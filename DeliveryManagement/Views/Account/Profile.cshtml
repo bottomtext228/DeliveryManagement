@@ -1,0 +1,32 @@
+﻿@*
+
+*@
+@model UserViewModel
+
+@{
+}
+
+
+
+
+  @if(Model.isCompany) {
+    <div>
+        <span>Company: @Model.Name</span><br />
+        <span>@Model.companyDesciption</span><br />
+        <span>@Model.Email</span><br />
+       
+    </div>
+
+} 
+else
+{ 
+<div>
+    <span>@Model.Name</span><br />
+    <span>@Model.Email</span><br />
+</div>
+}
+
+
+<form method="post" asp-controller="Account" asp-action="Logout">
+    <input type="submit" value="Выход" />
+</form>
