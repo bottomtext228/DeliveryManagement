@@ -18,8 +18,8 @@ namespace DeliveryManagement.Models.Account
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердить пароль")]
         public string PasswordConfirm { get; set; }
-
-        [Required]
+   
+        [Display(Name = "Вы - компания?")]
         public bool AsCompany { get; set; }
     }
 }

@@ -4,16 +4,18 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace DeliveryManagement.Models
 {
-    public class UserDbContext : IdentityDbContext<User>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+        public DbSet<Company> Companies { get; set; }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseInMemoryDatabase("TestDb");
+            options.UseSqlite("Filename=Database.db");
+            //options.UseInMemoryDatabase("TestDb");
 
         }
     }

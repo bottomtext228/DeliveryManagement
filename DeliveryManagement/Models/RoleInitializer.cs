@@ -4,7 +4,7 @@ namespace DeliveryManagement.Models
 {
     public class RoleInitializer
     {
-        public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, CompanyDbContext dbContext)
+        public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext dbContext)
         {
      
 
@@ -41,22 +41,24 @@ namespace DeliveryManagement.Models
             {
                 User admin = new User { Email = adminEmail, UserName = adminEmail };
                 IdentityResult result = await userManager.CreateAsync(admin, password);
+           
                 if (result.Succeeded)
                 {
-                  
-                
-                    
-                    await userManager.AddToRoleAsync(admin, "company");
-                    var company = new Company { User = admin, Description = "Empty description.", Name = "УралВагонЗавод" };
-                    dbContext.Add(company);
-                    dbContext.SaveChanges();          
+           
+                    var user = await userManager.FindByEmailAsync(adminEmail);
+
+                    await userManager.AddToRoleAsync(user, "company");
+
+
+                   
+                    var company = new Company { UserId = user.Id, Description = "Empty description.", Name = "УралВагонЗавод" };
+
+                    dbContext.Companies.Add(company);
+                    dbContext.SaveChanges();
+               
+
                 }
             }
-
-            
-
-
-
 
 
         }

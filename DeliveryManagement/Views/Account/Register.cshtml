@@ -1,4 +1,6 @@
-﻿@model RegisterViewModel
+﻿@using DeliveryManagement.Models.Account;
+@model RegisterViewModel
+
 <h2>Регистрация нового пользователя</h2>
 <form method="post" asp-controller="Account" asp-action="Register">
     <div asp-validation-summary="ModelOnly"></div>
@@ -16,6 +18,10 @@
         <label asp-for="PasswordConfirm"></label><br />
         <input asp-for="PasswordConfirm" />
         <span asp-validation-for="PasswordConfirm"></span>
+    </div>
+    <div>
+        <label asp-for="AsCompany"></label><br />
+        <input asp-for="AsCompany" />
     </div>
     <div>
         <input type="submit" value="Регистрация" />

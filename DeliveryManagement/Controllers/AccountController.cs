@@ -13,8 +13,8 @@ namespace DeliveryManagement.Controllers
 
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly CompanyDbContext _dbContext;
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, CompanyDbContext dbContext)
+        private readonly ApplicationDbContext _dbContext;
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -24,11 +24,11 @@ namespace DeliveryManagement.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-           return View();
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model) 
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -37,6 +37,10 @@ namespace DeliveryManagement.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+
+                    await _userManager.AddToRoleAsync(user, model.AsCompany ? "company" : "client");
+
+
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
@@ -52,43 +56,43 @@ namespace DeliveryManagement.Controllers
             return View(model);
         }
 
-        
+
         [Authorize]
         public async Task<IActionResult> Profile()
         {
-            var result = await _userManager.FindByEmailAsync(User.Identity.Name);
 
-      
-            if (User.Identity.IsAuthenticated)
+            
+            var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (user != null)
             {
-
                 if (User.IsInRole("company"))
                 {
 
-                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                    var userName = User.FindFirstValue(ClaimTypes.Name);
-                    var email = User.FindFirstValue(ClaimTypes.Email);
-
-
-
-                    var company = _dbContext.Companies.FirstOrDefault(e => e.User == result);
-                    return View(new UserViewModel 
-                    { Name = company.Name, Email = email, companyDesciption = company.Description, isCompany = true});
+                    var company =   _dbContext.Companies.FirstOrDefault(e => e.UserId == user.Id);
+                    return View(new UserViewModel
+                    { Name = company.Name, Email = user.Email, companyDesciption = company.Description, isCompany = true });
 
 
                 }
-
-                return View(new UserViewModel { Name = result.UserName, Email = result.UserName, isCompany = false });
-             
+                else
+                {
+                    return View(new UserViewModel { Name = user.UserName, Email = user.UserName, isCompany = false });
+                }
             }
-            return RedirectToAction("Register", "Account");
+            else
+            {
+                return RedirectToAction("Register", "Account");
+            }
+
+
+           
         }
 
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
             returnUrl = "Home/Index";
-            return View(new LoginViewModel{ ReturnUrl = returnUrl});
+            return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
         [HttpPost]
@@ -98,7 +102,7 @@ namespace DeliveryManagement.Controllers
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
 
-                Console.WriteLine(result.Succeeded);
+
                 if (result.Succeeded)
                 {
                     // проверяем, принадлежит ли URL приложению
@@ -115,10 +119,8 @@ namespace DeliveryManagement.Controllers
                 {
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");
                 }
-            } else
-            {
-                Console.WriteLine("Invalid");
             }
+
             return View(model);
         }
 
