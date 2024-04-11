@@ -1,4 +1,4 @@
-﻿@using DeliveryManagement.Models.Account;
+﻿@using DeliveryManagement.ViewModels.Account;
 @model RegisterViewModel
 
 <h2>Регистрация нового пользователя</h2>
@@ -21,9 +21,33 @@
     </div>
     <div>
         <label asp-for="AsCompany"></label><br />
-        <input asp-for="AsCompany" />
+        <input id="AsCompanyForm" asp-for="AsCompany" />
     </div>
+    <div id="CompanyNameForm" style="display: none;">
+        <label asp-for="CompanyName"></label><br />
+        <input asp-for="CompanyName" />
+    </div>
+    <div id="CompanyDescriptionForm" style="display: none;">
+        <label asp-for="CompanyDescription"></label><br />
+        <input asp-for="CompanyDescription" />
+    </div>
+    <br />
     <div>
         <input type="submit" value="Регистрация" />
     </div>
+    
 </form>
+
+<script>
+    document.getElementById("AsCompanyForm").addEventListener('input', function(e) {
+      
+        const displayValue = this.checked == true ? '' : 'none'
+        console.log(displayValue);
+        document.getElementById("CompanyNameForm").style.display = displayValue;
+        document.getElementById("CompanyDescriptionForm").style.display = displayValue;
+
+    });
+
+  
+   
+</script>

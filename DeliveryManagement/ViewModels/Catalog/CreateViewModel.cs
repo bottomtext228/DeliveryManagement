@@ -1,11 +1,11 @@
 ﻿using DeliveryManagement.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace DeliveryManagement.Models.Catalog
+namespace DeliveryManagement.ViewModels.Catalog
 {
     public class CreateViewModel
     {
-   
+
 
         [Required]
         [Display(Name = "Название")]
@@ -26,8 +26,8 @@ namespace DeliveryManagement.Models.Catalog
         [Display(Name = "Размеры")]
         [InvariantCultureParse]
 
-        public string SizeX { get; set; }       
-             
+        public string SizeX { get; set; }
+
         [Required]
         [InvariantCultureParse]
         public string SizeY { get; set; }

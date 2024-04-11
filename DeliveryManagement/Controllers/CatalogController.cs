@@ -1,5 +1,4 @@
-﻿using DeliveryManagement.Models.Catalog;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using DeliveryManagement.Models;
 using System.Numerics;
 using Microsoft.AspNetCore.Authorization;
@@ -8,9 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Linq.Expressions;
 using System.Globalization;
+using System.Diagnostics.Eventing.Reader;
+using DeliveryManagement.ViewModels.Catalog;
 
 namespace DeliveryManagement.Controllers
 {
+    [Authorize]
     public class CatalogController : Controller
     {
 
@@ -21,19 +23,99 @@ namespace DeliveryManagement.Controllers
             _userManager = userManager;
             _dbContext = dbContext;
         }
-        public IActionResult All()
+
+        [HttpGet]
+        public IActionResult Get(int? id)
         {
+            if (id != null)
+            {
+                var product = _dbContext.Products.FirstOrDefault(p => p.Id == id);
+                if (product != null)
+                {
+                    GetProductViewModel model = new GetProductViewModel
+                    {
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Weight = product.Weight,
+                        SizeX = product.SizeX,
+                        SizeY = product.SizeY,
+                        SizeZ = product.SizeZ,
+                        ImageBase64 = Convert.ToBase64String(product.Image)
+                    };
+                    return View(model);
+                }
+            }
             return View();
         }
 
-        [Authorize]
+        [HttpPost]
+        [Authorize(Roles = "company")]
+        public IActionResult Delete(int? id)
+        {
+            if (id != null)
+            {
+                var product = _dbContext.Products.FirstOrDefault(p => p.Id == id); // get product from request id
+
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier); // get current logged-in user
+                if (currentUserId != null)
+                {
+                    // get company of that user and check if it has product with that id
+                    var currentCompany = _dbContext.Companies.Include(c => c.Products).FirstOrDefault(c => c.UserId == currentUserId);
+                    if (currentCompany != null && currentCompany.Products.FirstOrDefault(p => p.Id == id) != null)
+                    {
+                        _dbContext.Products.Remove(product); // delete it
+                        _dbContext.SaveChanges();
+                        return Ok();
+                    }
+                }
+            }
+            return BadRequest();
+        }
+
+
+        public IActionResult All()
+        {
+            if (User.IsInRole("client"))
+            {
+                var products = _dbContext.Products.ToList();
+                AllProductViewModel allProductViewModel = new AllProductViewModel();
+                foreach (var product in products)
+                {
+                    allProductViewModel.Products.Add(new ProductSmallViewModel { Id = product.Id, Name = product.Name, Price = product.Price, ImageBase64 = Convert.ToBase64String(product.Image) });
+                }
+                return View(allProductViewModel);
+            }
+
+            if (User.IsInRole("company"))
+            {
+                // company of the current user;
+                var company = _dbContext.Companies.Include(e => e.Products).FirstOrDefault(c => c.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                if (company != null)
+                {
+                    var products = company.Products.ToList();
+                    AllProductViewModel allProductViewModel = new AllProductViewModel();
+                    foreach(var product in products)
+                    {
+                        allProductViewModel.Products.Add(new ProductSmallViewModel{ Id = product.Id, Name = product.Name, Price = product.Price, ImageBase64 = Convert.ToBase64String(product.Image) });
+                    }
+                    return View(allProductViewModel);
+                }
+                // display company products. button to add new
+
+            }
+            return View();
+        }
+
+        [Authorize(Roles = "company")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "company")]
         public async Task<IActionResult> Create(CreateViewModel model)
         {
             if (ModelState.IsValid)
@@ -43,7 +125,7 @@ namespace DeliveryManagement.Controllers
                 float weight;
                 float price;
                 try
-                {                  
+                {
                     // server-side checking values
                     productSize = new(float.Parse(model.SizeX, CultureInfo.InvariantCulture), float.Parse(model.SizeY, CultureInfo.InvariantCulture), float.Parse(model.SizeZ, CultureInfo.InvariantCulture));
                     weight = float.Parse(model.Weight, CultureInfo.InvariantCulture);
@@ -86,18 +168,13 @@ namespace DeliveryManagement.Controllers
                 var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
                 if (user != null)
                 {
-                    if (User.IsInRole("company"))
+                    var company = _dbContext.Companies.Include(c => c.Products).FirstOrDefault(e => e.UserId == user.Id);
+                    if (company != null)
                     {
-                        
-                        var company = _dbContext.Companies.FirstOrDefault(e => e.UserId == user.Id);
-                        if (company != null)
-                        {
-                            company.Products.Add(product); // DeliveryManagement.Models.Company.Products.get returned null.
-                            _dbContext.SaveChanges();
-                        }
+                        _dbContext.Products.Add(product);
+                        company.Products.Add(product);
+                        _dbContext.SaveChanges();
                     }
-
-
                 }
             }
 

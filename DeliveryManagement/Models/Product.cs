@@ -19,6 +19,9 @@ namespace DeliveryManagement.Models
         public byte[] Image { get; set; }
 
 
+        public int CompanyId { get; set; }
+        public Company Company { get; set; }
+       
         //        Минимальный набор информационных полей из которых состоит
         //сущность “Изделие производства”
         //● Название изделия

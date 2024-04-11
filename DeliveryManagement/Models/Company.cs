@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Cryptography.X509Certificates;
+﻿using DeliveryManagement.Models.Map;
 
 namespace DeliveryManagement.Models
 {
@@ -15,8 +14,11 @@ namespace DeliveryManagement.Models
 
         // public List<> Stocks;
         // public List<> PickUpPoints;
-        [ForeignKey("ProductId")]
-        public virtual ICollection<Product> Products { get; set; }
-        public virtual int ProductId { get; set; }
+        //[ForeignKey("ProductId")]
+        public ICollection<Product> Products { get; set; }
+
+        public ICollection<Stock> Stocks { get; set; }
+
+        public ICollection<PickUpPoint> PickUpPoints { get; set;}
     }
 }

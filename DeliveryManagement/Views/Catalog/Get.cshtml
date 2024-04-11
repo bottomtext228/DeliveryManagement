@@ -1,0 +1,27 @@
+﻿@model DeliveryManagement.ViewModels.Catalog.GetProductViewModel
+
+
+@if (Model != null)
+{
+    
+
+<span>Name: @Model.Name</span>
+<br />
+<span>Description: @Model.Description</span>
+<br />
+<span>Price: @Model.Price</span>
+<br />
+<span>Weight: @Model.Weight</span>
+<br />
+<span>Size: (@Model.SizeX, @Model.SizeY, @Model.SizeZ)</span>
+<br />
+<img src="data:image/png;base64,@Model.ImageBase64" width="300" height="400" />
+
+    <br />
+
+} else
+{
+    <span>Ничего не найдено!</span>
+    <br />
+    <a asp-controller="Catalog" asp-action="All">Вернуться в каталог</a>
+}

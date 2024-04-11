@@ -1,9 +1,8 @@
 ﻿using DeliveryManagement.Models;
-using DeliveryManagement.Models.Account;
+using DeliveryManagement.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace DeliveryManagement.Controllers
@@ -41,6 +40,16 @@ namespace DeliveryManagement.Controllers
                     await _userManager.AddToRoleAsync(user, model.AsCompany ? "company" : "client");
 
 
+                    if (model.AsCompany)
+                    {
+                        var _user = await _userManager.FindByEmailAsync(model.Email);
+                        if (_user != null)
+                        {
+                            _dbContext.Companies.Add(new Company { Name = model.CompanyName, Description = model.CompanyDescription, UserId = _user.Id });
+                            _dbContext.SaveChanges();
+                        }
+                    }
+
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
@@ -61,14 +70,15 @@ namespace DeliveryManagement.Controllers
         public async Task<IActionResult> Profile()
         {
 
-            
+
             var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
             if (user != null)
             {
                 if (User.IsInRole("company"))
                 {
 
-                    var company =   _dbContext.Companies.FirstOrDefault(e => e.UserId == user.Id);
+                    var company = _dbContext.Companies.FirstOrDefault(e => e.UserId == user.Id);
+
                     return View(new UserViewModel
                     { Name = company.Name, Email = user.Email, companyDesciption = company.Description, isCompany = true });
 
@@ -85,7 +95,7 @@ namespace DeliveryManagement.Controllers
             }
 
 
-           
+
         }
 
         [HttpGet]

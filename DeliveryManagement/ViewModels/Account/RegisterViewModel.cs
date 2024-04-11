@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DeliveryManagement.Models.Account
+namespace DeliveryManagement.ViewModels.Account
 {
     public class RegisterViewModel
     {
@@ -18,8 +18,13 @@ namespace DeliveryManagement.Models.Account
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердить пароль")]
         public string PasswordConfirm { get; set; }
-   
+
         [Display(Name = "Вы - компания?")]
         public bool AsCompany { get; set; }
+
+        [Display(Name = "Название")]
+        public string CompanyName { get; set; }
+        [Display(Name = "Описание")]
+        public string CompanyDescription { get; set; }
     }
 }

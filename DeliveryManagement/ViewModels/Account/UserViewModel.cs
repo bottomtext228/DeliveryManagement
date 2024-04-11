@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace DeliveryManagement.Models.Account
+namespace DeliveryManagement.ViewModels.Account
 {
     public class UserViewModel
     {

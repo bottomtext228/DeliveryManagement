@@ -1,0 +1,39 @@
+﻿@model DeliveryManagement.ViewModels.Order.IndexModel
+@{
+}
+
+
+<connect-it id="graph">
+    <nodes>
+
+        @foreach (var town in Model.Towns)
+        {
+            <div style="position: absolute; left: @($"{town.Position.X * 5}px"); top: @($"{town.Position.Y * 5}px");" id="town-@town.Id">@town.Name</div>
+        }
+    </nodes>
+
+    <edges>
+        @{
+            for (int i = 0; i < Model.Matrix.GetLength(0); i++)
+            {
+                for (int j = i; j < Model.Matrix.GetLength(1); j++)
+                {
+                    if (Model.Matrix[i, j] != 0)
+                    {
+                        <edge from="town-@(i + 1)" to="town-@(j + 1)"></edge>
+                    }
+                }
+            }
+        }
+    </edges>
+</connect-it>
+
+
+<script src="https://cdn.jsdelivr.net/npm/connect-it/dist/connect-it.js"></script>
+
+
+
+<script>
+    document.getElementById("graph").onEdgesClick = (edge) => {console.log(edge)};
+
+</script>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DeliveryManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,8 +58,7 @@ namespace DeliveryManagement.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    ProductId = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -173,7 +172,7 @@ namespace DeliveryManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -186,16 +185,17 @@ namespace DeliveryManagement.Migrations
                     SizeZ = table.Column<float>(type: "REAL", nullable: false),
                     Weight = table.Column<float>(type: "REAL", nullable: false),
                     Image = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    ProductId = table.Column<int>(type: "INTEGER", nullable: true)
+                    CompanyId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Product_Companies_ProductId",
-                        column: x => x.ProductId,
+                        name: "FK_Products_Companies_CompanyId",
+                        column: x => x.CompanyId,
                         principalTable: "Companies",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -236,9 +236,9 @@ namespace DeliveryManagement.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_ProductId",
-                table: "Product",
-                column: "ProductId");
+                name: "IX_Products_CompanyId",
+                table: "Products",
+                column: "CompanyId");
         }
 
         /// <inheritdoc />
@@ -260,7 +260,7 @@ namespace DeliveryManagement.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

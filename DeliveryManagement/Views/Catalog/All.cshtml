@@ -1,1 +1,13 @@
-﻿
+﻿@model DeliveryManagement.ViewModels.Catalog.AllProductViewModel
+
+@foreach(var product in Model.Products)
+{
+    <span>Name: @product.Name</span>
+    <br />
+    <span>Price: @product.Price</span>
+    <br />
+    <img src="data:image/png;base64,@product.ImageBase64" width="300" height="400" />
+    <br />
+
+    <a asp-controller="Catalog" asp-action="Get" asp-route-id="@product.Id">Подробнее</a>
+}

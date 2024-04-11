@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using DeliveryManagement.Models;
+using DeliveryManagement.ViewModels;
 
 namespace DeliveryManagement.Controllers;
 

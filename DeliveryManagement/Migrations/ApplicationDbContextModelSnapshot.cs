@@ -31,9 +31,6 @@ namespace DeliveryManagement.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -47,6 +44,9 @@ namespace DeliveryManagement.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CompanyId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
@@ -64,9 +64,6 @@ namespace DeliveryManagement.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("REAL");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<float>("SizeX")
                         .HasColumnType("REAL");
 
@@ -81,9 +78,9 @@ namespace DeliveryManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("CompanyId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("DeliveryManagement.Models.User", b =>
@@ -280,9 +277,13 @@ namespace DeliveryManagement.Migrations
 
             modelBuilder.Entity("DeliveryManagement.Models.Product", b =>
                 {
-                    b.HasOne("DeliveryManagement.Models.Company", null)
+                    b.HasOne("DeliveryManagement.Models.Company", "Company")
                         .WithMany("Products")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
