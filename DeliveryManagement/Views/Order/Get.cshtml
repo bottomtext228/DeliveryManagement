@@ -1,0 +1,67 @@
+﻿@model DeliveryManagement.ViewModels.Order.OneOrderViewModel;
+
+@if (Model != null)
+{
+    <div class="container-fluid">
+        <div class="row" style="padding-top: 30px;">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-4">
+                <img src="static/images/bolt.jpg" width="520" height="auto" class="rounded-3 shadow">
+            </div>
+            <div class="col-lg-3">
+                <p class="tvname">@Model.Product.Name</p>
+                <p>@Model.Product.Description</p>
+                <p style="font-size: 27px; margin-top: 60px;font-weight: 500;">Характеристики: </p>
+
+                <ul>
+                    <li class="cat">Вес: @Model.Product.Weight</li>
+                    <li class="cat">Длина: @Model.Product.SizeX</li>
+                    <li class="cat">Ширина: @Model.Product.SizeY</li>
+                    <li class="cat">Высота: @Model.Product.SizeZ</li>
+                </ul>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-4 rounded-3 shadow-sm">
+                    <div class="|">
+
+                        <div class="card-body">
+                            <h1 class="card-title pricing-card-title">
+                                <ya-tr-span data-index="16-0"
+                                            data-translated="true" data-source-lang="en" data-target-lang="ru" data-value="$15"
+                                            data-translation="15 долларов " data-ch="0" data-type="trSpan"
+                                            style="visibility: initial !important;">Был куплен за: </ya-tr-span><small class="text-body-secondary fw-light">
+                                    <ya-tr-span data-index="16-0"
+                                                data-translated="true" data-source-lang="en" data-target-lang="ru"
+                                                data-value="/mo" data-translation="/ месяц" data-ch="0" data-type="trSpan"
+                                                style="visibility: initial !important;"></ya-tr-span>
+                                </small>
+                            </h1>
+                            <h3 class="card-title">@* @Model.FinalPrice *@</h3>
+                            <hr class="h-divider">
+                            <h2>Путь: </h2>
+                            <ul>
+                                @foreach(var townName in Model.TownsNames)
+                                {
+                                    <li>@townName</li>
+                                }
+                            </ul>
+                            <hr class="h-divider">
+                            <h2 class="card-title">В дороге: </h2>
+                            <h3 class="card-title">5 часов</h3>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+else
+{
+    <span>Ничего не найдено!</span>
+    <br />
+    <a asp-controller="Catalog" asp-action="All">Вернуться в каталог</a>
+}

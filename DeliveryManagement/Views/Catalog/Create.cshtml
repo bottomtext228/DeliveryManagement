@@ -1,6 +1,6 @@
 ﻿@model DeliveryManagement.ViewModels.Catalog.CreateViewModel
 
-@* 
+@*
 
         [Required]
         [Display(Name = "Название")]
@@ -79,3 +79,88 @@
     </div>
 </form>
 
+<section>
+    <div class="row my-5">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-4">
+            <div>
+                <h2>Список моих товаров</h2>
+                <div class="list-group">
+
+                    <a href="#" class="list-group-item list-group-item-action">A second link item</a>
+                    <a href="#" class="list-group-item list-group-item-action">A third link item</a>
+                    <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>
+                </div>
+                <div style="height: 10px;"></div>
+
+                <div>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary py-2" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                        </svg>
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Добавлене товара</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <label for="basic-url" class="form-label">Название</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" asp-for="Name" />
+                                        @* <input type="text" class="form-control" id="basic-url"
+                                               aria-describedby="basic-addon3"> *@
+                                    </div>
+                                    <label for="basic-url" class="form-label">Вес</label>
+                                    <div class="input-group mb-3">
+
+                                        <input type="text" class="form-control" id="basic-url"
+                                               aria-describedby="basic-addon3">
+                                    </div>
+                                    <label for="basic-url" class="form-label">Длина</label>
+                                    <div class="input-group mb-3">
+
+                                        <input type="text" class="form-control" id="basic-url"
+                                               aria-describedby="basic-addon3">
+                                    </div>
+                                    <label for="basic-url" class="form-label">Ширина</label>
+                                    <div class="input-group mb-3">
+
+                                        <input type="text" class="form-control" id="basic-url"
+                                               aria-describedby="basic-addon3">
+                                    </div>
+                                    <label for="basic-url" class="form-label">Высота</label>
+                                    <div class="input-group mb-3">
+
+                                        <input type="text" class="form-control" id="basic-url"
+                                               aria-describedby="basic-addon3">
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <input type="file" class="form-control" id="inputGroupFile01">
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary">Сохранить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</section>

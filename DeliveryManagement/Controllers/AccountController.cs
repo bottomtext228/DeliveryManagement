@@ -27,7 +27,7 @@ namespace DeliveryManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register([FromForm]RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -110,7 +110,7 @@ namespace DeliveryManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
 
 
                 if (result.Succeeded)

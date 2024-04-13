@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeliveryManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240410155222_InitialMigrations")]
-    partial class InitialMigrations
+    [Migration("20240413012001_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,66 @@ namespace DeliveryManagement.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("DeliveryManagement.Models.Map.PickUpPoint", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TownId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("PickUpPoints");
+                });
+
+            modelBuilder.Entity("DeliveryManagement.Models.Map.Stock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TownId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("DeliveryManagement.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("DeliveryManagement.Models.Product", b =>
@@ -278,6 +338,47 @@ namespace DeliveryManagement.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DeliveryManagement.Models.Map.PickUpPoint", b =>
+                {
+                    b.HasOne("DeliveryManagement.Models.Company", "Company")
+                        .WithMany("PickUpPoints")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("DeliveryManagement.Models.Map.Stock", b =>
+                {
+                    b.HasOne("DeliveryManagement.Models.Company", "Company")
+                        .WithMany("Stocks")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("DeliveryManagement.Models.Order", b =>
+                {
+                    b.HasOne("DeliveryManagement.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DeliveryManagement.Models.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DeliveryManagement.Models.Product", b =>
                 {
                     b.HasOne("DeliveryManagement.Models.Company", "Company")
@@ -342,7 +443,16 @@ namespace DeliveryManagement.Migrations
 
             modelBuilder.Entity("DeliveryManagement.Models.Company", b =>
                 {
+                    b.Navigation("PickUpPoints");
+
                     b.Navigation("Products");
+
+                    b.Navigation("Stocks");
+                });
+
+            modelBuilder.Entity("DeliveryManagement.Models.User", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

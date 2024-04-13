@@ -1,0 +1,51 @@
+.nav-link {
+    color:black;
+}
+.navbar-nav .nav-link.active {
+    color: orange;
+}
+
+.btn-outline-warning{
+    border-color: orange;
+    color: orange;
+}
+
+a {
+text-decoration: none;
+}
+
+.btn-warning {
+    border-color:rgb(221, 221, 221);
+    background-color: rgb(221, 221, 221);
+}
+.btn-warning:hover {
+    border-color:rgb(184, 184, 184);
+    background-color: rgb(184, 184, 184);
+}
+
+.btn-primary {
+    background-color: orange;
+    border-color: orange;
+}
+
+.btn-primary:hover {
+    background-color: rgb(199, 129, 0);
+    border-color: rgb(199, 129, 0);
+    
+}
+.btn-success {
+    background-color: rgb(151, 151, 151);
+    border-color: rgb(153, 153, 153);
+}
+
+.btn-secondary {
+    background-color: orange;
+    border-color: orange;
+}
+
+.card-text {
+    color: black;
+}
+
+
+

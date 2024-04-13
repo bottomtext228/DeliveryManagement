@@ -12,49 +12,54 @@ namespace DeliveryManagement.DijkstraAlgorith
             Graph = graph;
         }
 
-        public Tuple<int, List<Town>> GetCheapestPath(Town from, Town to)
+        public Tuple<int, int, List<Town>> GetCheapestPath(Town from, Town to) // returns hours, price, path
         {
-            var adjacencyMatrix = Graph.CreatePriceAdjacencyMatrix();
+            var TimeAdjacencyMatrix = Graph.CreateTimeAdjacencyMatrix();
+            var PriceAdjacencyMatrix = Graph.CreatePriceAdjacencyMatrix();
 
-            var list = Graph.Dijkstar(adjacencyMatrix, Graph.AllNodes.FindIndex(n => n.Town == from), Graph.AllNodes.FindIndex(n => n.Town == to));
+            var list = Graph.Dijkstar(PriceAdjacencyMatrix, Graph.AllNodes.FindIndex(n => n.Town == from), Graph.AllNodes.FindIndex(n => n.Town == to));
             List<Town> result = new();
 
 
-            int sum = 0;
+            int hoursSum = 0;
+            int priceSum = 0;
             for (int i = 0; i < list.Count - 1; i++)
             {
                 result.Add(Graph.AllNodes[list[i]].Town); // end point is not included
-                sum += (int)adjacencyMatrix[list[i], list[i + 1]];
+                hoursSum += (int)TimeAdjacencyMatrix[list[i], list[i + 1]];
+                priceSum += (int)PriceAdjacencyMatrix[list[i], list[i + 1]];
             }
 
             result.Add(to); // add endpoint
 
-            return Tuple.Create(sum, result);
+            return Tuple.Create(hoursSum, priceSum, result);
         }
 
 
 
 
-        public Tuple<int, List<Town>> GetFastestPath(Town from, Town to)
+        public Tuple<int, int, List<Town>> GetFastestPath(Town from, Town to) // retuns hours, price, path
         {
-            var adjacencyMatrix = Graph.CreateTimeAdjacencyMatrix();
+            var TimeAdjacencyMatrix = Graph.CreateTimeAdjacencyMatrix();
+            var PriceAdjacencyMatrix = Graph.CreatePriceAdjacencyMatrix();
 
-            var list = Graph.Dijkstar(adjacencyMatrix, Graph.AllNodes.FindIndex(n => n.Town == from), Graph.AllNodes.FindIndex(n => n.Town == to));
+            var list = Graph.Dijkstar(TimeAdjacencyMatrix, Graph.AllNodes.FindIndex(n => n.Town == from), Graph.AllNodes.FindIndex(n => n.Town == to));
             List<Town> result = new();
 
 
-            int sum = 0;
+            int hoursSum = 0;
+            int priceSum = 0;
             for (int i = 0; i < list.Count - 1; i++)
             {
                 result.Add(Graph.AllNodes[list[i]].Town); // end point is not included
-                sum += (int)adjacencyMatrix[list[i], list[i + 1]];
+                hoursSum += (int)TimeAdjacencyMatrix[list[i], list[i + 1]];
+                priceSum += (int)PriceAdjacencyMatrix[list[i], list[i + 1]];
             }
 
             result.Add(to); // add endpoint
 
-            return Tuple.Create(sum, result);
+            return Tuple.Create(hoursSum, priceSum, result);
         }
-
 
     }
 

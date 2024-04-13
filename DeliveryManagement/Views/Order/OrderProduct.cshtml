@@ -1,0 +1,170 @@
+﻿@model DeliveryManagement.ViewModels.Order.OrderProductToViewViewModel
+
+
+@if (Model != null)
+{
+
+
+    <section>
+        <div class="row my-5">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4">
+                <div>
+                    <h2>Выберите ПВЗ который вам удобен</h2>
+                    <select class="form-select" id="selectPickUpPoint" onchange="onSelectChange(this);">
+                        <option value="none">Выбрать...</option>
+                        @foreach (var town in Model.PickUpPointsTowns)
+                        {
+                            <option value="@town.Id">@town.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="" style="height: 50px;"></div>
+                <hr class="h-divider">
+                <div>
+                    <h2>Выберите способ доставки</h2>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card mb-4 rounded-3 shadow-sm">
+                                <div class="card-header py-3">
+                                    <h4 class="my-0 fw-normal">Дешевый</h4>
+                                </div>
+                                <div class="card-body">
+                                    <h1 id="CheapPriceId" class="card-title pricing-card-title">
+                                        0 рублей<small class="text-body-secondary fw-light"></small>
+                                    </h1>
+                                    <ul id="CheapTimeId" class="list-unstyled mt-3 mb-4">
+                                        <li>0 часов</li>
+
+                                    </ul>
+                                    <input value="false" type="radio" class="btn-check" name="IsFastest" id="choosen1"
+                                           autocomplete="off" checked>
+                                    <label class="w-100 mb-2 btn btn-lg rounded-3 btn btn-secondary " for="choosen1">Выбрать</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card mb-4 rounded-3 shadow-sm">
+                                <div class="card-header py-3">
+                                    <h4 class="my-0 fw-normal">Быстрый</h4>
+                                </div>
+                                <div class="card-body">
+                                    <h1 id="FastPriceId" class="card-title pricing-card-title">
+                                        0 рублей<small class="text-body-secondary fw-light"></small>
+                                    </h1>
+                                    <ul id="FastTimeId" class="list-unstyled mt-3 mb-4">
+                                        <li>0 часов</li>
+                                    </ul>
+                                    <input value="true" type="radio" class="btn-check" name="IsFastest" id="choosen2"
+                                           autocomplete="off">
+                                    <label class="w-100 mb-2 btn btn-lg rounded-3 btn btn-secondary " for="choosen2">Выбрать</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="h-divider">
+                <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="button" onclick="OnButtonClick();" id="submit_button" value="Input">
+                    <ya-tr-span data-index="17-0" data-translated="true" data-source-lang="en" data-target-lang="ru"
+                                data-value="Sign up" data-translation="Регистрация" data-ch="0" data-type="trSpan"
+                                style="visibility: initial !important;">Заказать</ya-tr-span>
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <ul id="cheapestPath">
+                </ul>
+            </div>
+
+            <div>
+                <ul id="fastestPath">
+                </ul>
+            </div>
+        </div>
+
+    </section>
+
+
+
+    <script>
+
+        function onSelectChange(e) {
+            if (e.value == 'None') return;
+            console.log(`Town-Id: ${e.value}`);
+            fetch('@Url.Action("ComputeRoute", "Order")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    PickUpPointTownId: e.value,
+                    CompanyId: @Model.Product.CompanyId
+                                         })
+            }).then(e => e.text().then(text => {
+                try {
+                    const paths = JSON.parse(text);
+
+                    let ul = document.getElementById('cheapestPath');
+
+                    ul.innerHTML = '';
+                    paths.bestCheapestPath.item3.forEach(e => {
+                        const li = document.createElement('li');
+                        li.innerText = e.name;
+                        ul.appendChild(li)
+                    })
+
+
+                    ul = document.getElementById('fastestPath');
+                    ul.innerHTML = '';
+                    paths.bestFastestPath.item3.forEach(e => {
+                        const li = document.createElement('li');
+                        li.innerText = e.name;
+                        ul.appendChild(li);
+                    })
+
+                    document.getElementById('CheapPriceId').innerText = `${paths.bestCheapestPath.item2} рублей`;
+                    document.getElementById('FastPriceId').innerText = `${paths.bestFastestPath.item2} рублей`;
+
+                    document.getElementById('CheapTimeId').innerText = `${paths.bestCheapestPath.item1} часов`;
+                    document.getElementById('FastTimeId').innerText = `${paths.bestFastestPath.item1} часов`;
+
+
+
+                    console.log(paths);
+                } catch (error) {
+
+                }
+            }))
+        }
+        @*
+        int ? id, int pickUpPointTownId, bool isFastest *@
+            function OnButtonClick() {
+                fetch('@Url.Action("OrderProduct", "Order")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: @Model.Product.Id,
+                        PickUpPointTownId: Number(document.querySelector('select').value),
+                        isFastest: document.getElementById('choosen2').checked,
+                    })
+                });
+            }
+
+
+    </script>
+
+
+
+}
+else
+{
+
+    <span>Ничего не найдено!</span>
+    <br />
+    <a asp-controller="Catalog" asp-action="All">Вернуться в каталог</a>
+}

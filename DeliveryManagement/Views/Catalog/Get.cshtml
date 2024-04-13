@@ -3,23 +3,84 @@
 
 @if (Model != null)
 {
-    
 
-<span>Name: @Model.Name</span>
-<br />
-<span>Description: @Model.Description</span>
-<br />
-<span>Price: @Model.Price</span>
-<br />
-<span>Weight: @Model.Weight</span>
-<br />
-<span>Size: (@Model.SizeX, @Model.SizeY, @Model.SizeZ)</span>
-<br />
-<img src="data:image/png;base64,@Model.ImageBase64" width="300" height="400" />
+
+@*     <span>Name: @Model.Name</span>
+    <br />
+    <span>Description: @Model.Description</span>
+    <br />
+    <span>Price: @Model.Price</span>
+    <br />
+    <span>Weight: @Model.Weight</span>
+    <br />
+    <span>Size: (@Model.SizeX, @Model.SizeY, @Model.SizeZ)</span>
+    <br />
+    <img src="data:image/png;base64,@Model.ImageBase64" width="300" height="400" />
 
     <br />
+    <a asp-controller="Order" asp-action="OrderProduct" asp-route-id="@Model.Id">Заказать</a>
 
-} else
+ *@
+
+
+    <div>
+        <div class="row" style="padding-top: 30px;">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-4">
+                <img src="data:image/png;base64,@Model.ImageBase64" width="520" height="auto" class="rounded-3 shadow">
+            </div>
+            <div class="col-lg-3">
+                <p class="tvname">@Model.Name</p>
+                <p>@Model.Description</p>
+                <p style="font-size: 27px; margin-top: 60px;font-weight: 500;">Характеристики: </p>
+
+                <ul>
+                    <li>Вес: @Model.Weight</li>
+                    <li>Длина: @Model.SizeX</li>
+                    <li>Ширина: @Model.SizeY</li>
+                    <li>Высота: @Model.SizeY</li>
+                </ul>
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-4 rounded-3 shadow-sm">
+                    <div class="|">
+
+                        <div class="card-body">
+                            <h1 class="card-title pricing-card-title">
+                                <ya-tr-span data-index="16-0"
+                                            data-translated="true" data-source-lang="en" data-target-lang="ru" data-value="$15"
+                                            data-translation="15 долларов " data-ch="0" data-type="trSpan"
+                                            style="visibility: initial !important;">Цена: </ya-tr-span><small class="text-body-secondary fw-light">
+                                    <ya-tr-span data-index="16-0"
+                                                data-translated="true" data-source-lang="en" data-target-lang="ru"
+                                                data-value="/mo" data-translation="/ месяц" data-ch="0" data-type="trSpan"
+                                                style="visibility: initial !important;"></ya-tr-span>
+                                </small>
+                            </h1>
+                            <h2 class="card-title">@Model.Price рублей</h2>
+                            <h2 class="card-title"></h2>
+
+                            <a href="oformlenie.html">
+                                <button type="button" class="w-100 btn btn-lg btn-primary">
+                                    <ya-tr-span data-index="21-0"
+                                                data-translated="true" data-source-lang="en" data-target-lang="ru"
+                                                data-value="Get started" data-translation="Начало работы" data-ch="0"
+                                                data-type="trSpan" style="visibility: initial !important;"
+                                                data-selected="false">Купить</ya-tr-span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+}
+else
 {
     <span>Ничего не найдено!</span>
     <br />

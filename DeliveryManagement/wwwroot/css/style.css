@@ -1,0 +1,275 @@
+* {
+    margin: 0;
+    text-decoration: none;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 10px 10px -7px black;
+    height: 140px;
+
+}
+
+.header-line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.logo {
+    margin-left: 243px;
+}
+
+.enter-panel {
+    display: flex;
+    align-items: center;
+    margin-right: 50px;
+}
+
+
+.enter-butt {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: solid 1.5px;
+    border-color: black;
+    border-radius: 10px;
+    margin-right: 25px;
+    width: 100px;
+    height: 80px;
+}
+
+.enter-butt>img {
+    width: 30px;
+}
+
+.enter-butt>p {
+    margin-top: 7px;
+    color: black;
+}
+
+.main-body {
+    margin-top: 20px;
+}
+
+.page1 {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.conteiner-page1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-items: center;
+    margin-inline: 15%;
+
+}
+
+
+.text-page1 {
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 45px;
+    background-color: rgb(255, 192, 151);
+    width: 493px;
+    height: 439px;
+}
+
+.text-page1>p {
+    margin-inline: 30px;
+    margin-top: 100px;
+    font-size: 32px;
+}
+
+.text1-page1 {
+    font-weight: bolder;
+    margin-top: 30px !important;
+}
+
+.simple-grad-page1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+    background: linear-gradient(white, rgb(192, 192, 192));
+    height: 200px;
+    width: auto;
+}
+
+.simple-grad-page1>samp {
+    margin-inline: 300px;
+    font-size: 30px;
+}
+
+.page2 {}
+
+.conteiner-page2 {
+    display: flex;
+    margin-inline: 8%;
+}
+
+
+.warpped-page2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 240px;
+}
+
+.inside-page2 {
+    display: flex;
+    background-image: url(a.png);
+    background-position: -10px 90px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    width: 1100px;
+    height: 800px;
+    justify-content: flex-start;
+    align-items: flex-end;
+
+
+}
+
+.inside-page2>img {
+    scale: 100%;
+    position: relative;
+    top: -200px;
+    right: 60px;
+}
+
+.collum1-page2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.collum2-page2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+#col2>div {
+    background-color: rgb(199, 199, 199);
+}
+
+.box-page2 {
+    margin: 50px;
+    background-color: rgb(255, 164, 99);
+    width: 220px;
+    height: 50px;
+    padding: 10px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+#call {
+    scale: 115%;
+    margin-top: 20px;
+}
+
+.side-page2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* width: 150px; */
+    margin-top: 20px;
+}
+
+.musor {
+    width: 250px;
+}
+
+    #row1 {
+    margin-left: 130px;
+}
+
+#row2 {
+    margin-left: 80px;
+}
+
+#row3 {
+    margin-left: 80px;
+}
+
+#row4 {
+    margin-left: 150px;
+    background-color: white;
+    border: solid 0.5px;
+    font-weight: bold;
+    color: black;
+}
+
+#row5 {
+    position: relative;
+    right: 115px;
+}
+
+#row6 {
+    position: relative;
+    right: 65px;
+}
+
+#row7 {
+    position: relative;
+    right: 65px;
+}
+
+#row8 {
+    position: relative;
+    right: 135px;
+    border: solid 0.5px;
+    background-color: white!important;
+    font-weight: bold;
+    color: black;
+
+}
+
+.conteiner-page3 {
+    display: flex;
+    background-color: #FFECDE;
+    height: 472px;
+    margin-top: 350px;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.text-page3 {
+    
+    box-shadow: 0 3px 10px -3px;
+    background-color: aliceblue;
+    border-radius: 21px;
+    margin-left:90px ;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 380px;
+    height: 150px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.img-page3 {
+    position: relative;
+    top: -100px;
+    right: 100px;
+}
+
+.conteiner-footer {
+    height: 668px;
+    background-color: #eeeeee;
+    margin-top: 100px;
+}
+

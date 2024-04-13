@@ -5,6 +5,7 @@ using System.Globalization;
 using DeliveryManagement.Models.Map;
 using DeliveryManagement.DijkstraAlgorith;
 using DeliveryManagement.Services;
+using DeliveryManagement.GraphSearch;
 
 CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
 
@@ -17,7 +18,7 @@ Thread.CurrentThread.CurrentUICulture = culture;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<CountryMap>();
-
+builder.Services.AddScoped<TownsGraphSearch>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
@@ -37,7 +38,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     options.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
     options.Password.RequireDigit = false; // требуются ли цифры
 }).AddEntityFrameworkStores<ApplicationDbContext>();
-
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
 var app = builder.Build();
 

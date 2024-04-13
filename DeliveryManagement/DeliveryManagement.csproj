@@ -16,10 +16,40 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Models\Company\" />
+    <Folder Include="static\fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\images\bolt.jpg" />
+    <None Include="wwwroot\images\enter-ico.png" />
+    <None Include="wwwroot\images\epo.png" />
+    <None Include="wwwroot\images\foto.png" />
+    <None Include="wwwroot\images\gray-elops.png" />
+    <None Include="wwwroot\images\Icon.png" />
+    <None Include="wwwroot\images\icon\android-chrome-192x192.png" />
+    <None Include="wwwroot\images\icon\android-chrome-512x512.png" />
+    <None Include="wwwroot\images\icon\apple-touch-icon.png" />
+    <None Include="wwwroot\images\icon\favicon-16x16.png" />
+    <None Include="wwwroot\images\icon\favicon-32x32.png" />
+    <None Include="wwwroot\images\icon\favicon.ico" />
+    <None Include="wwwroot\images\icon\site.webmanifest" />
+    <None Include="wwwroot\images\Img-page1.png" />
+    <None Include="wwwroot\images\left_main.png" />
+    <None Include="wwwroot\images\left_top.png" />
+    <None Include="wwwroot\images\logo.png" />
+    <None Include="wwwroot\images\Logotip.svg" />
+    <None Include="wwwroot\images\reg-ico.png" />
+    <None Include="wwwroot\images\right_main.png" />
+    <None Include="wwwroot\images\right_top.png" />
+    <None Include="wwwroot\images\turtle 3page.png" />
+    <None Include="wwwroot\images\turtle-logstic.png" />
+    <None Include="wwwroot\css\mycss.css" />
+    <None Include="wwwroot\css\style.css" />
   </ItemGroup>
 
 </Project>

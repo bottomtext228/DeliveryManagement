@@ -2,7 +2,99 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+
+<div class="modal bg-secondary py-5 fade" tabindex="-1" role="dialog" id="modalSignin">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-5 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+                <!-- <h5 class="modal-title">Заголовок модального окна</h5> -->
+                <h2 class="fw-bold mb-0">Войдите в систему</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-5 pt-0">
+                <form class="">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control rounded-4" id="floatingInput" placeholder="name@example.com">
+                        <label for="floatingInput">Адрес электронной почты</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control rounded-4" id="floatingPassword" placeholder="Пароль">
+                        <label for="floatingPassword">Пароль</label>
+                    </div>
+                    <button class="w-100 mb-2 btn btn-lg rounded-4 btn-primary" type="submit">Войти</button>
+                    <a href="login.html">
+                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-warning"
+                                type="button">
+                            Зарегистрироваться
+                        </button>
+                    </a>
+                    <small class="text-muted">Нажимая «Войти», вы соглашаетесь с условиями использования.</small>
+                    <hr class="my-4">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main-body">
+    <div class="page1">
+        <div class="conteiner-page1">
+            <div class="text-page1">
+                <p class="text1-page1">Выбирайте товар, а мы доставим!</p>
+                <p>Мы сэкономим ваше время и подберм для вас самый выгодный способ доставки</p>
+            </div>
+            <div class="img-page1">
+                <img src="~/images/Img-page1.png" width="800px">
+            </div>
+        </div>
+        <div class="simple-grad-page1">
+            <samp>Что то про нас</samp>
+            <samp>Еще какой то текст</samp>
+        </div>
+    </div>
+    <div class="page2">
+        <div class="conteiner-page2">
+            <div class="warpped-page2">
+                <div class="side-page2">
+                    <img src="~/images/left_top.png" alt="" width="220px">
+                    <img src="~/images/left_main.png" alt="">
+                </div>
+                <div class="inside-page2">
+                    <div class="collum1-page2" id="col1">
+                        <div class="box-page2" id="row1"><samp>КАКИЕ ТО ПРИЕМУЩЕСТВА</samp></div>
+                        <div class="box-page2" id="row2"><samp>КАКИЕ ТО ПРИЕМУЩЕСТВА</samp></div>
+                        <div class="box-page2" id="row3"><samp>КАКИЕ ТО ПРИЕМУЩЕСТВА</samp></div>
+                        <a href="login.html">
+                            <div class="box-page2" id="row4">СТАНЬ ПОКУПАТЕЛЕМ</div>
+                        </a>
+                    </div>
+                    <img src="~/images/turtle-logstic.png" alt="">
+                    <div class="collum2-page2" id="col2">
+                        <div class="box-page2" id="row5"><samp>КАКИЕ ТО ПРИЕМУЩЕСТВА</samp></div>
+                        <div class="box-page2" id="row6"><samp>КАКИЕ ТО ПРИЕМУЩЕСТВА</samp></div>
+                        <div class="box-page2" id="row7"><samp>КАКИЕ ТО ПРИЕМУЩЕСТВА</samp></div>
+                        <a href="login.html">
+                            <div class="box-page2" id="row8">СТАНЬ ПРОДАВЦОМ</div>
+                        </a>
+                    </div>
+                </div>
+                <div class="side-page2">
+                    <img class="musor" src="~/images/right_top.png" alt="">
+                    <img src="~/images/right_main.png" id="call" alt="">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="page3">
+        <div class="conteiner-page3">
+            <div class="text-page3">
+                МЫ ВСЕГДА НА СВЯЗИ СО СВОИМИ КЛИЕНТАМИ
+            </div>
+            <div class="img-page3">
+                <img src="~/images/turtle 3page.png" alt="" width="1000px">
+            </div>
+        </div>
+    </div>
 </div>

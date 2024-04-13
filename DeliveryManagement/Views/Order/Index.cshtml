@@ -20,7 +20,7 @@
                 {
                     if (Model.Matrix[i, j] != 0)
                     {
-                        <edge from="town-@(i + 1)" to="town-@(j + 1)"></edge>
+                            <edge from="town-@(i + 1)" to="town-@(j + 1)"></edge>
                     }
                 }
             }
@@ -29,11 +29,137 @@
 </connect-it>
 
 
+<div>
+    <input type="radio" id="stocks" name="town_type" value=0 checked />
+    <label for="stocks">Склады</label>
+</div>
+
+<div>
+    <input type="radio" id="pickUpPoints" name="town_type" value=1 />
+    <label for="pickUpPoints">ПВЗ</label>
+</div>
+
+
+<div>
+    <<ul id="stocksList">
+    </ul>
+</div>
+
+<div>
+    <<ul id="pickUpPointsList">
+    </ul>
+</div>
+
+
+<button onclick="sendTowns();">Send data</button>
 <script src="https://cdn.jsdelivr.net/npm/connect-it/dist/connect-it.js"></script>
 
 
 
 <script>
-    document.getElementById("graph").onEdgesClick = (edge) => {console.log(edge)};
 
+
+
+    @{
+
+        // [1, 2, 3, ]
+    }
+
+     const stocks = [@Model.JsonStocks];
+    const pickUpPoints = [@Model.JsonPickUpPoints];
+
+    for (const stock of stocks) {
+        //console.log(stock);
+         const town = document.getElementById(`town-${stock}`);
+      
+        createAndAppendStock(stock, town.innerText);
+    }
+
+    for (const pickUpPoint of pickUpPoints) {
+         const town = document.getElementById(`town-${pickUpPoint}`);
+         createAndAppendPickUpPoint(pickUpPoint, town.innerText);
+    }
+
+    const pickerModes = {
+        STOCKS: 0,
+        PICK_UP_POINTS: 1
+    };
+
+
+    document.querySelectorAll('div[id^=town-]').forEach(e => e.addEventListener('click', t => {
+
+        const id = Number(t.target.id.replace('town-', ''));
+
+        const pickerMode = document.querySelector('input[name="town_type"]:checked')?.value
+        if (pickerMode == pickerModes.STOCKS) {
+            const index = stocks.indexOf(id);
+            if (index != -1) {
+                removeStock(id);
+
+            } else {
+                stocks.push(id);
+                createAndAppendStock(id, t.target.innerText)
+            }
+
+        } else {
+
+            const index = pickUpPoints.indexOf(id);
+            if (index != -1) {
+                removePickUpPoint(id);
+            } else {
+                pickUpPoints.push(id);
+                createAndAppendPickUpPoint(id, t.target.innerText);
+            }
+        }
+
+    }));
+
+    function sendTowns() {
+
+        fetch('index', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                stocks: stocks,
+                pickUpPoints: pickUpPoints
+            })
+
+
+        });
+    }
+
+
+    function createAndAppendStock(id, name) {
+
+        const stocksListHtml = document.getElementById('stocksList');
+        const li = document.createElement('li');
+        li.id = `li-stock-${id}`;
+
+        li.innerText = name;
+        stocksListHtml.appendChild(li);
+
+    }
+
+    function removeStock(id) {
+        stocks.splice(stocks.indexOf(id), 1);
+        document.getElementById(`li-stock-${id}`).remove();
+    }
+
+    function createAndAppendPickUpPoint(id, name) {
+
+
+        const stocksListHtml = document.getElementById('pickUpPointsList');
+        const li = document.createElement('li');
+        li.id = `li-pickUpPoint-${id}`;
+
+        li.innerText = name;
+        stocksListHtml.appendChild(li);
+    }
+
+    function removePickUpPoint(id) {
+        pickUpPoints.splice(pickUpPoints.indexOf(id), 1);
+        document.getElementById(`li-pickUpPoint-${id}`).remove();
+    }
 </script>

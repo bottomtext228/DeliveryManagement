@@ -8,6 +8,10 @@ namespace DeliveryManagement.ViewModels.Order
     {
         public List<Town> Towns { get; set; }
 
-        public int?[,] Matrix;
+        public int?[,] Matrix { get; set; }
+
+        public string JsonStocks { get; set; } 
+        public string JsonPickUpPoints {  get; set; }
+
     }
 }
