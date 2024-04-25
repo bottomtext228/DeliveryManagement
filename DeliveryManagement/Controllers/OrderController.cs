@@ -181,6 +181,15 @@ namespace DeliveryManagement.Controllers
                 if (pickUpPointTown != null && currentCompany.PickUpPoints.Any(p => p.TownId == pickUpPointTown.Id))
                 {
 
+                    var m = _countryMap.Graph.CreateTimeAdjacencyMatrix();
+                    for (int i = 0; i < m.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < m.GetLength(1); j++)
+                        {
+                            Console.WriteLine(m[i, j]);
+                        }
+                    }
+                
                     var route = _graphSearch.ComputeRoute(currentCompany, pickUpPointTown);
                     return Json(new ComputeRouteResponse { bestCheapestPath = route.Item1, bestFastestPath = route.Item2 });
 

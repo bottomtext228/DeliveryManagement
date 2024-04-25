@@ -47,7 +47,7 @@ namespace DeliveryManagement.GraphSearch
 
                 if (mostSuitableStockTimeWeight > fastestPath.Item1)
                 {
-                    mostSuitableStockTimeWeight = cheapestPath.Item1;
+                    mostSuitableStockTimeWeight = fastestPath.Item1;
                     mostSuitableStockTime = stock;
                     bestFastestPath = fastestPath;
                 }

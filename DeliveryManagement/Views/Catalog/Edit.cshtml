@@ -1,0 +1,13 @@
+﻿@model DeliveryManagement.ViewModels.Catalog.EditViewModel
+
+@if (Model != null)
+{
+    <div>
+        @Model.Name
+        
+    </div>
+} else
+{
+    <div>Ничего не найдено!</div>
+    <a asp-controller="Catalog" asp-action="All">Вернуться в каталог</a>
+}

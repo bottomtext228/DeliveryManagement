@@ -2,32 +2,49 @@
 @{
 }
 
+<style type="text/css">
+    .town {
+        position: absolute
+    }
 
-<connect-it id="graph">
-    <nodes>
 
-        @foreach (var town in Model.Towns)
-        {
-            <div style="position: absolute; left: @($"{town.Position.X * 5}px"); top: @($"{town.Position.Y * 5}px");" id="town-@town.Id">@town.Name</div>
-        }
-    </nodes>
+    .center-screen {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid purple
+    }
 
-    <edges>
-        @{
-            for (int i = 0; i < Model.Matrix.GetLength(0); i++)
+</style>
+
+<div id="graph-container" class="center-screen" style="position:absolute; width: 1000px; height: 500px;">
+    <connect-it id="graph">
+        <nodes>
+
+            @foreach (var town in Model.Towns)
             {
-                for (int j = i; j < Model.Matrix.GetLength(1); j++)
+                <div class="town" style="left: @($"{town.Position.X}px"); top: @($"{town.Position.Y}px");" id="town-@town.Id">@town.Name</div>
+            }
+        </nodes>
+
+        <edges>
+            @{
+                for (int i = 0; i < Model.Matrix.GetLength(0); i++)
                 {
-                    if (Model.Matrix[i, j] != 0)
+                    for (int j = i; j < Model.Matrix.GetLength(1); j++)
                     {
+                        if (Model.Matrix[i, j] != 0)
+                        {
                             <edge from="town-@(i + 1)" to="town-@(j + 1)"></edge>
+                        }
                     }
                 }
             }
-        }
-    </edges>
-</connect-it>
-
+        </edges>
+    </connect-it>
+</div>
 
 <div>
     <input type="radio" id="stocks" name="town_type" value=0 checked />
@@ -65,19 +82,19 @@
         // [1, 2, 3, ]
     }
 
-     const stocks = [@Model.JsonStocks];
+         const stocks = [@Model.JsonStocks];
     const pickUpPoints = [@Model.JsonPickUpPoints];
 
     for (const stock of stocks) {
         //console.log(stock);
-         const town = document.getElementById(`town-${stock}`);
-      
+        const town = document.getElementById(`town-${stock}`);
+
         createAndAppendStock(stock, town.innerText);
     }
 
     for (const pickUpPoint of pickUpPoints) {
-         const town = document.getElementById(`town-${pickUpPoint}`);
-         createAndAppendPickUpPoint(pickUpPoint, town.innerText);
+        const town = document.getElementById(`town-${pickUpPoint}`);
+        createAndAppendPickUpPoint(pickUpPoint, town.innerText);
     }
 
     const pickerModes = {

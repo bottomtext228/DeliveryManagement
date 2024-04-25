@@ -1,19 +1,17 @@
 using DeliveryManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using DeliveryManagement.Models.Map;
-using DeliveryManagement.DijkstraAlgorith;
 using DeliveryManagement.Services;
 using DeliveryManagement.GraphSearch;
 
-CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
 
-CultureInfo.DefaultThreadCurrentCulture = culture;
-CultureInfo.DefaultThreadCurrentUICulture = culture;
+//CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
 
-Thread.CurrentThread.CurrentCulture = culture;
-Thread.CurrentThread.CurrentUICulture = culture;
+//CultureInfo.DefaultThreadCurrentCulture = culture;
+//CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+//Thread.CurrentThread.CurrentCulture = culture;
+//Thread.CurrentThread.CurrentUICulture = culture;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,7 +64,40 @@ using (var scope = app.Services.CreateScope())
     }
 
 }
+/**
+ * 
+ * TODO:
+ * make edit/delete products
+ * make order products
+ * fix all html
+ * make better map
+ * 
+*/
 
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+
+//    var map = services.GetRequiredService<CountryMap>();
+//    var graphSearch = services.GetRequiredService<TownsGraphSearch>();
+
+//    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+
+
+//    string[] labels = map.Graph.AllNodes.Select(s => s.Town.Name).ToArray();
+
+//    int?[,] adj = map.Graph.CreateTimeAdjacencyMatrix();
+
+//    map.Graph.PrintMatrix(ref adj, labels, map.Graph.AllNodes.Count);
+
+//    map.Graph.PrintPath(ref adj, labels, "Рязань", "Санкт-Петербург");
+
+//    var company = dbContext.Companies.Include(c => c.Stocks).FirstOrDefault();
+//    var town = map.Towns.ToList()[10];
+    
+
+
+//}
 
 
 //string[] labels = graph.AllNodes.Select(s => s.Town.Name).ToArray();
