@@ -68,6 +68,7 @@ namespace DeliveryManagement.Controllers
                 {
                     GetProductViewModel model = new GetProductViewModel
                     {
+                        Id = product.Id,
                         Name = product.Name,
                         Description = product.Description,
                         Price = product.Price,
@@ -101,15 +102,18 @@ namespace DeliveryManagement.Controllers
 
             EditViewModel model = new EditViewModel
             {
+                Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price.ToString(),
                 Weight = product.Weight.ToString(),
                 SizeX = product.SizeX.ToString(),
                 SizeY = product.SizeY.ToString(),
-                SizeZ = product.SizeZ.ToString()
+                SizeZ = product.SizeZ.ToString(),
             };
-
+            ViewData["ImageBase64"] = Convert.ToBase64String(product.Image);
+            //RedirectToAction("Edit");
+            //return Ok();
             return View(model);
         }
         [HttpPost]
@@ -153,11 +157,27 @@ namespace DeliveryManagement.Controllers
             product.SizeX = productSize.Item1;
             product.SizeY = productSize.Item2;
             product.SizeZ = productSize.Item3;
-            //_dbContext.Products.Update(product);
+
+            var Image = model.Image;
+
+            if (Image != null && Image.Length > 0)
+            {
+                //Convert Image to byte and save to database
+
+                byte[] ImageBytes = null;
+                using (var fs1 = Image.OpenReadStream())
+                using (var ms1 = new MemoryStream())
+                {
+                    fs1.CopyTo(ms1);
+                    ImageBytes = ms1.ToArray();
+                }
+
+                product.Image = ImageBytes;
+            }
+
             _dbContext.SaveChanges();
-           
-     
-            return Ok();
+
+            return RedirectToAction("Get", "Catalog", new { id = product.Id });
         }
         [HttpPost]
         [Authorize(Roles = "company")]
@@ -181,7 +201,7 @@ namespace DeliveryManagement.Controllers
                 }
             }
             return BadRequest();
-        }   
+        }
         [Authorize(Roles = "company")]
         public IActionResult Create()
         {
@@ -213,15 +233,16 @@ namespace DeliveryManagement.Controllers
 
                 var Image = model.Image;
 
+                if (Image.Length <= 0)
+                    return BadRequest();
 
                 //Convert Image to byte and save to database
-
-                byte[] p1 = null;
+                byte[] ImageBytes = null;
                 using (var fs1 = Image.OpenReadStream())
                 using (var ms1 = new MemoryStream())
                 {
                     fs1.CopyTo(ms1);
-                    p1 = ms1.ToArray();
+                    ImageBytes = ms1.ToArray();
                 }
 
                 var product = new Product
@@ -233,7 +254,7 @@ namespace DeliveryManagement.Controllers
                     SizeZ = productSize.Item3,
                     Weight = weight,
                     Price = price,
-                    Image = p1
+                    Image = ImageBytes
                 };
 
                 var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -249,7 +270,7 @@ namespace DeliveryManagement.Controllers
                 }
             }
 
-            return View();
+            return RedirectToAction("All");
 
         }
 

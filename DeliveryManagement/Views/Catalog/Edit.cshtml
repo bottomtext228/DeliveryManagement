@@ -2,10 +2,55 @@
 
 @if (Model != null)
 {
-    <div>
-        @Model.Name
-        
-    </div>
+    <form asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div>
+            <label asp-for="Name"></label><br />
+            <input asp-for="Name" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div>
+            <label asp-for="Description"></label><br />
+            <input asp-for="Description" />
+            <span asp-validation-for="Description"></span>
+        </div>
+        <div>
+            <label asp-for="Price"></label><br />
+            <input asp-for="Price" />
+            <span asp-validation-for="Price"></span>
+        </div>
+        <div>
+            <label asp-for="Weight"></label><br />
+            <input asp-for="Weight" />
+            <span asp-validation-for="Weight"></span>
+        </div>
+        <div>
+            <label asp-for="SizeX"></label><br />
+            <input asp-for="SizeX" step="any" />
+            <span asp-validation-for="SizeX"></span>
+        </div>
+        <div>
+            <label asp-for="SizeY"></label><br />
+            <input asp-for="SizeY" step="any" />
+            <span asp-validation-for="SizeY"></span>
+        </div>
+        <div>
+            <label asp-for="SizeZ"></label><br />
+            <input asp-for="SizeZ" step="any" />
+            <span asp-validation-for="SizeZ"></span>
+        </div>
+        <div>
+            <img src="data:image/png;base64, @ViewData["ImageBase64"]" />
+        </div>
+        <div>
+            <label asp-for="Image"></label><br />
+            <input asp-for="Image" />
+        </div>
+        <div>
+            <input type="submit" value="Изменить" />
+        </div>
+    </form>
 } else
 {
     <div>Ничего не найдено!</div>

@@ -67,7 +67,6 @@ using (var scope = app.Services.CreateScope())
 /**
  * 
  * TODO:
- * make edit/delete products
  * make order products
  * fix all html
  * make better map

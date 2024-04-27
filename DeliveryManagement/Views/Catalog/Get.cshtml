@@ -3,26 +3,6 @@
 
 @if (Model != null)
 {
-
-
-@*     <span>Name: @Model.Name</span>
-    <br />
-    <span>Description: @Model.Description</span>
-    <br />
-    <span>Price: @Model.Price</span>
-    <br />
-    <span>Weight: @Model.Weight</span>
-    <br />
-    <span>Size: (@Model.SizeX, @Model.SizeY, @Model.SizeZ)</span>
-    <br />
-    <img src="data:image/png;base64,@Model.ImageBase64" width="300" height="400" />
-
-    <br />
-    <a asp-controller="Order" asp-action="OrderProduct" asp-route-id="@Model.Id">Заказать</a>
-
- *@
-
-
     <div>
         <div class="row" style="padding-top: 30px;">
             <div class="col-lg-1"></div>
@@ -43,35 +23,56 @@
             </div>
             <div class="col-lg-3">
                 <div class="card mb-4 rounded-3 shadow-sm">
-                    <div class="|">
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">
+                            Цена
+                        </h1>
+                        <h2 class="card-title">@Model.Price рублей</h2>
+                        <a asp-action="OrderProduct" asp-controller="Order" asp-route-id="@Model.Id">
+                            <button type="button" class="w-100 btn btn-lg btn-primary">
+                                Купить
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <a asp-action="Edit" asp-controller="Catalog" asp-route-id="@Model.Id">
+                            <button>Изменить</button>
+                        </a>
+                    </div>
+                    <div>
 
-                        <div class="card-body">
-                            <h1 class="card-title pricing-card-title">
-                                <ya-tr-span data-index="16-0"
-                                            data-translated="true" data-source-lang="en" data-target-lang="ru" data-value="$15"
-                                            data-translation="15 долларов " data-ch="0" data-type="trSpan"
-                                            style="visibility: initial !important;">Цена: </ya-tr-span><small class="text-body-secondary fw-light">
-                                    <ya-tr-span data-index="16-0"
-                                                data-translated="true" data-source-lang="en" data-target-lang="ru"
-                                                data-value="/mo" data-translation="/ месяц" data-ch="0" data-type="trSpan"
-                                                style="visibility: initial !important;"></ya-tr-span>
-                                </small>
-                            </h1>
-                            <h2 class="card-title">@Model.Price рублей</h2>
-                            <h2 class="card-title"></h2>
+                        <button type="button" class="btn btn-primary py-2" data-bs-toggle="modal"
+                                data-bs-target="#deleteConfirmationModal">
+                            Удалить
+                        </button>
 
-                            <a href="oformlenie.html">
-                                <button type="button" class="w-100 btn btn-lg btn-primary">
-                                    <ya-tr-span data-index="21-0"
-                                                data-translated="true" data-source-lang="en" data-target-lang="ru"
-                                                data-value="Get started" data-translation="Начало работы" data-ch="0"
-                                                data-type="trSpan" style="visibility: initial !important;"
-                                                data-selected="false">Купить</ya-tr-span>
-                                </button>
-                            </a>
+                        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteConfirmationModalLabel">Удалить</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+
+                                    </div>
+                                    <div class="modal-body">
+                                        Вы уверены?
+                                    </div>
+                                    <div class="modal-footer">
+
+                                        <button type="submit" class="btn btn-primary py-2" onclick="fetch('@Url.Action("Delete", new {id = Model.Id}))', {method: 'POST', headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }, body: 'id=@Model.Id'}); window.location.replace('@Url.Action("All")');">
+                                            Удалить
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 

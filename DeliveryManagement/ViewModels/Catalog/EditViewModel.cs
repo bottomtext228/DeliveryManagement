@@ -5,7 +5,7 @@ namespace DeliveryManagement.ViewModels.Catalog
 {
     public class EditViewModel
     {
-
+        public int Id { get; set; }
 
         [Required]
         [Display(Name = "Название")]
@@ -40,10 +40,8 @@ namespace DeliveryManagement.ViewModels.Catalog
         [InvariantCultureParse]
         public string Weight { get; set; }
 
-
-        [Required]
         [Display(Name = "Изображение")]
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
 
     }
 }
