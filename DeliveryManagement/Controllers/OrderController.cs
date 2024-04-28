@@ -31,7 +31,7 @@ namespace DeliveryManagement.Controllers
             _graphSearch = graphSearch;
         }
         [Authorize(Roles = "company")]
-        public IActionResult Index()
+        public IActionResult Index() // country map
         {
 
 
@@ -209,7 +209,7 @@ namespace DeliveryManagement.Controllers
         public IActionResult All()
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var orders = _dbContext.Orders.Where(o => o.User.Id == currentUserId);
+            var orders = _dbContext.Orders.Include(o => o.Product).Where(o => o.User.Id == currentUserId).ToList();
 
 
 
@@ -241,7 +241,7 @@ namespace DeliveryManagement.Controllers
         public IActionResult Get(int? id)
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var order = _dbContext.Orders.FirstOrDefault(o => o.User.Id == currentUserId && o.Id == id);
+            var order = _dbContext.Orders.Include(o => o.Product).FirstOrDefault(o => o.User.Id == currentUserId && o.Id == id);
             if (order != null)
             {
                 var model = new OneOrderViewModel

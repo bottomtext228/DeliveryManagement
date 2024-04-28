@@ -11,9 +11,10 @@ namespace DeliveryManagement.Models
 
         public float Price { get; set; }
 
-        public float SizeX { get; set; } // can't map vector3 or tuple to database
-        public float SizeY { get; set; }
-        public float SizeZ { get; set; }
+        public Vector3 Size { get; set; }
+        //public float SizeX { get; set; } // can't map vector3 or tuple to database
+        //public float SizeY { get; set; }
+        //public float SizeZ { get; set; }
         public float Weight { get; set; }
 
         public byte[] Image { get; set; }

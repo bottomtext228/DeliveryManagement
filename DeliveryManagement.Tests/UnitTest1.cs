@@ -2,21 +2,19 @@ using DeliveryManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using System.Numerics;
 
 namespace DeliveryManagement.Tests
 {
-    public class UserDbTests
+    public class OrderTests
     {
 
         [Fact]
-        public void Test1()
+        public void CreationTest()
         {
-            //var dbContextMock = new Mock<ApplicationDbContext>();
-            //IList<User> users = new List<User>();
-            
-            //User user = new User { Email = "Post@yandex.ru", UserName = "Vasya" };
-            //users.Add(user);
-            //dbContextMock.Setups()
+            var v = new Vector3(1, 2, 3);
+            var s = string.Join(",", new float[3] { v.X, v.Y, v.Z});
+            Assert.Equal("1,2,3", s);
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace DeliveryManagement.Controllers
 {
@@ -21,13 +22,14 @@ namespace DeliveryManagement.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(bool? AsCompany)
         {
-            return View();
+
+            return View(new RegisterViewModel { AsCompany = AsCompany ?? false });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromForm]RegisterViewModel model)
+        public async Task<IActionResult> Register([FromForm] RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {

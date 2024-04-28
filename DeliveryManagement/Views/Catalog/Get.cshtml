@@ -16,9 +16,9 @@
 
                 <ul>
                     <li>Вес: @Model.Weight</li>
-                    <li>Длина: @Model.SizeX</li>
-                    <li>Ширина: @Model.SizeY</li>
-                    <li>Высота: @Model.SizeY</li>
+                    <li>Длина: @Model.Size.X</li>
+                    <li>Ширина: @Model.Size.Y</li>
+                    <li>Высота: @Model.Size.Z</li>
                 </ul>
             </div>
             <div class="col-lg-3">
@@ -36,43 +36,46 @@
                     </div>
                 </div>
                 <div>
-                    <div>
-                        <a asp-action="Edit" asp-controller="Catalog" asp-route-id="@Model.Id">
-                            <button>Изменить</button>
-                        </a>
-                    </div>
-                    <div>
+                    @if (Model.IsCompany)
+                    {
+                        <div>
+                            <a asp-action="Edit" asp-controller="Catalog" asp-route-id="@Model.Id">
+                                <button>Изменить</button>
+                            </a>
+                        </div>
+                        <div>
 
-                        <button type="button" class="btn btn-primary py-2" data-bs-toggle="modal"
-                                data-bs-target="#deleteConfirmationModal">
-                            Удалить
-                        </button>
+                            <button type="button" class="btn btn-primary py-2" data-bs-toggle="modal"
+                                    data-bs-target="#deleteConfirmationModal">
+                                Удалить
+                            </button>
 
-                        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
-                             aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="deleteConfirmationModalLabel">Удалить</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+                            <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteConfirmationModalLabel">Удалить</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
 
-                                    </div>
-                                    <div class="modal-body">
-                                        Вы уверены?
-                                    </div>
-                                    <div class="modal-footer">
+                                        </div>
+                                        <div class="modal-body">
+                                            Вы уверены?
+                                        </div>
+                                        <div class="modal-footer">
 
-                                        <button type="submit" class="btn btn-primary py-2" onclick="fetch('@Url.Action("Delete", new {id = Model.Id}))', {method: 'POST', headers: {
+                                            <button type="submit" class="btn btn-primary py-2" onclick="fetch('@Url.Action("Delete", new {id = Model.Id}))', {method: 'POST', headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }, body: 'id=@Model.Id'}); window.location.replace('@Url.Action("All")');">
-                                            Удалить
-                                        </button>
+                                                Удалить
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
 

@@ -4,7 +4,7 @@ namespace DeliveryManagement.ViewModels.Order
 {
     public class AllViewModel
     {
-        public List<OneOrderViewModel> Orders;
+        public List<OneOrderViewModel> Orders = new();
     }
     public class OneOrderViewModel
     {

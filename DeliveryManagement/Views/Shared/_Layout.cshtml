@@ -80,9 +80,9 @@
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a href="account-poc.html"><button class="dropdown-item" type="button">Аккаунт</button></a></li>
-                        <li><button class="dropdown-item" type="button">Корзина</button></li>
-                        <li><button class="dropdown-item" type="button">Заказы</button></li>
+                        <li><a class="nav-link" aria-current="page" asp-controller="Account" asp-action="Profile"><button class="dropdown-item" type="button">Аккаунт</button></a></li>
+                        <li>@* TODO: Basket  *@<button class="dropdown-item" type="button">Корзина</button></li>
+                        <li><a class="nav-link" aria-current="page" asp-controller="Order" asp-action="All"><button class="dropdown-item" type="button">Заказы</button></a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>

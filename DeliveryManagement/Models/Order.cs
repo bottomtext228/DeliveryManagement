@@ -12,14 +12,13 @@ namespace DeliveryManagement.Models
 
         public int ProductId { get; set; }
         public Product Product { get; set; }
-
         //public int StockId { get; set; }
         //public Stock Stock { get; set; }
         //public int PickUpPointId { get; set; }
         //public PickUpPoint PickUpPoint { get; set; }
         //public float FinalPrice { get; set; }
 
-        public List<int> TownIds;
+        public List<int> TownIds { get; set; }
 
     }
 }

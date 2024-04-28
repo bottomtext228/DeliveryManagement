@@ -66,6 +66,16 @@ namespace DeliveryManagement.Controllers
                 var product = _dbContext.Products.FirstOrDefault(p => p.Id == id);
                 if (product != null)
                 {
+                    if (User.IsInRole("company"))
+                    {
+                        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var company = _dbContext.Companies.Include(c => c.Products).FirstOrDefault(c => c.UserId == currentUserId);
+                        if (company != null && !company.Products.Any(p => p == product))
+                        {
+                            return View(); // do not allow other companies to see product.
+                        }
+                    } // while usual user can see all products.
+
                     GetProductViewModel model = new GetProductViewModel
                     {
                         Id = product.Id,
@@ -73,10 +83,9 @@ namespace DeliveryManagement.Controllers
                         Description = product.Description,
                         Price = product.Price,
                         Weight = product.Weight,
-                        SizeX = product.SizeX,
-                        SizeY = product.SizeY,
-                        SizeZ = product.SizeZ,
-                        ImageBase64 = Convert.ToBase64String(product.Image)
+                        Size = product.Size,
+                        ImageBase64 = Convert.ToBase64String(product.Image),
+                        IsCompany = User.IsInRole("company")
                     };
                     return View(model);
                 }
@@ -107,9 +116,9 @@ namespace DeliveryManagement.Controllers
                 Description = product.Description,
                 Price = product.Price.ToString(),
                 Weight = product.Weight.ToString(),
-                SizeX = product.SizeX.ToString(),
-                SizeY = product.SizeY.ToString(),
-                SizeZ = product.SizeZ.ToString(),
+                SizeX = product.Size.X.ToString(),
+                SizeY = product.Size.Y.ToString(),
+                SizeZ = product.Size.Z.ToString(),
             };
             ViewData["ImageBase64"] = Convert.ToBase64String(product.Image);
             //RedirectToAction("Edit");
@@ -133,7 +142,7 @@ namespace DeliveryManagement.Controllers
 
 
 
-            (float, float, float) productSize;
+            Vector3 productSize;
             float weight;
             float price;
             try
@@ -154,9 +163,7 @@ namespace DeliveryManagement.Controllers
             product.Description = model.Description;
             product.Price = price;
             product.Weight = weight;
-            product.SizeX = productSize.Item1;
-            product.SizeY = productSize.Item2;
-            product.SizeZ = productSize.Item3;
+            product.Size = productSize;
 
             var Image = model.Image;
 
@@ -215,7 +222,7 @@ namespace DeliveryManagement.Controllers
             if (ModelState.IsValid)
             {
 
-                (float, float, float) productSize;
+                Vector3 productSize;
                 float weight;
                 float price;
                 try
@@ -249,9 +256,7 @@ namespace DeliveryManagement.Controllers
                 {
                     Name = model.Name,
                     Description = model.Description,
-                    SizeX = productSize.Item1,
-                    SizeY = productSize.Item2,
-                    SizeZ = productSize.Item3,
+                    Size = productSize,              
                     Weight = weight,
                     Price = price,
                     Image = ImageBytes
