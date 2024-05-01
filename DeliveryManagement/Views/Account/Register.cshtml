@@ -1,7 +1,102 @@
 ﻿@using DeliveryManagement.ViewModels.Account;
 @model RegisterViewModel
 
-<h2>Регистрация нового пользователя</h2>
+
+<div class="modal modal-sheet d-block bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog"
+     id="modalSignin">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+                <h1 class="fw-bold mb-0 fs-2">
+                    Зарегистрируйтесь в
+                    Terrapin
+                </h1>
+                <a asp-controller="Home" asp-action="Index" class="btn-close"></a>
+            </div>
+            <div class="modal-body p-5 pt-0">
+                <form method="post" asp-controller="Account" asp-action="Register">
+                    <div class="row my-3">
+                        <div class="col">
+                            <input value="false" type="radio" class="btn-check" name="AsCompany"
+                                   id="as-client" autocomplete="off" checked>
+                            <label class="w-100 mb-2 btn btn-lg rounded-3 btn-secondary "
+                                   for="as-client">Как покупатель</label>
+                        </div>
+                        <div class="col">
+                            <input value="true" type="radio" class="btn-check" name="AsCompany"
+                                   id="as-company" autocomplete="on">
+                            <label class="w-100 mb-2 btn btn-lg rounded-3 btn-secondary"
+                                   for="as-company">Как продавец</label>
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" type="email" class="form-control rounded-3"
+                               placeholder="name@example.com">
+                        <label asp-for="Email">Эл. адрес</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Password" type="password" class="form-control rounded-3"
+                               placeholder="Пароль">
+                        <label asp-for="Password">Пароль</label>
+                    </div>
+                    <div>
+                        <div id="CompanyInputs">
+                            <hr style="width: 100%;float:left;" />
+                            <div>
+                                Информация о компании
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="CompanyName" type="text" placeholder="Название" class="form-control rounded-3">
+                                <label asp-for="CompanyName">Название</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="CompanyDescription" type="text" placeholder="Описание" class="form-control rounded-3">
+                                <label asp-for="CompanyDescription">Описание</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
+                            value="Input">
+                        Регистрация
+                    </button>
+                    <a asp-controller="Account" asp-action="Login" class="w-100 mb-2 btn btn-lg rounded-3 btn-warning">Уже есть аккаунт?</a>
+                    <small class="text-body-secondary">
+                        Нажимая Зарегистрироваться,
+                        вы соглашаетесь с условиями использования.
+                    </small>
+                    <hr class="my-4">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    @if (Model.AsCompany)
+    {
+        <text>
+            $('#as-company').prop('checked', true);
+        </text>
+    }
+    else
+    {
+        <text>
+            $('#CompanyInputs').hide();
+        $('#as-client').prop('checked', true);
+        </text>
+    }
+
+        $('input[type="radio"').on('change', function () {
+            const value = $(this).val();
+            if (value == 'true') {
+                $('#CompanyInputs').slideDown('medium');
+            } else {
+                $('#CompanyInputs').hide('medium');
+            }
+        });
+</script>
+@* <h2>Регистрация нового пользователя</h2>
 <form method="post" asp-controller="Account" asp-action="Register">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
@@ -45,8 +140,8 @@
 
 
 
-</script>
-@* 
+</script> *@
+@*
 
 <section>
     <div class="container-fluid my-5">
@@ -144,7 +239,7 @@
                                                         data-translation="Регистрация" data-ch="0" data-type="trSpan"
                                                         style="visibility: initial !important;">Регистрация</ya-tr-span>
                                         </button>
-                              
+
                                         <small class="text-body-secondary">
                                             <ya-tr-span data-index="17-1"
                                                         data-translated="true" data-source-lang="en" data-target-lang="ru"

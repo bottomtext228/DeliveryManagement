@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DeliveryManagement.Services;
 using DeliveryManagement.GraphSearch;
+using System.Linq.Expressions;
 
 
 //CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
@@ -63,7 +64,10 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while seeding the database.");
     }
 
+
 }
+
+
 /**
  * 
  * TODO:
@@ -93,7 +97,7 @@ using (var scope = app.Services.CreateScope())
 
 //    var company = dbContext.Companies.Include(c => c.Stocks).FirstOrDefault();
 //    var town = map.Towns.ToList()[10];
-    
+
 
 
 //}

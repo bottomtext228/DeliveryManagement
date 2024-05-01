@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Globalization;
 using System.Diagnostics.Eventing.Reader;
 using DeliveryManagement.ViewModels.Catalog;
+using Vector = DeliveryManagement.Models.Vector;
 
 namespace DeliveryManagement.Controllers
 {
@@ -142,7 +143,7 @@ namespace DeliveryManagement.Controllers
 
 
 
-            Vector3 productSize;
+            Vector productSize;
             float weight;
             float price;
             try
@@ -222,7 +223,7 @@ namespace DeliveryManagement.Controllers
             if (ModelState.IsValid)
             {
 
-                Vector3 productSize;
+                Vector productSize;
                 float weight;
                 float price;
                 try

@@ -3,7 +3,7 @@
 
 
 
-<h2>Вход в приложение</h2>
+@* <h2>Вход в приложение</h2>
 <form method="post" asp-controller="Account" asp-action="Login"
       asp-route-returnUrl="@Model.ReturnUrl">
     <div asp-validation-summary="ModelOnly"></div>
@@ -14,16 +14,39 @@
     </div>
     <div>
         <label asp-for="Password"></label><br />
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-@*     <div>
-        <label asp-for="RememberMe"></label><br />
-        <input asp-for="RememberMe" />
-    </div> *@
-    <div>
+        <
         <input type="submit" value="Войти" />
     </div>
-</form>
+</form> *@
 
 
+
+<div class="modal bg-secondary py-5 d-block" tabindex="-1" role="dialog" id="modalSignin">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-5 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+                <h2 class="fw-bold mb-0">Войдите в систему</h2>
+                <a asp-controller="Home" asp-action="Index" class="btn-close"></a>
+            </div>
+            <div class="modal-body p-5 pt-0">
+                <form method="post" asp-controller="Account" asp-action="Login"
+                      asp-route-returnUrl="@Model.ReturnUrl">
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" type="email" class="form-control rounded-4" id="floatingInput" placeholder="name@example.com">
+                        <label for="floatingInput">Адрес электронной почты</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Password" type="password" class="form-control rounded-4" id="floatingPassword" placeholder="Пароль">
+                        <label for="floatingPassword">Пароль</label>
+                    </div>
+                    <button class="w-100 mb-2 btn btn-lg rounded-4 btn-primary" type="submit">Войти</button>
+                    <a asp-controller="Account" asp-action="Register" class="w-100 mb-2 btn btn-lg rounded-4 btn-warning">
+                        Зарегистрироваться
+                    </a>
+                    <small class="text-muted">Нажимая «Войти», вы соглашаетесь с условиями использования.</small>
+                    <hr class="my-4">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

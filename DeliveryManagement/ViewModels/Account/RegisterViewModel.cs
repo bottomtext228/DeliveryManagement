@@ -17,8 +17,8 @@ namespace DeliveryManagement.ViewModels.Account
         public bool AsCompany { get; set; }
 
         [Display(Name = "Название")]
-        public string CompanyName { get; set; }
+        public string? CompanyName { get; set; }
         [Display(Name = "Описание")]
-        public string CompanyDescription { get; set; }
+        public string? CompanyDescription { get; set; }
     }
 }

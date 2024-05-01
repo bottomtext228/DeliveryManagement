@@ -1,6 +1,4 @@
-﻿using DeliveryManagement.Attributes;
-using System.ComponentModel.DataAnnotations;
-using System.Numerics;
+﻿using Vector = DeliveryManagement.Models.Vector;
 
 namespace DeliveryManagement.ViewModels.Catalog
 {
@@ -11,7 +9,7 @@ namespace DeliveryManagement.ViewModels.Catalog
         public string Description { get; set; }
         public float Price { get; set; }
         public float Weight { get; set; }
-        public Vector3 Size { get; set; }
+        public Vector Size { get; set; }
         public string ImageBase64 { get; set; }
         public bool IsCompany { get; set; }
     }

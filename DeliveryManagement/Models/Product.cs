@@ -2,6 +2,7 @@
 
 namespace DeliveryManagement.Models
 {
+    public record class Vector (float X, float Y, float Z);
     public class Product
     {
         public int Id { get; set; }
@@ -11,7 +12,7 @@ namespace DeliveryManagement.Models
 
         public float Price { get; set; }
 
-        public Vector3 Size { get; set; }
+        public Vector Size { get; set; }
         //public float SizeX { get; set; } // can't map vector3 or tuple to database
         //public float SizeY { get; set; }
         //public float SizeZ { get; set; }
