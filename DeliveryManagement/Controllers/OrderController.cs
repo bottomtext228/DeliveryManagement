@@ -99,16 +99,6 @@ namespace DeliveryManagement.Controllers
             }
             return View();
         }
-
-
-        public record class RouteData
-        {
-            public int PickUpPointTownId { get; set; }
-            public int CompanyId { get; set; }
-
-        }
-
-
         public record class OrderProductResult
         {
             public int id { get; set; }
@@ -166,9 +156,15 @@ namespace DeliveryManagement.Controllers
             public Tuple<int, int, List<Town>> bestCheapestPath { get; set; }
             public Tuple<int, int, List<Town>> bestFastestPath { get; set; }
         }
+        public record class MapRouteData
+        {
+            public int PickUpPointTownId { get; set; }
+            public int CompanyId { get; set; }
+
+        }
         [HttpPost]
         [Authorize(Roles = "client")]
-        public JsonResult ComputeRoute([FromBody] RouteData data)
+        public JsonResult ComputeRoute([FromBody] MapRouteData data)
         {
             if (data == null)
             {

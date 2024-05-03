@@ -1,4 +1,6 @@
 ﻿using DeliveryManagement.Attributes;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryManagement.ViewModels.Catalog
@@ -7,41 +9,44 @@ namespace DeliveryManagement.ViewModels.Catalog
     {
         public int Id { get; set; }
 
-        [Required]
+
+        [Required(ErrorMessage = "Название не может быть пустым!")]
         [Display(Name = "Название")]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Описание не может быть пустым!")]
         [Display(Name = "Описание")]
         public string Description { get; set; }
-        //public string Category { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Стоимость не может быть пустой!")]
         [Display(Name = "Стоимость")]
-        [InvariantCultureParse]
-        public string Price { get; set; }
+        public float Price { get; set; }
 
+        [Required(ErrorMessage = "Длина не может быть пустой!")]
+        [Display(Name = "Длина")]
+        public float SizeX { get; set; }
 
-        [Required]
-        [Display(Name = "Размеры")]
-        [InvariantCultureParse]
+        [Required(ErrorMessage = "Ширина не может быть пустой!")]
+        [Display(Name = "Ширина")]
+        public float SizeY { get; set; }
 
-        public string SizeX { get; set; }
+        [Required(ErrorMessage = "Высота не может быть пустой!")]
+        [Display(Name = "Высота")]
+        public float SizeZ { get; set; }
 
-        [Required]
-        [InvariantCultureParse]
-        public string SizeY { get; set; }
-        [Required]
-        [InvariantCultureParse]
-        public string SizeZ { get; set; }
-
-        [Required]
+        [Required(ErrorMessage = "Вес не может быть пустым!")]
         [Display(Name = "Вес")]
-        [InvariantCultureParse]
-        public string Weight { get; set; }
+        public float Weight { get; set; }
 
+
+        [Required(ErrorMessage = "Изображение обязательно!")]
         [Display(Name = "Изображение")]
         public IFormFile? Image { get; set; }
 
+
+
+        [BindNever]
+        [ValidateNever]
+        public string OldImageBase64 { get; set; }
     }
 }

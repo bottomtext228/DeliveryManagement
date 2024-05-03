@@ -17,35 +17,35 @@
         </div>
         <div>
             <label asp-for="Price"></label><br />
-            <input asp-for="Price" />
+            <input asp-for="Price" type="number" />
             <span asp-validation-for="Price"></span>
         </div>
         <div>
             <label asp-for="Weight"></label><br />
-            <input asp-for="Weight" />
+            <input asp-for="Weight" type="number" />
             <span asp-validation-for="Weight"></span>
         </div>
         <div>
             <label asp-for="SizeX"></label><br />
-            <input asp-for="SizeX" step="any" />
+            <input asp-for="SizeX" type="number" />
             <span asp-validation-for="SizeX"></span>
         </div>
         <div>
             <label asp-for="SizeY"></label><br />
-            <input asp-for="SizeY" step="any" />
+            <input asp-for="SizeY" type="number" />
             <span asp-validation-for="SizeY"></span>
         </div>
         <div>
             <label asp-for="SizeZ"></label><br />
-            <input asp-for="SizeZ" step="any" />
+            <input asp-for="SizeZ" type="number" />
             <span asp-validation-for="SizeZ"></span>
         </div>
         <div>
-            <img src="data:image/png;base64, @ViewData["ImageBase64"]" />
+            <img src="data:image/png;base64, @Model.OldImageBase64" />
         </div>
         <div>
             <label asp-for="Image"></label><br />
-            <input asp-for="Image" />
+            <input asp-for="Image" accept=".jpg, .jpeg, .png" />
         </div>
         <div>
             <input type="submit" value="Изменить" />
@@ -55,4 +55,10 @@
 {
     <div>Ничего не найдено!</div>
     <a asp-controller="Catalog" asp-action="All">Вернуться в каталог</a>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

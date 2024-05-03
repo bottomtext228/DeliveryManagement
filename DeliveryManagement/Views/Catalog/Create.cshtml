@@ -47,38 +47,45 @@
     </div>
     <div>
         <label asp-for="Price"></label><br />
-        <input asp-for="Price" />
+        <input asp-for="Price" type="number"/>
         <span asp-validation-for="Price"></span>
     </div>
     <div>
         <label asp-for="Weight"></label><br />
-        <input asp-for="Weight" />
+        <input asp-for="Weight" type="number" />
         <span asp-validation-for="Weight"></span>
     </div>
     <div>
         <label asp-for="SizeX"></label><br />
-        <input asp-for="SizeX" step="any" />
+        <input asp-for="SizeX" type="number" />
         <span asp-validation-for="SizeX"></span>
     </div>
     <div>
         <label asp-for="SizeY"></label><br />
-        <input asp-for="SizeY" step="any" />
+        <input asp-for="SizeY" type="number" />
         <span asp-validation-for="SizeY"></span>
     </div>
     <div>
         <label asp-for="SizeZ"></label><br />
-        <input asp-for="SizeZ" step="any" />
+        <input asp-for="SizeZ" type="number" />
         <span asp-validation-for="SizeZ"></span>
     </div>
     <div>
         <label asp-for="Image"></label><br />
-        <input asp-for="Image" />
+        <input asp-for="Image" accept=".jpg, .jpeg, .png" />
     </div>
     <div>
         <input type="submit" value="Создать" />
     </div>
 </form>
-@* 
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@*
 <section>
     <div class="row my-5">
         <div class="col-lg-4"></div>
@@ -110,7 +117,7 @@
                                     <div class="input-group mb-3">
                                         <input class="form-control" asp-for="Name" />
                                          <input type="text" class="form-control" id="basic-url"
-                                               aria-describedby="basic-addon3"> 
+                                               aria-describedby="basic-addon3">
                                     </div>
                                     <label for="basic-url" class="form-label">Вес</label>
                                     <div class="input-group mb-3">

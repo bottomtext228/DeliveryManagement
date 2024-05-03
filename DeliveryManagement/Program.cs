@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DeliveryManagement.Services;
 using DeliveryManagement.GraphSearch;
-using System.Linq.Expressions;
+using System.Globalization;
 
 
 //CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
@@ -13,6 +13,9 @@ using System.Linq.Expressions;
 
 //Thread.CurrentThread.CurrentCulture = culture;
 //Thread.CurrentThread.CurrentUICulture = culture;
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,7 +74,8 @@ using (var scope = app.Services.CreateScope())
 /**
  * 
  * TODO:
- * make registration frontend
+ * check registration backend (check CompanyName/CompanyDescription for null)
+ * fix bug when deleting product it's still shown in Catalog/All
  * fix all html
  * make better map
  * 

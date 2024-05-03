@@ -115,15 +115,14 @@ namespace DeliveryManagement.Controllers
                 Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
-                Price = product.Price.ToString(),
-                Weight = product.Weight.ToString(),
-                SizeX = product.Size.X.ToString(),
-                SizeY = product.Size.Y.ToString(),
-                SizeZ = product.Size.Z.ToString(),
+                Price = product.Price,
+                Weight = product.Weight,
+                SizeX = product.Size.X,
+                SizeY = product.Size.Y,
+                SizeZ = product.Size.Z,
+                OldImageBase64 = Convert.ToBase64String(product.Image)
             };
-            ViewData["ImageBase64"] = Convert.ToBase64String(product.Image);
-            //RedirectToAction("Edit");
-            //return Ok();
+
             return View(model);
         }
         [HttpPost]
@@ -131,45 +130,43 @@ namespace DeliveryManagement.Controllers
         public IActionResult Edit(int? id, EditViewModel model)
         {
 
-            if (id == null || !ModelState.IsValid)
-                return BadRequest();
+            if (id == null)
+                return View();
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var company = _dbContext.Companies.Include(c => c.Products).FirstOrDefault(c => c.UserId == userId);
             if (company == null)
                 return BadRequest();
             var product = company.Products.FirstOrDefault(p => p.Id == id);
             if (product == null)
-                return BadRequest();
+                return View();
+
+            if (!ModelState.IsValid)
+                return View(model);
 
 
 
-            Vector productSize;
-            float weight;
-            float price;
-            try
-            {
-                // server-side checking values
-                productSize = new(float.Parse(model.SizeX, CultureInfo.InvariantCulture), float.Parse(model.SizeY, CultureInfo.InvariantCulture), float.Parse(model.SizeZ, CultureInfo.InvariantCulture));
-                weight = float.Parse(model.Weight, CultureInfo.InvariantCulture);
-                price = float.Parse(model.Price, CultureInfo.InvariantCulture);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Поля с десятичной дробью содержат ошибки.");
-                return BadRequest(ex.Message);
-            }
+     
 
 
             product.Name = model.Name;
             product.Description = model.Description;
-            product.Price = price;
-            product.Weight = weight;
-            product.Size = productSize;
+            product.Price = model.Price;
+            product.Weight = model.Weight;
+            product.Size = new Vector(model.SizeX, model.SizeY, model.SizeZ);
 
             var Image = model.Image;
 
-            if (Image != null && Image.Length > 0)
+
+
+            if (Image != null)
             {
+
+                if (Image.Length <= 0 || !(
+                    Image.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                    Image.ContentType.Equals("image/jpg", StringComparison.OrdinalIgnoreCase) ||
+                    Image.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase)))
+                    return BadRequest();
                 //Convert Image to byte and save to database
 
                 byte[] ImageBytes = null;
@@ -223,25 +220,28 @@ namespace DeliveryManagement.Controllers
             if (ModelState.IsValid)
             {
 
-                Vector productSize;
-                float weight;
-                float price;
-                try
-                {
-                    // server-side checking values
-                    productSize = new(float.Parse(model.SizeX, CultureInfo.InvariantCulture), float.Parse(model.SizeY, CultureInfo.InvariantCulture), float.Parse(model.SizeZ, CultureInfo.InvariantCulture));
-                    weight = float.Parse(model.Weight, CultureInfo.InvariantCulture);
-                    price = float.Parse(model.Price, CultureInfo.InvariantCulture);
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Поля с десятичной дробью содержат ошибки.");
-                    return BadRequest(ex.Message);
-                }
+                //Vector productSize;
+                //float weight;
+                //float price;
+                //try
+                //{
+                //    // server-side checking values
+                //    productSize = new(float.Parse(model.SizeX, CultureInfo.InvariantCulture), float.Parse(model.SizeY, CultureInfo.InvariantCulture), float.Parse(model.SizeZ, CultureInfo.InvariantCulture));
+                //    weight = float.Parse(model.Weight, CultureInfo.InvariantCulture);
+                //    price = float.Parse(model.Price, CultureInfo.InvariantCulture);
+                //}
+                //catch (Exception ex)
+                //{
+                //    ModelState.AddModelError("", "Поля с десятичной дробью содержат ошибки.");
+                //    return BadRequest(ex.Message);
+                //}
 
                 var Image = model.Image;
 
-                if (Image.Length <= 0)
+                if (Image.Length <= 0 || !(
+                    Image.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                    Image.ContentType.Equals("image/jpg", StringComparison.OrdinalIgnoreCase) ||
+                    Image.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase)))
                     return BadRequest();
 
                 //Convert Image to byte and save to database
@@ -253,13 +253,14 @@ namespace DeliveryManagement.Controllers
                     ImageBytes = ms1.ToArray();
                 }
 
+
                 var product = new Product
                 {
                     Name = model.Name,
                     Description = model.Description,
-                    Size = productSize,              
-                    Weight = weight,
-                    Price = price,
+                    Size = new Vector(model.SizeX, model.SizeY, model.SizeZ),
+                    Weight = model.Weight,
+                    Price = model.Price,
                     Image = ImageBytes
                 };
 
@@ -272,11 +273,12 @@ namespace DeliveryManagement.Controllers
                         _dbContext.Products.Add(product);
                         company.Products.Add(product);
                         _dbContext.SaveChanges();
+                        return RedirectToAction("All");
                     }
                 }
             }
+            return View();
 
-            return RedirectToAction("All");
 
         }
 
