@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Globalization;
-using System.Numerics;
-using System.Reflection.Metadata;
+
 
 namespace DeliveryManagement.Models
 {
@@ -31,17 +30,6 @@ namespace DeliveryManagement.Models
             modelBuilder.Entity<Product>()
                 .ComplexProperty(e => e.Size);
 
-            //var stringToVector = (String str) =>
-            //{
-            //    var values = str.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(value => float.Parse(value, CultureInfo.InvariantCulture)).ToList();
-            //    return new Vector3(values[0], values[1], values[2]);
-            //};
-
-            //modelBuilder.Entity<Product>()
-            //    .Property(e => e.Size)
-            //    .HasConversion(new ValueConverter<Vector3, string>(
-            //        v => string.Join(";", new float[3] { v.X, v.Y, v.Z }),
-            //        v => stringToVector(v)));
 
             var converter = new ValueConverter<List<int>, string>(
                 v => string.Join(";", v),

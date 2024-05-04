@@ -29,15 +29,18 @@
                                    for="as-company">Как продавец</label>
                         </div>
                     </div>
+                    <div class="validation" asp-validation-summary="ModelOnly"></div>
                     <div class="form-floating mb-3">
                         <input asp-for="Email" type="email" class="form-control rounded-3"
                                placeholder="name@example.com">
                         <label asp-for="Email">Эл. адрес</label>
+                        <span asp-validation-for="Email"></span>
                     </div>
                     <div class="form-floating mb-3">
                         <input asp-for="Password" type="password" class="form-control rounded-3"
                                placeholder="Пароль">
                         <label asp-for="Password">Пароль</label>
+                        <span asp-validation-for="Password"></span>
                     </div>
                     <div>
                         <div id="CompanyInputs">
@@ -48,14 +51,16 @@
                             <div class="form-floating mb-3">
                                 <input asp-for="CompanyName" type="text" placeholder="Название" class="form-control rounded-3">
                                 <label asp-for="CompanyName">Название</label>
+                                <span asp-validation-for="CompanyName"></span>
                             </div>
                             <div class="form-floating mb-3">
                                 <input asp-for="CompanyDescription" type="text" placeholder="Описание" class="form-control rounded-3">
                                 <label asp-for="CompanyDescription">Описание</label>
+                                <span asp-validation-for="CompanyDescription"></span>
                             </div>
                         </div>
                     </div>
-                    
+
                     <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit"
                             value="Input">
                         Регистрация
@@ -95,188 +100,11 @@
                 $('#CompanyInputs').hide('medium');
             }
         });
+
 </script>
-@* <h2>Регистрация нового пользователя</h2>
-<form method="post" asp-controller="Account" asp-action="Register">
-    <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Email"></label><br />
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div>
-        <label asp-for="Password"></label><br />
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <div>
-        <label asp-for="AsCompany"></label><br />
-        <input id="AsCompanyForm" asp-for="AsCompany" />
-    </div>
-    <div id="CompanyNameForm" style="display: none;">
-        <label asp-for="CompanyName"></label><br />
-        <input asp-for="CompanyName" />
-    </div>
-    <div id="CompanyDescriptionForm" style="display: none;">
-        <label asp-for="CompanyDescription"></label><br />
-        <input asp-for="CompanyDescription" />
-    </div>
-    <br />
-    <div>
-        <input type="submit" value="Регистрация" />
-    </div>
 
-</form>
-
-<script>
-    document.getElementById("AsCompanyForm").addEventListener('input', function(e) {
-
-        const displayValue = this.checked == true ? '' : 'none'
-        console.log(displayValue);
-        document.getElementById("CompanyNameForm").style.display = displayValue;
-        document.getElementById("CompanyDescriptionForm").style.display = displayValue;
-
-    });
-
-
-
-</script> *@
-@*
-
-<section>
-    <div class="container-fluid my-5">
-        <div class="row">
-            <div class="col-lg-2"></div>
-            <div class="col-lg-8 bg-primary">
-
-                <div class="d-flex align-items-center py-4 bg-body-tertiary">
-                    <div class="modal modal-sheet d-block bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog"
-                         id="modalSignin">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content rounded-4 shadow">
-                                <div class="modal-header p-5 pb-4 border-bottom-0">
-                                    <h1 class="fw-bold mb-0 fs-2">
-                                        <ya-tr-span data-index="15-0"
-                                                    data-translated="true" data-source-lang="en" data-target-lang="ru"
-                                                    data-value="Sign up for free"
-                                                    data-translation="Зарегистрируйтесь в Terrapin" data-ch="0"
-                                                    data-type="trSpan"
-                                                    style="visibility: initial !important;">
-                                            Зарегистрируйтесь в
-                                            Terrapin
-                                        </ya-tr-span>
-                                    </h1>
-                                    <a asp-controller="Home" asp-action="Index">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Закрыть"></button>
-                                    </a>
-                                </div>
-
-                                <div class="modal-body p-5 pt-0">
-                                    <form method="post" asp-controller="Account" asp-action="Register">
-                                        <div class="row my-3">
-                                            <div class="col">
-                                                <input value="false" type="radio" class="btn-check" onchange="IsSeller();"
-                                                       name="AsCompany" id="option1" autocomplete="off" checked>
-                                                <label class="w-100 mb-2 btn btn-lg rounded-3 btn-secondary "
-                                                       for="option1">Как покупатель</label>
-                                            </div>
-                                            <div class="col">
-                                                <input value="true" type="radio" class="btn-check" onchange="IsSeller();"
-                                                       name="AsCompany" id="option2" autocomplete="on">
-                                                <label class="w-100 mb-2 btn btn-lg rounded-3 btn-secondary"
-                                                       for="option2">Как продавец</label>
-                                            </div>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input asp-for="Email" type="email" class="form-control rounded-3" id="floatingInput"
-                                                   placeholder="name@example.com">
-                                            <label for="floatingInput">
-                                                <ya-tr-span data-index="16-0"
-                                                            data-translated="true" data-source-lang="en"
-                                                            data-target-lang="ru" data-value="Email address"
-                                                            data-translation="Эл. адрес" data-ch="0" data-type="trSpan"
-                                                            style="visibility: initial !important;">
-                                                    Эл.
-                                                    адрес
-                                                </ya-tr-span>
-                                            </label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input asp-for="Password" type="password" class="form-control rounded-3"
-                                                   id="floatingPassword" placeholder="Пароль">
-                                            <label for="floatingPassword">Пароль</label>
-                                        </div>
-
-                                        <div class="form-floating mb-3" id="form1">
-                                        </div>
-                                        <div class="form-floating mb-3" id="form2">
-                                        </div>
-
-                                        <div id="CompanyNameForm" style="display: none;">
-                                            <input class="form-control rounded-3" id="floatingInputName"
-                                                   placeholder="name@example.com" value="">
-                                            <label for="CompanyName">
-                                                <ya-tr-span data-index="16-0"
-                                                            data-translated="true" data-source-lang="en"
-                                                            data-target-lang="ru" data-value="name"
-                                                            data-translation="Название" data-ch="0" data-type="trSpan"
-                                                            style="visibility: initial !important;">Название</ya-tr-span>
-                                            </label>
-                                        </div>
-                                        <div id="CompanyDescriptionForm" style="display: none;">
-                                            <input class="form-control rounded-3" id="floatingDescription"
-                                                   placeholder="Описание" value="">
-                                            <label for="CompanyDescription">
-                                                Описание
-                                            </label>
-                                        </div>
-                                        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary"
-                                                type="submit" value="Input">
-                                            <ya-tr-span data-index="17-0"
-                                                        data-translated="true" data-source-lang="en"
-                                                        data-target-lang="ru" data-value="Sign up"
-                                                        data-translation="Регистрация" data-ch="0" data-type="trSpan"
-                                                        style="visibility: initial !important;">Регистрация</ya-tr-span>
-                                        </button>
-
-                                        <small class="text-body-secondary">
-                                            <ya-tr-span data-index="17-1"
-                                                        data-translated="true" data-source-lang="en" data-target-lang="ru"
-                                                        data-value="By clicking Sign up, you agree to the terms of use."
-                                                        data-translation="Нажимая Зарегистрироваться, вы соглашаетесь с условиями использования."
-                                                        data-ch="0" data-type="trSpan"
-                                                        style="visibility: initial !important;">
-                                                Нажимая Зарегистрироваться,
-                                                вы соглашаетесь с условиями использования.
-                                            </ya-tr-span>
-                                        </small>
-                                        <hr class="my-4">
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2"></div>
-                </div>
-            </div>
-</section>
-
-
-
-<script>
-
-    function IsSeller() {
-
-        if (document.getElementById("option2").checked == true) {
-            document.getElementById("CompanyName").style.display = 'none';
-            document.getElementById("CompanyDescriptionForm").style.display = 'none';
-
-        }
-        else {
-            document.getElementById("CompanyName").style.display = '';
-            document.getElementById("CompanyDescriptionForm").style.display = '';
-        }
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-</script> *@
-
+}

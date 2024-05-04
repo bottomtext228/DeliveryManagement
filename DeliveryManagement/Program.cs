@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using DeliveryManagement.Services;
 using DeliveryManagement.GraphSearch;
 using System.Globalization;
+using DeliveryManagement.Localisation;
 
 
 //CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
@@ -34,12 +35,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(builder =>
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
+    // if password requirements changed here
+    // then password validation attributes in ViewModels must be changed too 
     options.Password.RequiredLength = 5;   // минимальная длина
     options.Password.RequireNonAlphanumeric = false;   // требуются ли не алфавитно-цифровые символы
     options.Password.RequireLowercase = false; // требуются ли символы в нижнем регистре
     options.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
     options.Password.RequireDigit = false; // требуются ли цифры
-}).AddEntityFrameworkStores<ApplicationDbContext>();
+
+}).AddEntityFrameworkStores<ApplicationDbContext>()
+.AddErrorDescriber<CustomIdentityErrorDescriber>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
@@ -81,60 +87,6 @@ using (var scope = app.Services.CreateScope())
  * 
 */
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-
-//    var map = services.GetRequiredService<CountryMap>();
-//    var graphSearch = services.GetRequiredService<TownsGraphSearch>();
-
-//    var dbContext = services.GetRequiredService<ApplicationDbContext>();
-
-
-//    string[] labels = map.Graph.AllNodes.Select(s => s.Town.Name).ToArray();
-
-//    int?[,] adj = map.Graph.CreateTimeAdjacencyMatrix();
-
-//    map.Graph.PrintMatrix(ref adj, labels, map.Graph.AllNodes.Count);
-
-//    map.Graph.PrintPath(ref adj, labels, "Рязань", "Санкт-Петербург");
-
-//    var company = dbContext.Companies.Include(c => c.Stocks).FirstOrDefault();
-//    var town = map.Towns.ToList()[10];
-
-
-
-//}
-
-
-//string[] labels = graph.AllNodes.Select(s => s.Town.Name).ToArray();
-
-//int?[,] adj = graph.CreatePriceAdjacencyMatrix();
-
-//graph.PrintMatrix(ref adj, labels, graph.AllNodes.Count);
-
-//graph.PrintPath(ref adj, labels, "Москва", "Давлеканово");
-
-//Console.WriteLine("-------------------------");
-
-
-//adj = graph.CreateTimeAdjacencyMatrix();
-
-//graph.PrintMatrix(ref adj, labels, graph.AllNodes.Count);
-
-//graph.PrintPath(ref adj, labels, "Москва", "Давлеканово");
-
-
-//var pathSystem = new DijkstraAlgorithm(graph);
-//var chepestPath = pathSystem.GetCheapestPath(towns[0], towns[^1]);
-
-//chepestPath.Item2.ForEach(e => Console.WriteLine(e.Name));
-
-//Console.WriteLine("-------------------------");
-//var fastestPath = pathSystem.GetFastestPath(towns[0], towns[^1]);
-//fastestPath.Item2.ForEach(e => Console.WriteLine(e.Name));
-
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -158,6 +110,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
-
 

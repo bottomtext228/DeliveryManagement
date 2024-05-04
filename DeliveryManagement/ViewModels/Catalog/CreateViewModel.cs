@@ -1,6 +1,4 @@
-﻿using DeliveryManagement.Attributes;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryManagement.ViewModels.Catalog
 {

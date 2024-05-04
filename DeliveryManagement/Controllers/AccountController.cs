@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Security.Principal;
 
 namespace DeliveryManagement.Controllers
 {
@@ -31,6 +30,11 @@ namespace DeliveryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromForm] RegisterViewModel model)
         {
+            if (!model.AsCompany)
+            {
+                ModelState.Remove("CompanyName");
+                ModelState.Remove("CompanyDescription");
+            }
             if (ModelState.IsValid)
             {
                 User user = new User { Email = model.Email, UserName = model.Email };
@@ -63,6 +67,7 @@ namespace DeliveryManagement.Controllers
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
+
             }
             return View(model);
         }
@@ -84,7 +89,6 @@ namespace DeliveryManagement.Controllers
                     return View(new UserViewModel
                     { Name = company.Name, Email = user.Email, companyDesciption = company.Description, isCompany = true });
 
-
                 }
                 else
                 {
@@ -101,10 +105,9 @@ namespace DeliveryManagement.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login()
         {
-            returnUrl = "Home/Index";
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return View();
         }
 
         [HttpPost]
@@ -117,19 +120,11 @@ namespace DeliveryManagement.Controllers
 
                 if (result.Succeeded)
                 {
-                    // проверяем, принадлежит ли URL приложению
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                    ModelState.AddModelError(string.Empty, "Неправильный логин и (или) пароль");
                 }
             }
 

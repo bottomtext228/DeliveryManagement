@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using DeliveryManagement.Models;
-using System.Numerics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Linq.Expressions;
-using System.Globalization;
-using System.Diagnostics.Eventing.Reader;
 using DeliveryManagement.ViewModels.Catalog;
 using Vector = DeliveryManagement.Models.Vector;
 
@@ -145,10 +141,7 @@ namespace DeliveryManagement.Controllers
                 return View(model);
 
 
-
      
-
-
             product.Name = model.Name;
             product.Description = model.Description;
             product.Price = model.Price;
@@ -156,7 +149,6 @@ namespace DeliveryManagement.Controllers
             product.Size = new Vector(model.SizeX, model.SizeY, model.SizeZ);
 
             var Image = model.Image;
-
 
 
             if (Image != null)
@@ -219,22 +211,6 @@ namespace DeliveryManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                //Vector productSize;
-                //float weight;
-                //float price;
-                //try
-                //{
-                //    // server-side checking values
-                //    productSize = new(float.Parse(model.SizeX, CultureInfo.InvariantCulture), float.Parse(model.SizeY, CultureInfo.InvariantCulture), float.Parse(model.SizeZ, CultureInfo.InvariantCulture));
-                //    weight = float.Parse(model.Weight, CultureInfo.InvariantCulture);
-                //    price = float.Parse(model.Price, CultureInfo.InvariantCulture);
-                //}
-                //catch (Exception ex)
-                //{
-                //    ModelState.AddModelError("", "Поля с десятичной дробью содержат ошибки.");
-                //    return BadRequest(ex.Message);
-                //}
 
                 var Image = model.Image;
 
