@@ -253,7 +253,7 @@ namespace DeliveryManagement.Controllers
                     }
                 }
             }
-            return View();
+            return View(model);
 
 
         }

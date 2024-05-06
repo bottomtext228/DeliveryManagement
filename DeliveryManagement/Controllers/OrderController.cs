@@ -1,5 +1,4 @@
-﻿using DeliveryManagement.DijkstraAlgorith;
-using DeliveryManagement.Models;
+﻿using DeliveryManagement.Models;
 using DeliveryManagement.Models.Map;
 using DeliveryManagement.Services;
 using DeliveryManagement.GraphSearch;
@@ -7,12 +6,7 @@ using DeliveryManagement.ViewModels.Order;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Newtonsoft.Json;
-using System.IO;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace DeliveryManagement.Controllers

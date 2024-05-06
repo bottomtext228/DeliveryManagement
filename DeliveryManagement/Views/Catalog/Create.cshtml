@@ -1,38 +1,7 @@
 ﻿@model DeliveryManagement.ViewModels.Catalog.CreateViewModel
 
-@*
 
-        [Required]
-        [Display(Name = "Название")]
-        public string Name { get; set; }
-
-        [Required]
-        [Display(Name = "Описание")]
-        public string Description { get; set; }
-        //public string Category { get; set; }
-
-        [Required]
-        [Display(Name = "Стоимость")]
-        public int Price { get; set; }
-
-
-        [Required]
-        [Display(Name = "Размеры")]
-        public float SizeX { get; set; }
-        [Required]
-        public float SizeY { get; set; }
-        [Required]
-        public float SizeZ { get; set; }
-
-        [Required]
-        [Display(Name = "Вес")]
-        public int Weight { get; set; }
-
-
-        [Required]
-        [Display(Name = "Изображение")]
-        public IFormFile Image { get; set; } *@
-<form asp-action="Create" enctype="multipart/form-data">
+@* <form asp-action="Create" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly"></div>
 
     <div>
@@ -72,12 +41,62 @@
     </div>
     <div>
         <label asp-for="Image"></label><br />
-        <input asp-for="Image" accept=".jpg, .jpeg, .png" /> @* TODO: check <span asp-validation-for="Image"></span> *@
+        <input asp-for="Image" accept=".jpg, .jpeg, .png" />
     </div>
     <div>
         <input type="submit" value="Создать" />
     </div>
-</form>
+</form> *@
+
+<div class="modal modal-sheet d-block bg-body-secondary p-4 py-md-5" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Добавлене товара</h5>
+                <a asp-controller="Catalog" asp-action="All" class="btn-close"></a>
+            </div>
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div asp-validation-summary="All"></div>
+                    <label asp-for="Name" class="form-label">Название</label>
+                    <div class="input-group mb-3">
+                        <input asp-for="Name" type="text" class="form-control">
+                    </div>
+                    <label asp-for="Description" class="form-label"></label>
+                    <div class="input-group mb-3">
+                        <textarea asp-for="Description" class="form-control"></textarea>
+                    </div>
+                    <label asp-for="Weight" class="form-label">Вес</label>
+                    <div class="input-group mb-3">
+                        <input asp-for="Weight" type="number" class="form-control">
+                    </div>
+                    <label asp-for="SizeX" class="form-label">Длина</label>
+                    <div class="input-group mb-3">
+                        <input asp-for="SizeY" type="number" class="form-control">
+                    </div>
+                    <label asp-for="SizeY" class="form-label">Ширина</label>
+                    <div class="input-group mb-3">
+                        <input asp-for="SizeY" type="number" class="form-control">
+                    </div>
+                    <label asp-for="SizeZ" class="form-label">Высота</label>
+                    <div class="input-group mb-3">
+                        <input asp-for="SizeZ" type="number" class="form-control">
+                    </div>
+                    <div class="input-group mb-3">
+                        <input asp-for="Image" accept=".jpg, .jpeg, .png" class="form-control">
+                    </div>
+                    <span asp-validation-for="Image"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{
@@ -85,80 +104,3 @@
     }
 }
 
-@*
-<section>
-    <div class="row my-5">
-        <div class="col-lg-4"></div>
-        <div class="col-lg-4">
-            <div>
-                <div>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary py-2" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                             class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
-                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
-                        </svg>
-                    </button>
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Добавлене товара</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-
-                                <div class="modal-body">
-                                    <label for="basic-url" class="form-label">Название</label>
-                                    <div class="input-group mb-3">
-                                        <input class="form-control" asp-for="Name" />
-                                         <input type="text" class="form-control" id="basic-url"
-                                               aria-describedby="basic-addon3">
-                                    </div>
-                                    <label for="basic-url" class="form-label">Вес</label>
-                                    <div class="input-group mb-3">
-
-                                        <input type="text" class="form-control" id="basic-url"
-                                               aria-describedby="basic-addon3">
-                                    </div>
-                                    <label for="basic-url" class="form-label">Длина</label>
-                                    <div class="input-group mb-3">
-
-                                        <input type="text" class="form-control" id="basic-url"
-                                               aria-describedby="basic-addon3">
-                                    </div>
-                                    <label for="basic-url" class="form-label">Ширина</label>
-                                    <div class="input-group mb-3">
-
-                                        <input type="text" class="form-control" id="basic-url"
-                                               aria-describedby="basic-addon3">
-                                    </div>
-                                    <label for="basic-url" class="form-label">Высота</label>
-                                    <div class="input-group mb-3">
-
-                                        <input type="text" class="form-control" id="basic-url"
-                                               aria-describedby="basic-addon3">
-                                    </div>
-                                    <div class="input-group mb-3">
-                                        <input type="file" class="form-control" id="inputGroupFile01">
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary">Сохранить</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-        </div>
-    </div>
-</section> *@

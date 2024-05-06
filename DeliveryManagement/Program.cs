@@ -76,16 +76,15 @@ using (var scope = app.Services.CreateScope())
 
 }
 
-
 /**
  * 
  * TODO:
- * check registration backend (check CompanyName/CompanyDescription for null)
  * fix bug when deleting product it's still shown in Catalog/All
  * fix all html
  * make better map
  * 
 */
+
 
 
 // Configure the HTTP request pipeline.

@@ -38,7 +38,7 @@ namespace DeliveryManagement.ViewModels.Catalog
         public float Weight { get; set; }
 
 
-        [Required(ErrorMessage = "Изображение обязательно!")]
+        //[Required(ErrorMessage = "Изображение обязательно!")]
         [Display(Name = "Изображение")]
         public IFormFile? Image { get; set; }
 

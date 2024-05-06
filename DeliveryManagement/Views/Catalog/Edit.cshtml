@@ -2,8 +2,8 @@
 
 @if (Model != null)
 {
-    <form asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly"></div>
+    @* <form asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div
 
         <div>
             <label asp-for="Name"></label><br />
@@ -50,8 +50,63 @@
         <div>
             <input type="submit" value="Изменить" />
         </div>
-    </form>
-} else
+    </form> *@
+
+    <div class="modal modal-sheet d-block bg-body-secondary p-4 py-md-5" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Добавлене товара</h5>
+                    <a asp-controller="Catalog" asp-action="All" class="btn-close"></a>
+                </div>
+                <form asp-action="Edit" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div asp-validation-summary="All"></div>
+                        <label asp-for="Name" class="form-label">Название</label>
+                        <div class="input-group mb-3">
+                            <input asp-for="Name" type="text" class="form-control">
+                        </div>
+                        <label asp-for="Description" class="form-label"></label>
+                        <div class="input-group mb-3">
+                            <textarea asp-for="Description" class="form-control"></textarea>
+                        </div>
+                        <label asp-for="Weight" class="form-label">Вес</label>
+                        <div class="input-group mb-3">
+                            <input asp-for="Weight" type="number" class="form-control">
+                        </div>
+                        <label asp-for="SizeX" class="form-label">Длина</label>
+                        <div class="input-group mb-3">
+                            <input asp-for="SizeY" type="number" class="form-control">
+                        </div>
+                        <label asp-for="SizeY" class="form-label">Ширина</label>
+                        <div class="input-group mb-3">
+                            <input asp-for="SizeY" type="number" class="form-control">
+                        </div>
+                        <label asp-for="SizeZ" class="form-label">Высота</label>
+                        <div class="input-group mb-3">
+                            <input asp-for="SizeZ" type="number" class="form-control">
+                        </div>
+
+                        <div>
+                            <img src="data:image/png;base64, @Model.OldImageBase64" />
+                        </div>
+                        <div class="input-group mb-3">
+                            <input asp-for="Image" accept=".jpg, .jpeg, .png" class="form-control">
+                        </div>
+                        <span asp-validation-for="Image"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Изменить</button>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+}
+else
 {
     <div>Ничего не найдено!</div>
     <a asp-controller="Catalog" asp-action="All">Вернуться в каталог</a>
