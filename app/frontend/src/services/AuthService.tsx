@@ -8,29 +8,27 @@ export const AuthService = {
                 {
                     method: 'POST',
                     body: JSON.stringify(UserData),
-                    headers: {'Content-type': 'application/json'}
+                    headers: { 'Content-type': 'application/json' }
                 });
-        if (data.ok) return undefined;
-        const problemDetails: IHtppValidationProblemDetails = await data.json();
-        return problemDetails;
+        return await data.json();
     },
     async login(UserData: IUserData): Promise<ILoginData | IHtppValidationProblemDetails> {
         const data = await (
             await fetch('/api/account/login', {
-                method: 'POST', 
+                method: 'POST',
                 body: JSON.stringify(UserData),
-                headers: {'Content-type': 'application/json'}
+                headers: { 'Content-type': 'application/json' }
             })).json();
         return data;
     },
-    async getProfile(): Promise<IUser | undefined>{
+    async getProfile(): Promise<IUser | undefined> {
         const data = await fetch('/api/account/profile', {
             headers: {
                 'Authorization': 'Bearer ' + getTokenFromLocalStorage()
             }
-            
+
         });
         if (data.ok) return data.json();
         return undefined;
-     }
+    }
 }
