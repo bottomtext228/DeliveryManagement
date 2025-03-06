@@ -72,9 +72,7 @@ function AuthGeneral({ handleGeneralSubmit, isCompany, handleChangeIsCompany, fo
             {errors.password && <div className="text-red-500">{errors.password.message}</div>}
 
             {isCompany ?
-
-
-              <button type='submit' className="rounded-lg bg-amber-400 text-white text-xl mt-3 p-2">Продолжить</button>
+              <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-3 p-2">Продолжить</button>
               : <> <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-3 p-2">Регистрация</button>
                 <span className="text-gray-500 p-4">Нажимая Регистрация, вы соглашаетесь с условиями использования.</span></>
             }
