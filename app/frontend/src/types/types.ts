@@ -4,7 +4,10 @@ export interface IUser {
 
 export interface IUserData {
     email: string,
-    password: string
+    password: string,
+    asCompany: boolean,
+    companyDescription: string,
+    companyName: string
 }
 
 export interface ILoginData {

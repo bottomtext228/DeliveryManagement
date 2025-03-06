@@ -12,6 +12,7 @@ import CatalogDetail from "./pages/Catalog/CatalogDetail";
 import CatalogAdd from "./pages/Catalog/CatalogAdd";
 import CatalogEdit from "./pages/Catalog/CatalogEdit";
 import Map from "./pages/Map/Map";
+import Test from "./pages/Test";
 
 const router = createBrowserRouter(
     [
@@ -63,6 +64,10 @@ const router = createBrowserRouter(
                 {
                     path: 'map',
                     element: (<ProtectedRoute><Map /></ProtectedRoute>)
+                },
+                {
+                    path: 'test',
+                    element: <Test/>
                 }
             ]
         }

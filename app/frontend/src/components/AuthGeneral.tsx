@@ -1,10 +1,36 @@
-import React, { BaseSyntheticEvent } from 'react'
+import React, { BaseSyntheticEvent, useState } from 'react'
+import { IHtppValidationProblemDetails } from '../types/types';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 interface Props {
-  handleSubmit: (e?: BaseSyntheticEvent<object, any, any> | undefined) => Promise<void>
+  handleGeneralSubmit: (e: FormValues) => void,
+  isCompany: boolean,
+  handleChangeIsCompany: (isCompany: boolean) => void,
+  setFormData: (data: FormValues) => void,
+  formData: FormValues
 }
 
-function AuthGeneral({ handleSubmit }: Props) {
+interface FormValues {
+  email: string
+  password: string,
+  companyName: string,
+  companyDescription: string
+};
+
+
+
+function AuthGeneral({ handleGeneralSubmit, isCompany, handleChangeIsCompany, formData, setFormData }: Props) {
+  const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({defaultValues: formData});
+
+  const onSubmit: SubmitHandler<FormValues> = (data, e) => {
+    e?.preventDefault();
+    setFormData({ ...formData, ...data });
+    handleGeneralSubmit(data);
+  }
+
+
   return (
     <div className="w-md mx-auto">
 
@@ -24,11 +50,11 @@ function AuthGeneral({ handleSubmit }: Props) {
           <button></button>
         </div>
         <div className="flex justify-between">
-          <button className="bg-amber-400 text-white text-xl font-semibold rounded-xl p-2 w-47 h-12">Как покупатель</button>
-          <button className="bg-neutral-400 text-white text-xl font-semibold rounded-xl p-2 w-47 h-12">Как продавец</button>
+          <button onClick={() => handleChangeIsCompany(false)} className={`${!isCompany ? 'bg-neutral-500' : 'hover:bg-neutral-400 bg-amber-400'} transition-colors duration-150 ease-in-out text-white text-xl font-semibold rounded-xl p-2 w-47 h-12`}>Как покупатель</button>
+          <button onClick={() => handleChangeIsCompany(true)} className={`${isCompany ? 'bg-neutral-500' : 'hover:bg-neutral-400 bg-amber-400'} transition-colors duration-150 ease-in-out text-white text-xl font-semibold rounded-xl p-2 w-47 h-12`}>Как продавец</button>
         </div>
         <div>
-          <form className="flex flex-col" onSubmit={handleSubmit}>
+          <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
             <label>Эл. адрес</label>
             <input id="email" className="border border-gray-300 rounded-lg mt-4 p-3" {...register('email', { required: 'Почта не может быть пустой' })} />
             {errors.email && <p className="text-red-500">{errors.email.message}</p>}
@@ -45,8 +71,13 @@ function AuthGeneral({ handleSubmit }: Props) {
             })} />
             {errors.password && <div className="text-red-500">{errors.password.message}</div>}
 
-            <button type='submit' className="rounded-lg bg-amber-400 text-white text-xl mt-3 p-2">{isLogin ? 'Войти' : 'Регистрация'}</button>
-            {isLogin ?? <span className="text-gray-500 p-4">Нажимая Регистрация, вы соглашаетесь с условиями использования.</span>}
+            {isCompany ?
+
+
+              <button type='submit' className="rounded-lg bg-amber-400 text-white text-xl mt-3 p-2">Продолжить</button>
+              : <> <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-3 p-2">Регистрация</button>
+                <span className="text-gray-500 p-4">Нажимая Регистрация, вы соглашаетесь с условиями использования.</span></>
+            }
           </form>
         </div>
       </div>

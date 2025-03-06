@@ -277,3 +277,4 @@ C:\Users\yarik\projects\DeliveryManagement\app\backend\obj\Debug\net9.0\backend.
 C:\Users\yarik\projects\DeliveryManagement\app\backend\obj\Debug\net9.0\backend.pdb
 C:\Users\yarik\projects\DeliveryManagement\app\backend\obj\Debug\net9.0\backend.genruntimeconfig.cache
 C:\Users\yarik\projects\DeliveryManagement\app\backend\obj\Debug\net9.0\ref\backend.dll
+C:\Users\bottom_text\projects\DeliveryManagement\app\backend\obj\Debug\net9.0\backend.sourcelink.json

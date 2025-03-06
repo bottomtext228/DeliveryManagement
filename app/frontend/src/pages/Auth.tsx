@@ -8,11 +8,27 @@ import { useAuth } from "../hooks/useAuth";
 import { useForm, SubmitHandler } from "react-hook-form";
 import useUserStore from "../store/user/userStore";
 import AuthGeneral from "../components/AuthGeneral";
+import AuthCompany from "../components/AuthCompany";
 
-type FormValues = {
+interface FormValues {
     email: string
-    password: string
-}
+    password: string,
+    companyName: string,
+    companyDescription: string
+};
+
+interface RegistrationData {
+    email: string
+    password: string,
+    asCompany: boolean,
+    companyName: string,
+    companyDescription: string
+};
+
+enum FormState {
+    GENERAL = 0,
+    COMPANY = 1
+};
 
 export default function Auth() {
     const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
@@ -20,13 +36,21 @@ export default function Auth() {
     const isAuth = useAuth();
     const location = useLocation();
     const [isLogin, setIsLogin] = useState(false/* location.state?.action !== 'register' */); // login is the default action, unless if we go here from the 'Sign up' button
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+    const [formData, setFormData] = useState<FormValues>({
+        email: "",
+        password: "",
+        companyName: "",
+        companyDescription: ""
+    });
+
+
     const [isCompany, setIsCompany] = useState(false);
-    const [isGeneral, setIsGeneral] = useState(false); 
+
+    const [formState, setFormState] = useState(FormState.GENERAL);
 
     const login = useUserStore(state => state.login);
-   
+
     const loginRequest = async ({ email, password }: FormValues) => {
 
         const data = await AuthService.login({ email, password });
@@ -42,17 +66,17 @@ export default function Auth() {
             setServerError(problemDetails);
         }
     }
-    const registrationHandler = async ({ email, password }: FormValues) => {
+    const registrationHandler = async (data: RegistrationData) => {
         try {
-            const data = await AuthService.registration({ email, password });
+            const response = await AuthService.registration(data);
 
-            if (Object.prototype.hasOwnProperty.call(data, 'token')) {
-                const loginData = data as ILoginData;
+            if (Object.prototype.hasOwnProperty.call(response, 'token')) {
+                const loginData = response as ILoginData;
                 setTokenToLocalStorage(loginData.token);
                 login({ email: loginData.email } as IUser);
                 navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
             } else {
-                const problemDetails = data as IHtppValidationProblemDetails;
+                const problemDetails = response as IHtppValidationProblemDetails;
                 setServerError(problemDetails);
             }
 
@@ -83,17 +107,43 @@ export default function Auth() {
         </div>
     }
 
-    const onSubmit: SubmitHandler<FormValues> = (data, e) => {
-        e?.preventDefault();
-        isLogin ? loginHandler(data) : registrationHandler(data);
+    const handleGeneralSubmit = (data: FormValues) => {
+        console.log(data);
+        if (isCompany) {
+            setFormState(FormState.COMPANY);
+        } else {
+            console.log('fetch');
+            registrationHandler({ ...data, asCompany: false });
+        }
     }
 
+    const handleChangeIsCompany = (isCompany: boolean) => {
+        setIsCompany(isCompany);
+    }
 
+    const handleCompanySubmit = (data: FormValues) => {
+        registrationHandler({ ...data, asCompany: true });
+    }
+
+    const handleGoBack = () => {
+        setFormState(FormState.GENERAL);
+    }
     return (<>
-        
-        
-        <AuthGeneral handleSubmit={handleSubmit(onSubmit)}></AuthGeneral>
 
+        {serverError ?
+            <div className="border border-gray-300 rounded-2xl shadow-md h-fit p-4 text-black my-4">
+                {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
+                    <div>
+                        Неправильная почта и/или пароль
+                    </div> : /** Bad Request - validation errors*/
+                    <div>
+                        {serverError.errors && Object.values(serverError.errors).map(e => <li>{e[0]}</li>)}
+                    </div>}
+            </div> : <></>}
+        {formState == FormState.GENERAL ?
+            <AuthGeneral handleGeneralSubmit={handleGeneralSubmit} isCompany={isCompany} handleChangeIsCompany={handleChangeIsCompany} formData={formData} setFormData={setFormData}></AuthGeneral>
+            : <AuthCompany handleCompanySubmit={handleCompanySubmit} handleGoBack={handleGoBack} formData={formData} setFormData={setFormData} ></AuthCompany>
+        }
     </>)
     return <div className="w-72">
         {serverError ?
