@@ -2,9 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import About from "./pages/About";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
-import Layout from "./components/Layout";
-import Auth from "./pages/Auth";
-import ProtectedPage from "./pages/ProtectedPage";
+import Layout from "./components/Layout/Layout";
+import Register from "./pages/Auth/Register";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Account from "./pages/Account/Account";
 import Catalog from "./pages/Catalog/Catalog";
@@ -12,7 +11,8 @@ import CatalogDetail from "./pages/Catalog/CatalogDetail";
 import CatalogAdd from "./pages/Catalog/CatalogAdd";
 import CatalogEdit from "./pages/Catalog/CatalogEdit";
 import Map from "./pages/Map/Map";
-import Test from "./pages/Test";
+import Login from "./pages/Auth/Login";
+import Terms from "./pages/Terms";
 
 const router = createBrowserRouter(
     [
@@ -38,8 +38,12 @@ const router = createBrowserRouter(
                     element: <NotFound />
                 },
                 {
-                    path: "auth",
-                    element: <Auth />
+                    path: "auth/register",
+                    element: <Register />
+                },
+                {
+                    path: 'auth/login',
+                    element: <Login />
                 },
                 {
                     path: 'account',
@@ -66,9 +70,10 @@ const router = createBrowserRouter(
                     element: (<ProtectedRoute><Map /></ProtectedRoute>)
                 },
                 {
-                    path: 'test',
-                    element: <Test/>
+                    path: 'terms',
+                    element: <Terms/>
                 }
+
             ]
         }
     ]

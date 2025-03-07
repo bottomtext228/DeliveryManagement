@@ -1,5 +1,5 @@
 import { Graph, DefaultLink } from '@visx/network';
-import { CustomeNode, Town } from '../types/types';
+import { CustomeNode, Town } from '../../types/types';
 import { NodeProvidedProps } from '@visx/network/lib/types';
 
 interface Props {

@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
-import { EditProductDto, IProductDetail } from "../../types/types";
+import { EditProductDto } from "../../types/types";
 import { editProduct } from "../../api/catalog/editProduct";
 
 import { SubmitHandler, useForm } from "react-hook-form";

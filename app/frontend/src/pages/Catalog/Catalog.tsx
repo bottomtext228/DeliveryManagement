@@ -1,5 +1,5 @@
 import { IProduct } from "../../types/types";
-import Product from "../../components/Product";
+import Product from "../../components/Product/Product";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getAllProducts } from "../../api/catalog/getAllProducts";

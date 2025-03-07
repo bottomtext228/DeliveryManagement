@@ -31,7 +31,7 @@ export default function Home() {
                             <div className="rounded-4xl bg-linear-to-r from-orange-200 to-orange-500 p-4 w-72 text-center relative bottom-5 left-15">надёжность</div>
                             <div className="rounded-4xl bg-linear-to-r from-orange-200 to-orange-500 p-4 w-72 text-center">скорость</div>
                             <div className="rounded-4xl bg-linear-to-r from-orange-200 to-orange-500 p-4 w-72 text-center">удобность</div>
-                            <Link to='/auth' className="rounded-4xl border-2 bg-linear-to-r from-orange-200 to-orange-500 hover:from-orange-300 shadow-lg p-4 w-72 text-center font-bold relative top-5 left-15">стать покупателем</Link>
+                            <Link to='/auth/register' state={{ choice: 'customer' }} className="rounded-4xl border-2 bg-linear-to-r from-orange-200 to-orange-500 hover:from-orange-300 shadow-lg p-4 w-72 text-center font-bold relative top-5 left-15">стать покупателем</Link>
                         </div>
                         <div className="flex-1/3 flex justify-center items-center">
                             <img className="w-fit h-96" src="/turtle-logstic.png" alt=""></img>
@@ -40,7 +40,7 @@ export default function Home() {
                             <div className="rounded-4xl bg-linear-to-r from-neutral-200 to-neutral-500 p-4 w-72 text-center relative bottom-5 right-15">спрос</div>
                             <div className="rounded-4xl bg-linear-to-r from-neutral-200 to-neutral-500 p-4 w-72 text-center">доход</div>
                             <div className="rounded-4xl bg-linear-to-r from-neutral-200 to-neutral-500 p-4 w-72 text-center">без переплат</div>
-                            <Link to='/auth' className="rounded-4xl border-2 bg-linear-to-r from-neutral-200 to-neutral-500 hover:from-neutral-300 p-4 w-72 text-center font-bold relative top-5 right-15">стать продавцом</Link>
+                            <Link to='/auth/register' state={{ choice: 'company' }} className="rounded-4xl border-2 bg-linear-to-r from-neutral-200 to-neutral-500 hover:from-neutral-300 p-4 w-72 text-center font-bold relative top-5 right-15">стать продавцом</Link>
                         </div>
                     </div>
                     <div className="flex-1/6 flex flex-col items-center">

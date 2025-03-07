@@ -1,5 +1,5 @@
-import { MapModes, Town } from "../types/types";
-import TrashCan from '../assets/trash-can.svg';
+import { MapModes, Town } from "../../types/types";
+import TrashCan from '../../assets/trash-can.svg';
 
 interface Props {
     currentMode: MapModes,

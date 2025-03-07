@@ -1,8 +1,8 @@
 import { useQueries } from '@tanstack/react-query'
 import { getPickUpPoints } from '../../api/map/getPickUpPoints';
 import { getStocks } from '../../api/map/getStocks';
-import TownsMap from '../../components/TownsMap';
-import TownsSidebar from '../../components/TownsSidebar';
+import TownsMap from '../../components/Towns/TownsMap';
+import TownsSidebar from '../../components/Towns/TownsSidebar';
 import { MapModes, Town } from '../../types/types';
 import { useEffect, useState } from 'react';
 import { getRoads } from '../../api/map/getRoads';

@@ -1,8 +1,8 @@
 import { getTokenFromLocalStorage } from "../helpers/localstorage.helper";
-import { IHtppValidationProblemDetails, ILoginData, IUser, IUserData } from "../types/types";
+import { IHtppValidationProblemDetails, ILoginRequest, ILoginResponse, IRegisterRequest, IUser, } from "../types/types";
 
 export const AuthService = {
-    async registration(UserData: IUserData): Promise<IHtppValidationProblemDetails | undefined> {
+    async registration(UserData: IRegisterRequest): Promise<ILoginResponse | IHtppValidationProblemDetails> {
         const data =
             await fetch('/api/account/register',
                 {
@@ -12,7 +12,7 @@ export const AuthService = {
                 });
         return await data.json();
     },
-    async login(UserData: IUserData): Promise<ILoginData | IHtppValidationProblemDetails> {
+    async login(UserData: ILoginRequest): Promise<ILoginResponse | IHtppValidationProblemDetails> {
         const data = await (
             await fetch('/api/account/login', {
                 method: 'POST',

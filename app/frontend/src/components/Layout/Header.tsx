@@ -1,7 +1,7 @@
-import useUserStore from "../store/user/userStore";
-import { removeTokenFromLocalStorage } from "../helpers/localstorage.helper";
+import useUserStore from "../../store/user/userStore";
+import { removeTokenFromLocalStorage } from "../../helpers/localstorage.helper";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth, useUser } from "../hooks/useAuth";
+import { useAuth, useUser } from "../../hooks/useAuth";
 
 export default function Header() {
     const logout = useUserStore(state => state.logout);

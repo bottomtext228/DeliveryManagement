@@ -1,10 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { IProductDetail } from "../../types/types";
-import ProductDetail from "../../components/ProductDetail";
 import { useQuery } from "@tanstack/react-query";
 import { getProduct } from "../../api/catalog/getProduct";
 import { deleteProduct } from "../../api/catalog/deleteProduct";
-import { AxiosError } from "axios";
 
 
 export default function CatalogDetail() {

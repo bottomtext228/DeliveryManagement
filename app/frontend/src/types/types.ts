@@ -2,7 +2,7 @@ export interface IUser {
     email: string
 }
 
-export interface IUserData {
+export interface IRegisterRequest {
     email: string,
     password: string,
     asCompany: boolean,
@@ -10,7 +10,13 @@ export interface IUserData {
     companyName: string
 }
 
-export interface ILoginData {
+
+export interface ILoginRequest {
+    email: string,
+    password: string
+}
+
+export interface ILoginResponse {
     /*  tokenType: string,
      accessToken: string,
      expiresIn: number,

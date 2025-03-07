@@ -17,7 +17,7 @@ interface Props {
 }
 
 
-function AuthCompany({ handleCompanySubmit, handleGoBack, formData, setFormData }: Props) {
+export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack, formData, setFormData }: Props) {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ defaultValues: formData });
 
     const onSubmit: SubmitHandler<FormValues> = (data, e) => {
@@ -37,13 +37,13 @@ function AuthCompany({ handleCompanySubmit, handleGoBack, formData, setFormData 
             <div className="my-16 rounded-2xl shadow-xl h-116 border border-gray-300 p-6">
                 <button onClick={() => handleGoBack()}>back</button>
                 <div>
-                    <h3 className="text-neutral-800 text-2xl font-bold">Зарегистрируйтесь в Terrapin</h3>
+                    <h3 className="text-neutral-800 text-2xl font-bold">Информация о вашей компании</h3>
                     <button></button>
                 </div>
 
                 <div>
                     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-                        <label>Название компании</label>
+                        <label>Название</label>
                         <input className="border border-gray-300 rounded-lg mt-4 p-3" {...register('companyName', { required: 'Название не может быть пустым' })} />
                         {errors.companyName && <p className="text-red-500">{errors.companyName.message}</p>}
                         <label>Описание</label>
@@ -66,5 +66,3 @@ function AuthCompany({ handleCompanySubmit, handleGoBack, formData, setFormData 
         </div>
     )
 }
-
-export default AuthCompany
