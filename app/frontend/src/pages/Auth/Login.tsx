@@ -86,19 +86,22 @@ export default function Login() {
         <div className="w-md mx-auto">
 
 
-            <div className="my-16 rounded-2xl shadow-xl h-116 border border-gray-300 p-6">
+            <div className="my-16 rounded-2xl shadow-xl h-fit border border-gray-300 p-6">
                 <div>
                     <h3 className="text-neutral-800 text-2xl font-bold">Войти в Terrapin</h3>
                     <button></button>
                 </div>
                 <div>
                     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-                        <label>Эл. адрес</label>
-                        <input id="email" className="outline-none border border-gray-300 rounded-lg mt-4 p-3" {...register('email', { required: 'Почта не может быть пустой' })} />
+                        <div className="relative mt-4">
+                            <input id="email" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('email', { required: 'Почта не может быть пустой' })} placeholder=" " />
+                            <label htmlFor="filled_success" className="absolute text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                Эл. адрес
+                            </label>
+                        </div>
                         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-                        <label>Пароль</label>
                         <div className="flex relative mt-4">
-                            <input type={isPasswordVisible ? "text" : "password"} id="password" className="w-full outline-none border border-gray-300 rounded-lg p-3 pr-10" {...register('password', {
+                            <input type={isPasswordVisible ? "text" : "password"} id="password" placeholder=" " className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('password', {
                                 required: 'Пароль не может быть пустым'
                             })} />
                             <button type='button' className="absolute right-2 top-1/2 -translate-y-1/2 w-6 flex items-center justify-around group" onClick={() => { setIsPasswordVisible(!isPasswordVisible) }}>
@@ -107,15 +110,15 @@ export default function Login() {
                                     Показать пароль
                                 </span>
                             </button>
+                            <label htmlFor="filled_success" className="absolute text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                Пароль
+                            </label>
                         </div>
                         {errors.password && <div className="text-red-500">{errors.password.message}</div>}
-                        <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-3 p-2">Войти</button>
-                        <div>
-                            Нет аккаунта?<Link to='/auth/register' className="hover:text-blue-700 hover:underline">Зарегистрироваться</Link>
-                        </div>
+                        <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-5 p-2">Войти</button>
                     </form>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     </>)
 }

@@ -1,4 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 
 interface FormValues {
@@ -18,7 +19,7 @@ interface Props {
 
 
 export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack, formData, setFormData }: Props) {
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ defaultValues: formData });
+    const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormValues>({ defaultValues: formData });
 
     const onSubmit: SubmitHandler<FormValues> = (data, e) => {
         e?.preventDefault();
@@ -27,39 +28,55 @@ export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack,
     }
 
 
-
+    const handleClick = () => {
+        setFormData({ ...formData, ...getValues() }); // save form values before returning to the general form
+        handleGoBack();
+    }
 
 
 
     return (
         <div className="w-md mx-auto">
 
-            <div className="my-16 rounded-2xl shadow-xl h-116 border border-gray-300 p-6">
-                <button onClick={() => handleGoBack()}>back</button>
-                <div>
+            <div className="my-16 rounded-2xl shadow-xl h-fit border border-gray-300 p-6">
+
+                <div className="flex justify-between items-center mb-6">
                     <h3 className="text-neutral-800 text-2xl font-bold">Информация о вашей компании</h3>
-                    <button></button>
+
+                    <button className="w-5 h-5 opacity-50 transient-colors duration-150 hover:opacity-70" onClick={handleClick}><img src='/arrow-left.svg'></img></button>
+
                 </div>
 
                 <div>
                     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-                        <label>Название</label>
-                        <input className="border border-gray-300 rounded-lg mt-4 p-3" {...register('companyName', { required: 'Название не может быть пустым' })} />
+                        <div className="relative mt-4">
+                            <input id="companyName" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('companyName', { required: 'Название не может быть пустым' })} placeholder=" " />
+                            <label htmlFor="companyName" className="absolute text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                Название
+                            </label>
+                        </div>
                         {errors.companyName && <p className="text-red-500">{errors.companyName.message}</p>}
-                        <label>Описание</label>
-                        <input className="border border-gray-300 rounded-lg mt-4 p-3" {...register('companyDescription', {
-                            required: 'Описание не может быть пустым', minLength: {
-                                value: 30,
-                                message: 'Описание должно быть минимум 30 символов'
-                            }/* ,
+                        <div className="relative mt-4">
+                            <textarea id="companyDescription" className="block w-full h-42 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" placeholder=" " {...register('companyDescription', {
+                                required: 'Описание не может быть пустым', minLength: {
+                                    value: 30,
+                                    message: 'Описание должно быть минимум 30 символов'
+                                }/* ,
                   pattern: {
                       value: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
                       message: 'Password must contain at least one lowercase character, at least one uppercase character, at least one non alphanumeric characher.'
                   } */
-                        })} />
+                            })} />
+
+                            <label htmlFor="companyDescription" className="absolute text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                Описание
+                            </label>
+                        </div>
                         {errors.companyDescription && <div className="text-red-500">{errors.companyDescription.message}</div>}
 
-                        <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-3 p-2">Регистрация</button>
+                        <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-5 p-2">Регистрация</button>
+                        <hr className='my-4 mx-auto opacity-20 w-[75%]'></hr>
+                        <span className="text-gray-500 text-xs mx-auto">Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 hover:underline cursor-pointer'>условиями пользования.</Link></span>
                     </form>
                 </div>
             </div>

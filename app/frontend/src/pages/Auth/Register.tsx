@@ -97,6 +97,7 @@ export default function Register() {
     }
 
     const handleGoBack = () => {
+        console.log(formData);
         setFormState(FormState.GENERAL);
     }
 
