@@ -102,19 +102,21 @@ export default function Register() {
     }
 
     return (<>
-        {serverError ?
-            <div className="border border-gray-300 rounded-2xl shadow-md h-fit p-4 text-black my-4">
-                {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
-                    <div>
-                        Неправильная почта и/или пароль
-                    </div> : /** Bad Request - validation errors*/
-                    <div>
-                        {serverError.errors && Object.values(serverError.errors).map(e => <li>{e[0]}</li>)}
-                    </div>}
-            </div> : <></>}
-        {formState == FormState.GENERAL ?
-            <RegisterFormGeneral handleGeneralSubmit={handleGeneralSubmit} isCompany={isCompany} handleChangeIsCompany={handleChangeIsCompany} formData={formData} setFormData={setFormData}></RegisterFormGeneral>
-            : <RegisterFormCompany handleCompanySubmit={handleCompanySubmit} handleGoBack={handleGoBack} formData={formData} setFormData={setFormData} ></RegisterFormCompany>
-        }
+        <div className="my-16 w-md mx-auto">
+            {serverError ?
+                <div className="border border-gray-300 rounded-2xl shadow-md h-fit p-4 text-black my-4">
+                    {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
+                        <div>
+                            Неправильная почта и/или пароль
+                        </div> : /** Bad Request - validation errors*/
+                        <div>
+                            {serverError.errors && Object.values(serverError.errors).map(e => <li>{e[0]}</li>)}
+                        </div>}
+                </div> : <></>}
+            {formState == FormState.GENERAL ?
+                <RegisterFormGeneral handleGeneralSubmit={handleGeneralSubmit} isCompany={isCompany} handleChangeIsCompany={handleChangeIsCompany} formData={formData} setFormData={setFormData}></RegisterFormGeneral>
+                : <RegisterFormCompany handleCompanySubmit={handleCompanySubmit} handleGoBack={handleGoBack} formData={formData} setFormData={setFormData} ></RegisterFormCompany>
+            }
+        </div>
     </>)
 }

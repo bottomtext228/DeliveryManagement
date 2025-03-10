@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
     return (<div className="w-[80%] mx-auto">
-        <footer className="flex h-60 items-center border-t border-t-gray-200">
+        <footer className="flex h-48 items-center border-t border-t-gray-200">
             <div className="flex-2">
                 <Link to='/' className="flex items-center">
                     <img src="/logo.png" alt=""></img>
