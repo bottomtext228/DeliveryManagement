@@ -110,7 +110,7 @@ export default function Register() {
                             Неправильная почта и/или пароль
                         </div> : /** Bad Request - validation errors*/
                         <div>
-                            {serverError.errors && Object.values(serverError.errors).map(e => <li>{e[0]}</li>)}
+                            {serverError.errors && Object.keys(serverError.errors).map(key => <li key={key}>{(serverError.errors as any)[key]}</li>)}
                         </div>}
                 </div> : <></>}
             {formState == FormState.GENERAL ?

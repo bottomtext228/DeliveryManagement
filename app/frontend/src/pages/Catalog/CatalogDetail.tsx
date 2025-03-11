@@ -44,9 +44,9 @@ export default function CatalogDetail() {
     }
 
     return (
-        <div className="flex lg:w-5xl md:w-4xl sm:w-2xl w-36 mx-auto">
-            <div className="flex-1/3">
-                <img src={"data:image/png;base64," + product.image}></img>
+        <div className="flex lg:w-5xl md:w-4xl sm:w-2xl w-36 mx-auto my-16">
+            <div className="flex-1/3 mr-8">
+                <img className="rounded-xl" src={"data:image/png;base64," + product.image}></img>
 
             </div>
             <div className="mt-8 flex-1/3">
