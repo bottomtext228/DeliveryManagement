@@ -44,8 +44,8 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 
-    var basePath = AppContext.BaseDirectory;
-    var xmlPath = Path.Combine(basePath, "backend.xml");
+    var xmlFile = "backend.xml"; // Adjust path if needed
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     option.IncludeXmlComments(xmlPath);
 });
 

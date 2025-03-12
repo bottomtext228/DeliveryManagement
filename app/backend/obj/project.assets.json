@@ -3970,19 +3970,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\yarik\\.nuget\\packages\\": {}
+    "C:\\Users\\bottom_text\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\yarik\\projects\\DeliveryManagement\\app\\backend\\backend.csproj",
+      "projectUniqueName": "C:\\Users\\bottom_text\\projects\\DeliveryManagement\\app\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "C:\\Users\\yarik\\projects\\DeliveryManagement\\app\\backend\\backend.csproj",
-      "packagesPath": "C:\\Users\\yarik\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\yarik\\projects\\DeliveryManagement\\app\\backend\\obj\\",
+      "projectPath": "C:\\Users\\bottom_text\\projects\\DeliveryManagement\\app\\backend\\backend.csproj",
+      "packagesPath": "C:\\Users\\bottom_text\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\bottom_text\\projects\\DeliveryManagement\\app\\backend\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\yarik\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\bottom_text\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4008,7 +4013,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net9.0": {
@@ -4064,22 +4069,16 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
   "logs": [
     {
-      "code": "NU1900",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Произошла ошибка при получении данных уязвимости пакета: Не удалось загрузить индекс службы для источника https://api.nuget.org/v3/index.json."
-    },
-    {
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"Microsoft.AspNet.WebApi.Core 5.3.0\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\", а не целевой платформы проекта \"net9.0\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'Microsoft.AspNet.WebApi.Core 5.3.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net9.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.AspNet.WebApi.Core",
       "targetGraphs": [
         "net9.0"

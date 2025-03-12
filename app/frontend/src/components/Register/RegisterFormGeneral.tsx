@@ -70,9 +70,9 @@ export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, ha
                         </>
                     }
 
-                    <div className={`${!isCompany ? 'h-12 opacity-100' : 'h-0 opacity-0'} transition-all duration-700`}>
-                        <hr className={`${!isCompany ? 'opacity-20' : 'opacity-0 hidden pointer-events-none'} transition-opacity duration-700 my-4 mx-auto w-[75%]`}></hr>
-                        <div className={`${!isCompany ? 'opacity-100' : 'opacity-0 hidden pointer-events-none'} mt-auto  transition-opacity duration-700 text-gray-500 text-xs text-center`}>Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 hover:underline cursor-pointer'>условиями пользования.</Link></div>
+                    <div className={`${!isCompany ? 'h-12' : 'h-0'} transition-height duration-700 overflow-hidden`}>
+                        <hr className={`${!isCompany ? 'opacity-20' : 'opacity-0 invisible pointer-events-none'} transition-all duration-700 my-4 mx-auto w-[75%]`}></hr>
+                        <div className={`${!isCompany ? 'opacity-100' : 'opacity-0 invisible pointer-events-none'} transition-all duration-700 mt-auto text-gray-500 text-xs text-center`}>Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 hover:underline cursor-pointer'>условиями пользования.</Link></div>
                     </div>
                 </form>
 
