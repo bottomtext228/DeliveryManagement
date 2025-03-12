@@ -140,5 +140,17 @@ namespace backend.Controllers
 
         }
 
+        /// <summary>
+        /// Checks if provided email is not used by another account.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [HttpGet("check_credentials")]
+        public async Task<IActionResult> CheckIfEmailIsNotUsed([FromQuery] string email)
+        {
+            var exists = await _userManager.Users.AnyAsync(u => u.Email == email);
+            return Ok(new { available = !exists });
+        }
+
     }
 }

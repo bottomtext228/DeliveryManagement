@@ -1,3 +1,5 @@
+import { AxiosResponse } from "axios";
+import { instance } from "../api/axios.api";
 import { getTokenFromLocalStorage } from "../helpers/localstorage.helper";
 import { IHtppValidationProblemDetails, ILoginRequest, ILoginResponse, IRegisterRequest, IUser, } from "../types/types";
 
@@ -30,5 +32,17 @@ export const AuthService = {
         });
         if (data.ok) return data.json();
         return undefined;
+    },
+    async checkEmail(email: string): Promise<AxiosResponse<CheckEmailResponse, any>> {
+        return instance.get<CheckEmailResponse>('/api/account/check_credentials', {
+            params: {
+                email: email
+            }
+        });
     }
+}
+
+
+interface CheckEmailResponse {
+    available: boolean
 }

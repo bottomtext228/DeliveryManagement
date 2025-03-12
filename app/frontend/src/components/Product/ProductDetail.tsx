@@ -1,4 +1,4 @@
-import { IProductDetail } from "../types/types";
+import { IProductDetail } from "../../types/types";
 
 interface Props {
     product: IProductDetail

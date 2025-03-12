@@ -7,6 +7,7 @@ import { useAuth } from "../../hooks/useAuth";
 import useUserStore from "../../store/user/userStore";
 import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
 import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
+import { AxiosError } from "axios";
 
 interface FormValues {
     email: string
@@ -80,12 +81,22 @@ export default function Register() {
         </div>
     }
 
-    const handleGeneralSubmit = (data: FormValues) => {
+    const handleGeneralSubmit = async (data: FormValues) => {
         if (isCompany) {
-            setFormState(FormState.COMPANY);
+            try {
+                let response = await AuthService.checkEmail(data.email);
+                if (response.data.available) {
+                    setFormState(FormState.COMPANY);
+                } else {
+                    setServerError({ errors: { Email: `Имя пользователя '${data.email}' уже занято.` } });
+                }
+            } catch (error: any) {
+                console.error(error);
+            }
         } else {
             registrationHandler({ ...data, asCompany: false });
         }
+/*         setServerError(null); */
     }
 
     const handleChangeIsCompany = (isCompany: boolean) => {
@@ -94,6 +105,7 @@ export default function Register() {
 
     const handleCompanySubmit = (data: FormValues) => {
         registrationHandler({ ...data, asCompany: true });
+/*         setServerError(null); */
     }
 
     const handleGoBack = () => {
