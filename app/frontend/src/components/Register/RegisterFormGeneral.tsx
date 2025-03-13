@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IHtppValidationProblemDetails } from '../../types/types';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -22,12 +22,13 @@ interface FormValues {
 
 export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, handleChangeIsCompany, formData, setFormData }: Props) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ defaultValues: formData });
+    const { register, handleSubmit, formState: { errors }, setError } = useForm<FormValues>({ defaultValues: formData });
 
     const onSubmit: SubmitHandler<FormValues> = (data, e) => {
         e?.preventDefault();
         setFormData({ ...formData, ...data });
         handleGeneralSubmit(data);
+
     }
 
     return (

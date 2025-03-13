@@ -53,16 +53,8 @@ export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack,
                     {errors.companyName && <p className="text-red-500">{errors.companyName.message}</p>}
                     <div className="relative mt-4">
                         <textarea id="companyDescription" className="block w-full h-42 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" placeholder=" " {...register('companyDescription', {
-                            required: 'Описание не может быть пустым', minLength: {
-                                value: 30,
-                                message: 'Описание должно быть минимум 30 символов'
-                            }/* ,
-                  pattern: {
-                      value: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).+$/,
-                      message: 'Password must contain at least one lowercase character, at least one uppercase character, at least one non alphanumeric characher.'
-                  } */
+                            required: 'Описание не может быть пустым'
                         })} />
-
                         <label htmlFor="companyDescription" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                             Описание
                         </label>

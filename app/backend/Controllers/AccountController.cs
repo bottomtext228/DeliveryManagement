@@ -43,6 +43,22 @@ namespace backend.Controllers
                 {
                     if (string.IsNullOrEmpty(dto.CompanyName)) return Problem("CompanyName can't be null with AsCompany = true", statusCode: StatusCodes.Status400BadRequest);
                     if (string.IsNullOrEmpty(dto.CompanyDescription)) return Problem("CompanyDescription can't be null with AsCompany = true", statusCode: StatusCodes.Status400BadRequest);
+
+
+                    bool exists = await _dbContext.Companies.AnyAsync(c => c.Name.Equals(dto.CompanyName));
+                    if (exists)
+                    {
+                        var errors = new Dictionary<string, string[]>
+                        {
+                            { "CompanyName", new[] { $"Имя компании '{dto.CompanyName}' уже занято." } }
+                        };
+                        return ValidationProblem(new ValidationProblemDetails(errors)
+                        {
+                            Title = "Invalid input",
+                            Detail = "One or more validation errors occurred.",
+                            Status = StatusCodes.Status400BadRequest
+                        });
+                    }
                 }
 
                 User user = new User { Email = dto.Email, UserName = dto.Email };
@@ -143,14 +159,36 @@ namespace backend.Controllers
         /// <summary>
         /// Checks if provided email is not used by another account.
         /// </summary>
+        /// <remarks>
+        /// If email is not used than `available` is true and `message` is null. Otherwise `available` is false and `messsage` is not null.
+        /// 
+        /// 
+        /// Response example:
+        /// ```
+        /// GET api/account/check_credentials?email=test@mail.com
+        /// {
+        ///     available: false,
+        ///     message: "Имя пользователя 'test@mail.com' уже занято."
+        /// }
+        /// ``` 
+        /// </remarks>
         /// <param name="email"></param>
-        /// <returns></returns>
+        /// <response code="200">Returns the result of the check.</response>
+        /// <response code="400">If email is not provided</response> 
         [HttpGet("check_credentials")]
+        [ProducesResponseType<AvailabilityResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         public async Task<IActionResult> CheckIfEmailIsNotUsed([FromQuery] string email)
         {
             var exists = await _userManager.Users.AnyAsync(u => u.Email == email);
-            return Ok(new { available = !exists });
+            return Ok(new AvailabilityResponse { Available = !exists, Message = exists ? $"Имя пользователя '{email}' уже занято." : null });
         }
 
+        public class AvailabilityResponse
+        {
+            public bool Available { get; set; }
+            public string? Message { get; set; }
+        }
     }
 }

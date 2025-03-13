@@ -44,5 +44,6 @@ export const AuthService = {
 
 
 interface CheckEmailResponse {
-    available: boolean
+    available: boolean,
+    message: string | null
 }
