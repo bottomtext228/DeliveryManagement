@@ -41,7 +41,7 @@ export default function CatalogAll() {
             </div>
         </div>
 
-        <div className="lg:w-5xl md:w-4xl sm:w-2xl w-36  mx-auto grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 gap-x-12 gap-y-20">
+        <div className="lg:w-5xl md:w-4xl sm:w-2xl w-[24rem]  mx-auto grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 gap-x-12 gap-y-20">
             {products.map((product, index) => {
                 return <Product product={product} key={index}></Product>
             })}
