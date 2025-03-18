@@ -1,12 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth"
+import { AuthState, useAuthState, useUser } from "../hooks/useAuth"
+import Loading from "./Loading/Loading";
+import { PropsWithChildren } from "react";
 
-interface ProtectedRouteProps {
-    children: JSX.Element
-}
 
-export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-    const isAuth = useAuth();
+
+export const ProtectedRoute = ({ allowedRoles, children }: PropsWithChildren & {
+    allowedRoles?: string[]
+}) => {
+    const authState = useAuthState();
+    const user = useUser();
     const location = useLocation();
     /*    const navigate = useNavigate();
          useEffect(() => {
@@ -16,11 +19,16 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         if (!isAuth) return <></>;
     
         return children; */
-    return <>
-        {isAuth ? children :
-            <div>
-                <h1>To view this page you must be logged in.</h1>
+    if (authState === AuthState.PENDING) return <Loading></Loading>
+    if (authState == AuthState.NOT_AUTHORIZED || (allowedRoles && !allowedRoles.some(e => user?.roles.includes(e)))) {
+        return (<>
+            <div >
+                <h1>Нет доступа.</h1>
                 <Link to='/auth/login' replace state={{ returnUrl: location }} >Login</Link>
-            </div>}
-    </>
+            </div >
+        </>)
+    }
+
+    return children;
+
 }

@@ -3,9 +3,11 @@ import Product from "../../components/Product/Product";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getAllProducts } from "../../api/catalog/getAllProducts";
+import Loading from "../../components/Loading/Loading";
+import { useUser } from "../../hooks/useAuth";
 
 export default function CatalogAll() {
-
+    const user = useUser();
     const { isError, isPending, error, data } = useQuery({
         queryKey: ['products'],
         queryFn: () => getAllProducts(),
@@ -13,7 +15,7 @@ export default function CatalogAll() {
     });
 
     if (isPending) {
-        return <span>Loading...</span>
+        return <Loading></Loading>
     }
 
     if (isError) {
@@ -25,10 +27,12 @@ export default function CatalogAll() {
 
 
     return (<section className="mb-12">
-        <div>
-            <Link to='/catalog/add'>Добавить</Link>
-        </div>
 
+        {user?.roles.includes('company') &&
+            <div>
+                <Link to='/catalog/add'>Добавить</Link>
+            </div>
+        }
 
 
         <div className="container-fluid my-5">

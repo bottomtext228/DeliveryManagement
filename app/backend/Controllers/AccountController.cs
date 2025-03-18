@@ -89,6 +89,7 @@ namespace backend.Controllers
                     return Ok(new NewLoginDto
                     {
                         Email = user.Email,
+                        Roles = roles.ToList(),
                         Token = _tokenService.CreateToken(user, roles, company?.Id)
                     });
                 }
@@ -111,19 +112,29 @@ namespace backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
 
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            var roles = await _userManager.GetRolesAsync(user);
+
+
             if (User.IsInRole("company"))
             {
                 var company = await _dbContext.Companies.FirstOrDefaultAsync(e => e.UserId == userId);
                 return Ok(new ProfileDto
-                { CompanyName = company.Name, Email = userEmail, CompanyDescription = company.Description, IsCompany = true });
+                { CompanyName = company.Name, Email = userEmail, CompanyDescription = company.Description, IsCompany = true, Roles = roles.ToList() });
             }
             else
             {
-                return Ok(new ProfileDto { Email = userEmail, IsCompany = false });
+                return Ok(new ProfileDto { Email = userEmail, IsCompany = false, Roles = roles.ToList() });
             }
         }
+ 
 
         [HttpPost("login")]
+        [Consumes("application/json")]
+        [ProducesResponseType<NewLoginDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             try
@@ -141,6 +152,7 @@ namespace backend.Controllers
                     return Ok(new NewLoginDto
                     {
                         Email = user.Email!,
+                        Roles = roles.ToList(),
                         Token = _tokenService.CreateToken(user, roles, company?.Id)
                     });
                 }

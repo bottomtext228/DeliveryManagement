@@ -23,7 +23,7 @@ export default function Home() {
             <div className="w-8xl mx-auto">
                 <div className="flex">
                     <div className="flex-1/6 flex flex-col items-center">
-                        <img className="w-64 h-64" src="/left_top.png" alt=""></img>
+                        <img className="w-64 h-64 pt-4" src="/left_top.png" alt=""></img>
                         <img src="/left_main.png" alt=""></img>
                     </div>
                     <div className="flex-4/6 flex rounded-full bg-orange-50">
@@ -44,8 +44,8 @@ export default function Home() {
                         </div>
                     </div>
                     <div className="flex-1/6 flex flex-col items-center">
-                        <img className="w-fit h-64" src="/right_top.png" alt=""></img>
-                        <img src="/right_main.png" id="call" alt=""></img>
+                        <img className="w-full h-full pt-4" src="/right_top.png" alt=""></img>
+                        <img src="/right_main.png" alt=""></img>
                     </div>
                 </div>
             </div>

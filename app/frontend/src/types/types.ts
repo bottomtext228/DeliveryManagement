@@ -1,5 +1,6 @@
 export interface IUser {
-    email: string
+    email: string,
+    roles: string[]
 }
 
 export interface IRegisterRequest {
@@ -22,6 +23,7 @@ export interface ILoginResponse {
      expiresIn: number,
      refreshToken: string */
     email: string,
+    roles: string[],
     token: string
 }
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setTokenToLocalStorage } from "../../helpers/localstorage.helper";
-import { useAuth } from "../../hooks/useAuth";
+import { AuthState, useAuthState } from "../../hooks/useAuth";
 import { AuthService } from "../../services/AuthService";
 import useUserStore from "../../store/user/userStore";
 import { IHtppValidationProblemDetails, ILoginResponse, IUser } from "../../types/types";
@@ -17,7 +17,7 @@ interface FormValues {
 export default function Login() {
     const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
     const navigate = useNavigate();
-    const isAuth = useAuth();
+    const authState = useAuthState();
     const location = useLocation();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -40,7 +40,7 @@ export default function Login() {
         if (Object.prototype.hasOwnProperty.call(data, 'token')) {
             const loginData = data as ILoginResponse;
             setTokenToLocalStorage(loginData.token);
-            login({ email: loginData.email } as IUser);
+            login(loginData as IUser);
             navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
 
         } else {
@@ -61,7 +61,7 @@ export default function Login() {
 
 
 
-    if (isAuth) {
+    if (authState == AuthState.AUTHORIZED) {
         return <div className="text-center border rounded p-4 bg-neutral-600">
             <div>
                 <div className="text-white">You already logged in.</div>

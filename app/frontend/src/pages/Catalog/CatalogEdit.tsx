@@ -5,6 +5,7 @@ import { editProduct } from "../../api/catalog/editProduct";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getProduct } from "../../api/catalog/getProduct";
 import { useQuery } from "@tanstack/react-query";
+import Loading from "../../components/Loading/Loading";
 
 
 
@@ -35,7 +36,7 @@ export default function CatalogEdit() {
     });
 
     if (isPending) {
-        return <span>Loading</span>
+        return <Loading></Loading>
     }
 
     if (isError) {

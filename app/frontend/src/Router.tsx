@@ -55,11 +55,11 @@ const router = createBrowserRouter(
                 },
                 {
                     path: 'catalog/add',
-                    element: (<ProtectedRoute><CatalogAdd /></ProtectedRoute>)
+                    element: (<ProtectedRoute allowedRoles={['company']}><CatalogAdd /></ProtectedRoute>)
                 },
                 {
                     path: 'catalog/edit/:id',
-                    element: (<ProtectedRoute><CatalogEdit /></ProtectedRoute>)
+                    element: (<ProtectedRoute allowedRoles={['company']}><CatalogEdit /></ProtectedRoute>)
                 },
                 {
                     path: 'catalog/:id',

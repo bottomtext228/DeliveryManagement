@@ -9,6 +9,7 @@ import { getRoads } from '../../api/map/getRoads';
 import { getTowns } from '../../api/map/getTowns';
 import { setStocks } from '../../api/map/setStocks';
 import { setPickUpPoints } from '../../api/map/setPickUpPoints';
+import Loading from '../../components/Loading/Loading';
 
 
 export default function Map() {
@@ -64,7 +65,7 @@ export default function Map() {
 
 
     if (townsResult.isPending || roadsResult.isPending || pickUpPointsResult.isPending || stocksResult.isPending)
-        return <span>Loading...</span>
+         return <Loading></Loading>
 
     if (townsResult.isError || roadsResult.isError || pickUpPointsResult.isError || stocksResult.isError) {
         return <span>Something went wrong...</span>

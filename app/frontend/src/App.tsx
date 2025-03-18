@@ -18,16 +18,17 @@ function App() {
         try {
             if (token) {
                 const data = await AuthService.getProfile();
-
                 if (data) {
-                    login({ email: data.email } as IUser);
-                } else {
-                    logout();
+                    login(data as IUser);
+                    return;
                 }
             }
+           
         } catch (error) {
             console.error(error);
         }
+        
+        logout(); 
     };
 
     useEffect(() => {

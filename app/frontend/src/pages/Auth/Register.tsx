@@ -3,7 +3,7 @@ import { AuthService } from "../../services/AuthService";
 import { IHtppValidationProblemDetails, ILoginResponse, IUser } from "../../types/types";
 import { setTokenToLocalStorage } from "../../helpers/localstorage.helper";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { AuthState, useAuthState } from "../../hooks/useAuth";
 import useUserStore from "../../store/user/userStore";
 import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
 import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
@@ -31,7 +31,7 @@ enum FormState {
 export default function Register() {
     const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
     const navigate = useNavigate();
-    const isAuth = useAuth();
+    const authState = useAuthState();
     const location = useLocation();
     const [isCompany, setIsCompany] = useState(location.state?.choice === 'company');
     const [formState, setFormState] = useState(FormState.GENERAL);
@@ -71,7 +71,7 @@ export default function Register() {
 
 
 
-    if (isAuth) {
+    if (authState == AuthState.AUTHORIZED) {
         return <div className="text-center border rounded p-4 bg-neutral-600">
             <div>
                 <div className="text-white">You already logged in.</div>

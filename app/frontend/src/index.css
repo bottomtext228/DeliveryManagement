@@ -2,15 +2,15 @@
 
 @layer base {
     body {
-        @apply m-0
+        @apply h-full m-0 p-0
     }
 
     html {
-        @apply h-full
+        @apply h-full m-0 p-0 min-h-screen
     }
 
     #root {
-        @apply flex flex-col min-h-screen
+        @apply flex flex-col h-full
     }
 
 
@@ -31,4 +31,28 @@
 
 .w-8xl {
     width: 1440px
+}
+
+        
+.loading:after {
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    -webkit-animation: ellipsis steps(4, end) 2000ms infinite;
+    animation: ellipsis steps(4, end) 2000ms infinite;
+    content: "\2026";
+    width: 0px;
+    box-sizing: border-box;
+}
+
+@keyframes ellipsis {
+    to {
+        width: 0.8em;
+    }
+}
+
+@-webkit-keyframes ellipsis {
+    to {
+        width: 0.8em;
+    }
 }

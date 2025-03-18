@@ -2,27 +2,28 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query";
 import { getProduct } from "../../api/catalog/getProduct";
 import { deleteProduct } from "../../api/catalog/deleteProduct";
+import Loading from "../../components/Loading/Loading";
+import { useUser } from "../../hooks/useAuth";
 
 
 export default function CatalogDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-
+    const user = useUser();
     if (isNaN(parseInt(id!))) {
         return <span>Not found...</span>
     }
-    const { isPending, isError, data, error,  } = useQuery({
+    const { isPending, isError, data, error, } = useQuery({
         queryKey: ['product', id],
         queryFn: () => getProduct(parseInt(id!)),
     });
 
-    
+
     if (isPending) {
-        return <span>Loading...</span>
+        return <Loading></Loading>
     }
 
     if (isError) {
-        console.log(error);
         return <span>Error: {error.message}</span>
     }
 
@@ -94,10 +95,16 @@ export default function CatalogDetail() {
                 <div className="w-full h-48 border-2 border-amber-500 rounded-2xl flex flex-col">
                     <div className="font-semibold p-6">{product.price} ₽</div>
                     <div className="mt-auto mb-2 mx-auto w-[75%] flex flex-col gap-2">
-                        <button onClick={handleEdit} className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-neutral-50 hover:bg-neutral-200">Редактировать</button>
-                        <button onClick={handleDelete} className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-red-600 hover:bg-red-700">Удалить</button>
-                        {/*                         <button className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-neutral-50 hover:bg-neutral-200">В корзину</button>
-                        <button className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-amber-400 hover:bg-amber-500">Заказать</button> */}
+                        {user?.roles.includes('company') ?
+                            <>
+                                <button onClick={handleEdit} className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-neutral-50 hover:bg-neutral-200">Редактировать</button>
+                                <button onClick={handleDelete} className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-red-600 hover:bg-red-700">Удалить</button>
+                            </>
+                            : <>
+                                <button className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-neutral-50 hover:bg-neutral-200">В корзину</button>
+                                <button className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-amber-400 hover:bg-amber-500">Заказать</button>
+                            </>
+                        }
                     </div>
                 </div>
             </div>
