@@ -18,7 +18,7 @@ export default function Header() {
 
     return (
         <header className="bg-gray-50 border-b border-b-gray-200">
-            <nav className="flex flex-wrap items-center justify-between w-8xl mx-auto">
+            <nav className="flex flex-wrap items-center justify-between lg:w-6xl md:w-3xl w-xl   mx-auto">
                 <div className="flex w-full p-2 h-38 items-center">
                     <a><img src="/logo.png" className=""></img></a>
                     <div className="ml-5">

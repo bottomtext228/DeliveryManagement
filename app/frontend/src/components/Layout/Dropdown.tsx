@@ -21,12 +21,12 @@ export default function Dropdown() {
 
     return (<>
         <div ref={dropdownRef} className='relative'>
-            <button onClick={() => setIsOpen(!isOpen)} className={`border border-gray-200 rounded-2xl p-2 hover:bg-neutral-200 ${isOpen && 'bg-neutral-200'}`}>
-                <img className="w-12 h-12" src="/person.svg"></img>
+            <button onClick={() => setIsOpen(!isOpen)} className={`w-22 rounded-xl p-2  hover:bg-neutral-200 ${isOpen && 'bg-neutral-200'} flex justify-center items-center mx-auto`}>
+                <img className="w-10 h-10" src="/person.svg"></img>
+                <img className={`w-4 h-4 rotate-${isOpen ? '180' : '0'} transition-all duration-200`} src='/caret-down.svg'></img>
             </button>
-
             {isOpen &&
-                <div className="absolute right-2 z-10 mt-2 w-40 origin-top-right divide-y-[1px] divide-gray-300  rounded-md  bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden">
+                <div className="absolute right-0 z-10 mt-2 w-40 origin-top-right divide-y-[1px] divide-gray-300  rounded-md  bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden">
                     <div>
                         <button className="px-4 w-full text-left py-1 my-1 opacity-85 hover:bg-neutral-200" type="button">
                             Вход в аккаунт
