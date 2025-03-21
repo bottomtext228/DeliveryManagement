@@ -5,31 +5,34 @@ import Dropdown from "./Dropdown";
 
 export default function Navbar() {
 
-    const [isOpen, setIsOpen] = useState<Boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
     const authState = useAuthState();
 
 
     return (
 
         <>
-            <nav>
-                <Link to='/'><img src="/logo.png" className=""></img></Link>
-                <div className="ml-5">
-                    {isOpen ?
-                        <ul className="flex h-full items-center">
-                            <li className="p-2">
-                                <Link to='/'>Главная</Link>
-                            </li>
-                            <li className="p-2">
-                                <Link to='/catalog'>Каталог</Link>
-                            </li>
-                            <li className="p-2">
-                                <Link to='/about'>О нас</Link>
-                            </li>
-                        </ul>
-                        : <></>}
+            <nav className="flex justify-around w-full items-center">
+                <Link className="" to='/'><img src="/logo.png" className="w-64"></img></Link>
+                <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
+                    <img className='w-12 h-12 opacity-80' src='bars.svg'></img>
+                </button>
+                <div className={`md:flex ${isOpen ? 'block' : 'hidden'}  h-full items-center`}>
+                    <ul className="flex">
+                        <li className="p-2">
+                            <Link to='/'>Главная</Link>
+                        </li>
+                        <li className="p-2">
+                            <Link to='/catalog'>Каталог</Link>
+                        </li>
+                        <li className="p-2">
+                            <Link to='/about'>О нас</Link>
+                        </li>
+                    </ul>
+
+
                 </div>
-                <div className="ml-auto">
+               {/*  <div className="ml-auto">
                     {authState == AuthState.AUTHORIZED &&
                         <div className="">
                             <Link to='/account'>Профиль</Link>
@@ -51,7 +54,7 @@ export default function Navbar() {
                             Уже есть аккаунт? <Link to='/auth/login' className="text-blue-600 hover:text-blue-700 hover:underline">Войти</Link>
                         </div>
                     </>}
-                </div>
+                </div> */}
             </nav>
         </>
     )
