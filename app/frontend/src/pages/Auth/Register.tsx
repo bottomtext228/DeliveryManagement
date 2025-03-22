@@ -111,7 +111,7 @@ export default function Register() {
     }
 
     return (<>
-        <div className="my-16 w-md mx-auto">
+        <div className="my-16 max-w-md w-[90%] mx-auto">
             {serverError ?
                 <div className="border border-gray-300 rounded-2xl shadow-md h-fit p-4 text-black my-4">
                     {serverError.status === 401 ? /** Unauthorized - wrong password/username*/

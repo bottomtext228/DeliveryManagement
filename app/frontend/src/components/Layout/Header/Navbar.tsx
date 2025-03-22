@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { AuthState, useAuthState } from "../../../hooks/useAuth";
-import Dropdown from "./Dropdown";
-
+import { useState } from 'react'
+import { AuthState, useAuthState } from '../../../hooks/useAuth'
+import { Link, useLocation } from 'react-router-dom';
+import Dropdown from './Dropdown';
 export default function Navbar() {
+    const location = useLocation();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const authState = useAuthState();
 
     return (
-
         <>
+            <button className="md:hidden ml-auto" onClick={() => setIsOpen(true)}>
+                <img className='w-12 h-12 opacity-80' src='/bars.svg'></img>
+            </button>
             <nav id='nav' className={`md:flex md:justify-around md:static  md:items-center md:bg-transparent bg-white p-0.5 md:w-8xl md:max-w-full md:h-24 h-full fixed top-0 w-full max-w-[15em] ${isOpen ? 'right-0' : '-right-full'} z-10 transition-all duration-300 ease-in-out`}>
                 <div className="md:flex md:justify-center md:items-center">
                     <Link className="md:block hidden" to='/'><img src="/logo.png" className="w-64"></img></Link>
@@ -52,6 +54,7 @@ export default function Navbar() {
                     </>}
                 </div>
             </nav>
+            <div id="overlay" onClick={() => setIsOpen(false)} className={`fixed z-[9] inset-0 ${isOpen ? 'block' : 'hidden'} bg-[rgba(0,0,0,0.1)] transition-colors duration-300`}></div>
         </>
     )
 }

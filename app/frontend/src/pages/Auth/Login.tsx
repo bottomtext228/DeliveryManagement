@@ -71,9 +71,9 @@ export default function Login() {
     }
 
     return (<>
-        <div className="my-16">
+        <div className="my-16 max-w-md w-[90%] mx-auto">
             {serverError ?
-                <div className="border border-gray-300 rounded-2xl shadow-md w-md mx-auto h-fit p-4 text-black my-4">
+                <div className="border border-gray-300 rounded-2xl shadow-md h-fit p-4 text-black my-4">
                     {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
                         <div>
                             <li>Неправильная почта и/или пароль</li>
@@ -82,7 +82,7 @@ export default function Login() {
                             {serverError.errors && Object.keys(serverError.errors).map(key => <li key={key}>{(serverError.errors as any)[key]}</li>)}
                         </div>}
                 </div> : <></>}
-            <div className="w-md mx-auto">
+            <div className="">
                 <div className="rounded-2xl shadow-xl h-fit border border-gray-300 p-6">
                     <div>
                         <h3 className="text-neutral-800 text-2xl font-bold">Войти в Terrapin</h3>

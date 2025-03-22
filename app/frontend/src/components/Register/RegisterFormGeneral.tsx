@@ -32,14 +32,14 @@ export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, ha
     }
 
     return (
-        <div className={`${isCompany ? 'max-h-100' : 'max-h-116'} h-fit rounded-2xl shadow-xl transition-all duration-700 ease-out border border-gray-300 p-6 flex flex-col`}>
+        <div className={`${isCompany ? 'max-h-100' : 'max-h-120'} h-fit rounded-2xl shadow-xl transition-all duration-700 ease-out border border-gray-300 p-6 flex flex-col`}>
             <div className='flex justify-between items-center mb-6'>
                 <h3 className="text-neutral-800 text-2xl font-bold">Зарегистрируйтесь в Terrapin</h3>
                 <Link className='w-4 h-4' to='/'><img className='opacity-50 transient-colors duration-150 hover:opacity-70' src="/cross.svg"></img></Link>
             </div>
             <div className="flex justify-between">
-                <button onClick={() => handleChangeIsCompany(false)} className={`${!isCompany ? 'bg-neutral-500' : 'hover:bg-neutral-400 bg-amber-400'} transition-colors duration-150 ease-in-out text-white text-xl font-semibold rounded-xl p-2 w-47 h-12`}>Как покупатель</button>
-                <button onClick={() => handleChangeIsCompany(true)} className={`${isCompany ? 'bg-neutral-500' : 'hover:bg-neutral-400 bg-amber-400'} transition-colors duration-150 ease-in-out text-white text-xl font-semibold rounded-xl p-2 w-47 h-12`}>Как продавец</button>
+                <button onClick={() => handleChangeIsCompany(false)} className={`${!isCompany ? 'bg-neutral-500' : 'hover:bg-neutral-400 bg-amber-400'} transition-colors duration-150 ease-in-out text-white md:text-xl text-sm font-semibold rounded-xl md:p-2 md:w-47 min-[375px]:w-34 w-28 h-12`}>Как покупатель</button>
+                <button onClick={() => handleChangeIsCompany(true)} className={`${isCompany ? 'bg-neutral-500' : 'hover:bg-neutral-400 bg-amber-400'} transition-colors duration-150 ease-in-out text-white md:text-xl text-sm font-semibold rounded-xl md:p-2 md:w-47 min-[375px]:w-34 w-28 h-12`}>Как продавец</button>
             </div>
             <div className=''>
                 <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
@@ -71,7 +71,7 @@ export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, ha
                         </>
                     }
 
-                    <div className={`${!isCompany ? 'h-12' : 'h-0'} transition-height duration-700 overflow-hidden`}>
+                    <div className={`${!isCompany ? 'md:h-12 h-16' : 'h-0'} transition-height duration-700 overflow-hidden`}>
                         <hr className={`${!isCompany ? 'opacity-20' : 'opacity-0 invisible pointer-events-none'} transition-all duration-700 my-4 mx-auto w-[75%]`}></hr>
                         <div className={`${!isCompany ? 'opacity-100' : 'opacity-0 invisible pointer-events-none'} transition-all duration-700 mt-auto text-gray-500 text-xs text-center`}>Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 hover:underline cursor-pointer'>условиями пользования.</Link></div>
                     </div>
