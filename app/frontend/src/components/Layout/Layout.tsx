@@ -5,10 +5,11 @@ import Footer from "./Footer";
 export default function Layout() {
     return <>         
         <Header></Header>
-        {/* <main className="flex-1">
+        <main className="flex-1 min-h-screen">
             <Outlet />
         </main>
-        <Footer></Footer> */}
+        <Footer></Footer>
+    
 
     </>
 }

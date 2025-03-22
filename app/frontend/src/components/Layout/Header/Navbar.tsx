@@ -4,21 +4,19 @@ import { AuthState, useAuthState } from "../../../hooks/useAuth";
 import Dropdown from "./Dropdown";
 
 export default function Navbar() {
-
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const authState = useAuthState();
-
 
     return (
 
         <>
-            <nav className="flex justify-around w-full items-center">
-                <Link className="" to='/'><img src="/logo.png" className="w-64"></img></Link>
-                <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-                    <img className='w-12 h-12 opacity-80' src='bars.svg'></img>
-                </button>
-                <div className={`md:flex ${isOpen ? 'block' : 'hidden'}  h-full items-center`}>
-                    <ul className="flex">
+            <nav id='nav' className={`md:flex md:justify-around md:static  md:items-center md:bg-transparent bg-white p-0.5 md:w-8xl md:max-w-full md:h-24 h-full fixed top-0 w-full max-w-[15em] ${isOpen ? 'right-0' : '-right-full'} z-10 transition-all duration-300 ease-in-out`}>
+                <div className="md:flex md:justify-center md:items-center">
+                    <Link className="md:block hidden" to='/'><img src="/logo.png" className="w-64"></img></Link>
+                    <button className="md:hidden flex w-8 h-8 opacity-75 justify-center items-center" onClick={() => setIsOpen(false)}>
+                        <img src='/cross.svg' className="w-4 h-4"></img>
+                    </button>
+                    <ul className="md:flex block ">
                         <li className="p-2">
                             <Link to='/'>Главная</Link>
                         </li>
@@ -29,10 +27,8 @@ export default function Navbar() {
                             <Link to='/about'>О нас</Link>
                         </li>
                     </ul>
-
-
                 </div>
-               {/*  <div className="ml-auto">
+                <div className="">
                     {authState == AuthState.AUTHORIZED &&
                         <div className="">
                             <Link to='/account'>Профиль</Link>
@@ -54,7 +50,7 @@ export default function Navbar() {
                             Уже есть аккаунт? <Link to='/auth/login' className="text-blue-600 hover:text-blue-700 hover:underline">Войти</Link>
                         </div>
                     </>}
-                </div> */}
+                </div>
             </nav>
         </>
     )
