@@ -26,9 +26,9 @@ export default function CatalogAll() {
     const products: IProduct[] = data.data;
 
 
-    return (<section className="mb-12">
+    return (<section className="md:my-16 my-4">
 
-        {user?.roles.includes('company') &&
+   {/*      {user?.roles.includes('company') &&
             <div>
                 <Link to='/catalog/add'>Добавить</Link>
             </div>
@@ -43,9 +43,9 @@ export default function CatalogAll() {
                     Рекомендации
                 </div>
             </div>
-        </div>
+        </div> */}
 
-        <div className="lg:w-5xl md:w-4xl sm:w-2xl w-[24rem]  mx-auto grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 gap-x-12 gap-y-20">
+        <div className="max-w-[1440px] w-[90%]  mx-auto grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
             {products.map((product, index) => {
                 return <Product product={product} key={index}></Product>
             })}

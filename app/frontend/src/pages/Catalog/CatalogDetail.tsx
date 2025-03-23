@@ -45,10 +45,9 @@ export default function CatalogDetail() {
     }
 
     return (
-        <div className="flex lg:w-5xl md:w-4xl sm:w-2xl w-36 mx-auto my-16">
+        <div className="flex md:flex-row flex-col max-w-[1440px] w-[90%] mx-auto my-16">
             <div className="flex-1/3 mr-8">
-                <img className="rounded-xl" src={"data:image/png;base64," + product.image}></img>
-
+                <img className="rounded-xl border border-gray-200 " src={"data:image/png;base64," + product.image}></img>
             </div>
             <div className="mt-8 flex-1/3">
                 <div className="mb-4">
@@ -92,7 +91,7 @@ export default function CatalogDetail() {
                 </div>
             </div>
             <div className="flex-1/3 mt-6">
-                <div className="w-full h-48 border-2 border-amber-500 rounded-2xl flex flex-col">
+                <div className="max-w-72 h-48 border-2 border-amber-500 rounded-2xl flex flex-col">
                     <div className="font-semibold p-6">{product.price} ₽</div>
                     <div className="mt-auto mb-2 mx-auto w-[75%] flex flex-col gap-2">
                         {user?.roles.includes('company') ?

@@ -12,7 +12,7 @@ export default function Navbar() {
             <button className="md:hidden ml-auto" onClick={() => setIsOpen(true)}>
                 <img className='w-12 h-12 opacity-80' src='/bars.svg'></img>
             </button>
-            <nav id='nav' className={`md:flex md:justify-around md:static  md:items-center md:bg-transparent bg-white p-0.5 md:w-8xl md:max-w-full md:h-24 h-full fixed top-0 w-full max-w-[15em] ${isOpen ? 'right-0' : '-right-full'} z-10 transition-all duration-300 ease-in-out`}>
+            <nav id='nav' className={`md:flex md:justify-around md:static  md:items-center md:bg-transparent bg-white p-0.5 md:w-8xl md:max-w-full md:h-24 h-full fixed top-0 w-full max-w-[15em] ${isOpen ? 'right-0' : '-right-full'} z-50 transition-all duration-300 ease-in-out`}>
                 <div className="md:flex md:justify-center md:items-center">
                     <Link className="md:block hidden" to='/'><img src="/logo.png" className="w-64"></img></Link>
                     <button className="md:hidden flex w-8 h-8 opacity-75 justify-center items-center" onClick={() => setIsOpen(false)}>

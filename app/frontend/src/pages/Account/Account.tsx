@@ -7,8 +7,8 @@ export default function Account() {
     const navigate = useNavigate();
     console.log(user);
     return <>
-        <div className="flex py-16 gap-16 w-8xl mx-auto">
-            <div className="w-xl h-40 flex justify-between border border-gray-200 rounded-2xl">
+        <div className="flex md:flex-row flex-col py-16 md:gap-16 gap-8 max-w-[1440px] w-[90%]  mx-auto justify-center">
+            <div className="lg:w-xl md:w-md md:max-w-full max-w-72 h-40 flex justify-between border border-gray-200 rounded-2xl">
                 <div className="m-4">
                     <div className="w-14 h-14">
                         <img src="/squared_person.svg"></img>
@@ -30,13 +30,13 @@ export default function Account() {
                 </div>
 
             </div>
-            <Link to='/catalog' className="w-44 h-40 flex flex-col border border-gray-200 rounded-2xl transform transition-transform hover:scale-102 group">
+            <Link to='/catalog' className="md:w-44 md:max-w-full max-w-72 h-40 flex flex-col border border-gray-200 rounded-2xl transform transition-transform hover:scale-102 group">
                 <img className="w-20 h-20 mx-auto m-4" src="/box.svg"></img>
-                <div className="font-semibold mx-auto mt-auto text-2xl m-4 group-hover:text-amber-400">Мои товары</div>
+                <div className="font-semibold mx-auto mt-auto text-2xl m-4 group-hover:text-amber-400">Товары</div>
             </Link>
-            <Link to='/orders' className="w-44 h-40 flex flex-col border border-gray-200 rounded-2xl transform transition-transform hover:scale-102 group">
+            <Link to='/orders' className="md:w-44 md:max-w-full max-w-72 h-40 flex flex-col border border-gray-200 rounded-2xl transform transition-transform hover:scale-102 group">
                 <img className="w-20 h-20 mx-auto m-4" src="/cart.svg"></img>
-                <div className="font-semibold mx-auto mt-auto text-2xl m-4 group-hover:text-amber-400 ">Мои заказы</div>
+                <div className="font-semibold mx-auto mt-auto text-2xl m-4 group-hover:text-amber-400 ">Заказы</div>
             </Link>
         </div>
     </>

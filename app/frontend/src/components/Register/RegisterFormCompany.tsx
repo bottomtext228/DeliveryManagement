@@ -50,7 +50,7 @@ export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack,
                             Название
                         </label>
                     </div>
-                    {errors.companyName && <p className="text-red-500">{errors.companyName.message}</p>}
+                    {errors.companyName && <div className="text-red-500">{errors.companyName.message}</div>}
                     <div className="relative mt-4">
                         <textarea id="companyDescription" className="block w-full h-42 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" placeholder=" " {...register('companyDescription', {
                             required: 'Описание не может быть пустым'

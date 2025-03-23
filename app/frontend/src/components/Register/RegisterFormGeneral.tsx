@@ -22,7 +22,7 @@ interface FormValues {
 
 export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, handleChangeIsCompany, formData, setFormData }: Props) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const { register, handleSubmit, formState: { errors }, setError } = useForm<FormValues>({ defaultValues: formData });
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({ defaultValues: formData });
 
     const onSubmit: SubmitHandler<FormValues> = (data, e) => {
         e?.preventDefault();
@@ -49,7 +49,7 @@ export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, ha
                             Эл. адрес
                         </label>
                     </div>
-                    {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+                    {errors.email && <div className="text-red-500">{errors.email.message}</div>}
                     <div className="flex relative mt-4">
                         <input type={isPasswordVisible ? "text" : "password"} id="password" placeholder=" " className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('password', {
                             required: 'Пароль не может быть пустым'
