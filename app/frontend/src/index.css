@@ -16,6 +16,10 @@
 }
 
 
+button {
+    cursor: pointer;
+}
+
 .loading:after {
     overflow: hidden;
     display: inline-block;
