@@ -26,7 +26,7 @@ export default function CatalogAll() {
     const products: IProduct[] = data.data;
 
 
-    return (<section className="md:my-16 my-4">
+    return (<section className="my-4 md:my-16">
 
    {/*      {user?.roles.includes('company') &&
             <div>
@@ -35,7 +35,7 @@ export default function CatalogAll() {
         }
 
 
-        <div className="container-fluid my-5">
+        <div className="my-5 container-fluid">
             <div className="row">
                 <div className="col-lg-1">
                 </div>

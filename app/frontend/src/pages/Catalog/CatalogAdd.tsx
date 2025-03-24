@@ -51,7 +51,7 @@ export default function CatalogAdd() {
     return (
         <div className="md:my-16 my-4 max-w-md w-[90%] mx-auto">
             {serverError ?
-                <div className="border border-gray-300 rounded-2xl shadow-md h-fit p-4 text-black my-4">
+                <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
                     {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
                         <div>
                             <li>Неправильная почта и/или пароль</li>
@@ -60,11 +60,11 @@ export default function CatalogAdd() {
                             {serverError.errors && Object.keys(serverError.errors).map(key => <li key={key}>{(serverError.errors as any)[key]}</li>)}
                         </div>}
                 </div> : <></>}
-            <div className="rounded-2xl p-6 border border-gray-300">
+            <div className="p-6 border border-gray-300 rounded-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-neutral-800 text-2xl font-bold">Новый товар</h3>
-                        <Link className='w-4 h-4' to='/catalog'><img className='opacity-50 transient-colors duration-150 hover:opacity-70' src="/cross.svg"></img></Link>
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-2xl font-bold text-neutral-800">Новый товар</h3>
+                        <Link className='w-4 h-4' to='/catalog'><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></Link>
                     </div>
                     <div className="relative mt-4">
                         <input id="name" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />
@@ -126,11 +126,11 @@ export default function CatalogAdd() {
                     </div>
                     {errors.sizeZ && <div className="text-red-500">{errors.sizeZ.message}</div>}
 
-
-                    <div className="mt-4 w-full">
-                        <label htmlFor="image" className="flex w-full h-12 border border-gray-300 rounded-lg my-4">
-                            <div id='image-label' className="flex-4/5 flex justify-start items-center p-3 text-ellipsis overflow-hidden whitespace-nowrap">Выберите файл...</div>
-                            <div className="flex-1/5 border-l border-gray-300 flex justify-center items-center"><img src="/upload-file.svg" className="w-12 h-12"></img></div>
+                  
+                    <div className="w-full mt-4">
+                        <label htmlFor="image" className="flex w-full h-12 my-4 border border-gray-300 rounded-lg">
+                            <div id='image-label' className="flex items-center justify-start p-3 overflow-hidden flex-4/5 text-ellipsis whitespace-nowrap">Выберите файл...</div>
+                            <div className="flex items-center justify-center border-l border-gray-300 flex-1/5"><img src="/upload-file.svg" className="w-12 h-12"></img></div>
                         </label>
                         <input className="w-0 h-0 opacity-0 overflow-hidden absolute -z-[1]" id="image" {...register("image", { required: 'Изображение обязательно!' })} type="file" accept=".jpg, .jpeg, .png" onChange={
                             (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,11 +146,11 @@ export default function CatalogAdd() {
 
                     </div>
                     <div className="w-full h-full">
-                        <img id="image-preview" className="w-full h-full object-contain rounded-2xl"></img>
+                        <img id="image-preview" className="object-contain w-full h-full rounded-2xl"></img>
                     </div>
                     {errors.image && <div className="text-red-500">{errors.image.message}</div>}
 
-                    <button type="submit" className="w-full rounded-lg p-2 bg-amber-400 hover:bg-amber-500 cursor-pointer text-white font-semibold text-xl mt-4">
+                    <button type="submit" className="w-full p-2 mt-4 text-xl font-semibold text-white rounded-lg cursor-pointer bg-amber-400 hover:bg-amber-500">
                         Создать
                     </button>
                 </form >

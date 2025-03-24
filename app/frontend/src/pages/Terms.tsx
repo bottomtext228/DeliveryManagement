@@ -4,9 +4,9 @@ export default function Terms() {
         <>
             <div className="max-w-5xl w-[90%] md:my-10 my-4 mx-auto rounded-2xl border border-gray-200">
 
-                <h1 className="text-3xl font-bold text-center border-b border-b-gray-200 p-2">Условия пользования</h1>
+                <h1 className="p-2 text-3xl font-bold text-center border-b border-b-gray-200">Условия пользования</h1>
                 <div className="p-4 mt-4">
-                    <div className="font-semibold uppercase text-2xl text-center">
+                    <div className="text-2xl font-semibold text-center uppercase">
                         Данный сайт не является реальным сервисом
                     </div>
                     <pre className="mt-4 text-wrap">

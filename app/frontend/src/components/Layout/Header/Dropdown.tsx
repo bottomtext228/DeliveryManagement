@@ -28,7 +28,7 @@ export default function Dropdown() {
             {isOpen &&
                 <div className="absolute right-0 z-10 mt-2 w-40 origin-top-right divide-y-[1px] divide-gray-300  rounded-md  bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden">
                     <div>
-                        <button className="px-4 w-full text-left py-1 my-1 opacity-85 hover:bg-neutral-200" type="button">
+                        <button className="w-full px-4 py-1 my-1 text-left opacity-85 hover:bg-neutral-200" type="button">
                             Вход в аккаунт
                         </button>
                     </div>
@@ -38,7 +38,7 @@ export default function Dropdown() {
                         <Link to='/orders' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Заказы</Link>
                     </div>
                     <div>
-                        <button className="px-4 w-full text-left py-1 my-1 opacity-85 text-red-600 hover:bg-neutral-200" type="button">Выйти</button>
+                        <button className="w-full px-4 py-1 my-1 text-left text-red-600 opacity-85 hover:bg-neutral-200" type="button">Выйти</button>
                     </div>
                 </div>
             }

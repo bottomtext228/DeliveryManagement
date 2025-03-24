@@ -36,10 +36,10 @@ export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack,
 
 
     return (
-        <div className="rounded-2xl shadow-xl h-fit border border-gray-300 p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h3 className="text-neutral-800 text-2xl font-bold">Информация о вашей компании</h3>
-                <button className="w-5 h-5 opacity-50 transient-colors duration-150 hover:opacity-70" onClick={handleClick}><img src='/arrow-left.svg'></img></button>
+        <div className="p-6 border border-gray-300 shadow-xl rounded-2xl h-fit">
+            <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-neutral-800">Информация о вашей компании</h3>
+                <button className="w-5 h-5 duration-150 opacity-50 transient-colors hover:opacity-70" onClick={handleClick}><img src='/arrow-left.svg'></img></button>
             </div>
 
             <div>
@@ -61,9 +61,9 @@ export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack,
                     </div>
                     {errors.companyDescription && <div className="text-red-500">{errors.companyDescription.message}</div>}
 
-                    <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-5 p-2">Регистрация</button>
+                    <button type='submit' className="p-2 mt-5 text-xl text-white rounded-lg bg-amber-400 hover:bg-amber-500">Регистрация</button>
                     <hr className='my-4 mx-auto opacity-20 w-[75%]'></hr>
-                    <span className="text-gray-500 text-xs mx-auto">Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 hover:underline cursor-pointer'>условиями пользования.</Link></span>
+                    <span className="mx-auto text-xs text-gray-500">Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 cursor-pointer hover:underline'>условиями пользования.</Link></span>
                 </form>
             </div>
         </div>

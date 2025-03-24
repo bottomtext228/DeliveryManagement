@@ -62,7 +62,7 @@ export default function Login() {
 
 
     if (authState == AuthState.AUTHORIZED) {
-        return <div className="text-center border rounded p-4 bg-neutral-600">
+        return <div className="p-4 text-center border rounded bg-neutral-600">
             <div>
                 <div className="text-white">You already logged in.</div>
                 <Link className="text-blue-400 hover:underline" to='/'>Home page</Link>
@@ -73,7 +73,7 @@ export default function Login() {
     return (<>
         <div className="my-16 max-w-md w-[90%] mx-auto">
             {serverError ?
-                <div className="border border-gray-300 rounded-2xl shadow-md h-fit p-4 text-black my-4">
+                <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
                     {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
                         <div>
                             <li>Неправильная почта и/или пароль</li>
@@ -82,10 +82,10 @@ export default function Login() {
                             {serverError.errors && Object.keys(serverError.errors).map(key => <li key={key}>{(serverError.errors as any)[key]}</li>)}
                         </div>}
                 </div> : <></>}
-            <div className="rounded-2xl shadow-xl h-fit border border-gray-300 p-6">
-                <div className="flex justify-between items-center">
-                    <h3 className="text-neutral-800 text-2xl font-bold">Войти в Terrapin</h3>
-                    <Link className='w-4 h-4' to='/'><img className='opacity-50 transient-colors duration-150 hover:opacity-70' src="/cross.svg"></img></Link>
+            <div className="p-6 border border-gray-300 shadow-xl rounded-2xl h-fit">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-2xl font-bold text-neutral-800">Войти в Terrapin</h3>
+                    <Link className='w-4 h-4' to='/'><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></Link>
                 </div>
                 <div>
                     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
@@ -96,13 +96,13 @@ export default function Login() {
                             </label>
                         </div>
                         {errors.email && <div className="text-red-500">{errors.email.message}</div>}
-                        <div className="flex relative mt-4">
+                        <div className="relative flex mt-4">
                             <input type={isPasswordVisible ? "text" : "password"} id="password" placeholder=" " className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('password', {
                                 required: 'Пароль не может быть пустым'
                             })} />
-                            <button type='button' className="absolute right-2 top-1/2 -translate-y-1/2 w-6 flex items-center justify-around group" onClick={() => { setIsPasswordVisible(!isPasswordVisible) }}>
+                            <button type='button' className="absolute flex items-center justify-around w-6 -translate-y-1/2 right-2 top-1/2 group" onClick={() => { setIsPasswordVisible(!isPasswordVisible) }}>
                                 <img className="w-6 h-6 filter opacity-30 hover:opacity-85" src={isPasswordVisible ? '/eye-on.svg' : '/eye-off.svg'}></img>
-                                <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-white text-sm rounded py-1 px-2 whitespace-nowrap">
+                                <span className="absolute px-2 py-1 mb-1 text-sm text-white transition-opacity -translate-x-1/2 bg-gray-800 rounded opacity-0 left-1/2 bottom-full group-hover:opacity-100 whitespace-nowrap">
                                     Показать пароль
                                 </span>
                             </button>
@@ -111,7 +111,7 @@ export default function Login() {
                             </label>
                         </div>
                         {errors.password && <div className="text-red-500">{errors.password.message}</div>}
-                        <button type='submit' className="rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-xl mt-5 p-2">Войти</button>
+                        <button type='submit' className="p-2 mt-5 text-xl text-white rounded-lg bg-amber-400 hover:bg-amber-500">Войти</button>
                     </form>
                 </div>
             </div >

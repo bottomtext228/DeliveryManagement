@@ -10,7 +10,7 @@ export default function ProductDetail({ product }: Props) {
                 {product.name}
             </div>
             <div className="flex">
-                <div className="w-36 h-36 mb-2">
+                <div className="mb-2 w-36 h-36">
                     <img className="w-full h-full " src={"data:image/png;base64," + product.image} ></img>
                 </div>
                 <div>

@@ -72,7 +72,7 @@ export default function Register() {
 
 
     if (authState == AuthState.AUTHORIZED) {
-        return <div className="text-center border rounded p-4 bg-neutral-600">
+        return <div className="p-4 text-center border rounded bg-neutral-600">
             <div>
                 <div className="text-white">You already logged in.</div>
                 <Link className="text-blue-400 hover:underline" to='/'>Home page</Link>
@@ -113,7 +113,7 @@ export default function Register() {
     return (<>
         <div className="my-16 max-w-md w-[90%] mx-auto">
             {serverError ?
-                <div className="border border-gray-300 rounded-2xl shadow-md h-fit p-4 text-black my-4">
+                <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
                     {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
                         <div>
                             Неправильная почта и/или пароль

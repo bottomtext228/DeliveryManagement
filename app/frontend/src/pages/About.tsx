@@ -2,11 +2,11 @@
 export default function About() {
     return (
         <div className="max-w-[1440px] w-[90%] mx-auto h-[1500px]">
-            <h1 className="w-fit mx-auto font-bold text-3xl pt-6">О нас</h1>
+            <h1 className="pt-6 mx-auto text-3xl font-bold w-fit">О нас</h1>
 
-            <div className="pt-6 h-48 flex">
-                <pre className="mx-auto w-full flex-wrap flex">
-                    <div className="font-semibold text-lg">Terrapin</div> - проект команды <div className="font-semibold">Stronghold</div> для хакатона CodeRocks 2024
+            <div className="flex h-48 pt-6">
+                <pre className="flex flex-wrap w-full mx-auto">
+                    <div className="text-lg font-semibold">Terrapin</div> - проект команды <div className="font-semibold">Stronghold</div> для хакатона CodeRocks 2024
                 </pre>
                 <img className="w-xs md:ml-auto md:relative md:bottom-50" src="Img-page1.png"></img>
             </div>
@@ -22,11 +22,11 @@ export default function About() {
                 </pre>
 
             </div>
-            <div className="flex h-64 items-center">
+            <div className="flex items-center h-64">
                 <pre className="mr-4">
                     Покупатель может "заказать" товар, выбрав нужный доступный пункт выдачи заказов компании, которая является владельцем этого товара.
                 </pre>
-                <img className="w-2xs mr-auto" src="left_top.png"></img>
+                <img className="mr-auto w-2xs" src="left_top.png"></img>
             </div>
 
             <div className="pt-6">
@@ -34,7 +34,7 @@ export default function About() {
                     Затем пользователю будет предложено на выбор два возможных маршрута - самый быстрый и самый дешёвый.
                     Стоимость и время маршрута вычисляются с помощью теории графов.
                 </pre>
-                <img className="w-xs pt-4" src="turtle 3page.png"></img>
+                <img className="pt-4 w-xs" src="turtle 3page.png"></img>
             </div>
             <img className="mx-auto pt-36" src="/logo.png"></img>
  */}

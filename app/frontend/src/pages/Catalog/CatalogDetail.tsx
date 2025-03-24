@@ -46,8 +46,8 @@ export default function CatalogDetail() {
 
     return (
         <div className="flex md:flex-row flex-col max-w-[1440px] w-[90%] mx-auto my-16">
-            <div className="flex-1/3 mr-8">
-                <img className="rounded-xl border border-gray-200 " src={"data:image/png;base64," + product.image}></img>
+            <div className="mr-8 flex-1/3">
+                <img className="border border-gray-200 rounded-xl " src={"data:image/png;base64," + product.image}></img>
             </div>
             <div className="mt-8 flex-1/3">
                 <div className="mb-4">
@@ -90,18 +90,18 @@ export default function CatalogDetail() {
                     <p>{product.description}</p>
                 </div>
             </div>
-            <div className="flex-1/3 mt-6">
-                <div className="max-w-72 h-48 border-2 border-amber-500 rounded-2xl flex flex-col">
-                    <div className="font-semibold p-6">{product.price} ₽</div>
+            <div className="mt-6 flex-1/3">
+                <div className="flex flex-col h-48 border-2 max-w-72 border-amber-500 rounded-2xl">
+                    <div className="p-6 font-semibold">{product.price} ₽</div>
                     <div className="mt-auto mb-2 mx-auto w-[75%] flex flex-col gap-2">
                         {user?.roles.includes('company') ?
                             <>
-                                <button onClick={handleEdit} className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-neutral-50 hover:bg-neutral-200">Редактировать</button>
-                                <button onClick={handleDelete} className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-red-600 hover:bg-red-700">Удалить</button>
+                                <button onClick={handleEdit} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">Редактировать</button>
+                                <button onClick={handleDelete} className="block w-full p-1 font-semibold text-center bg-red-600 shadow-sm shadow-neutral-500 rounded-xl hover:bg-red-700">Удалить</button>
                             </>
                             : <>
-                                <button className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-neutral-50 hover:bg-neutral-200">В корзину</button>
-                                <button className="w-full block shadow-neutral-500 shadow-sm p-1 rounded-xl text-center font-semibold bg-amber-400 hover:bg-amber-500">Заказать</button>
+                                <button className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">В корзину</button>
+                                <button className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-400 hover:bg-amber-500">Заказать</button>
                             </>
                         }
                     </div>

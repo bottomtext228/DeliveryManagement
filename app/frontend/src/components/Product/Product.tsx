@@ -15,11 +15,11 @@ export default function Product({ product }: Props) {
                     </img>
                 </Link>
             </div>
-            <div className="ml-2 mt-2 pb-1 flex-1/12">
+            <div className="pb-1 mt-2 ml-2 flex-1/12">
                 <p className="font-bold">{product.price} ₽</p>
-                <p className="font-semibold overflow-hidden whitespace-nowrap">{product.name}</p>
+                <p className="overflow-hidden font-semibold whitespace-nowrap">{product.name}</p>
             </div>
-            <button className="rounded-xl bg-amber-500 hover:bg-amber-600 w-full text-black font-semibold p-2 flex justify-center items-center">
+            <button className="flex items-center justify-center w-full p-2 font-semibold text-black rounded-xl bg-amber-500 hover:bg-amber-600">
                 В корзину
             </button>
         </article>

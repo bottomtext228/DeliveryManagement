@@ -3,11 +3,11 @@ import LoadingSpinner from "./LoadingSpinner";
 export default function Loading() {
 
     return (<>
-        <div className="h-full flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center justify-center h-full">
             <div className="flex items-center justify-center">
                 <LoadingSpinner></LoadingSpinner>
             </div>
-            <pre className="loading text-xl pt-2">Загрузка</pre>
+            <pre className="pt-2 text-xl loading">Загрузка</pre>
         </div>
     </>)
 }
