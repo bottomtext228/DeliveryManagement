@@ -111,7 +111,7 @@ export default function Register() {
     }
 
     return (<>
-        <div className="my-16 max-w-md w-[90%] mx-auto">
+        <div className="my-4 md:my-16 max-w-md w-[90%] mx-auto">
             {serverError ?
                 <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
                     {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
@@ -123,7 +123,12 @@ export default function Register() {
                         </div>}
                 </div> : <></>}
             {formState == FormState.GENERAL ?
-                <RegisterFormGeneral handleGeneralSubmit={handleGeneralSubmit} isCompany={isCompany} handleChangeIsCompany={handleChangeIsCompany} formData={formData} setFormData={setFormData}></RegisterFormGeneral>
+                <>
+                    <RegisterFormGeneral handleGeneralSubmit={handleGeneralSubmit} isCompany={isCompany} handleChangeIsCompany={handleChangeIsCompany} formData={formData} setFormData={setFormData}></RegisterFormGeneral>
+                    <div className="w-full p-4 mx-auto my-4 text-center border border-gray-300 rounded-2xl">
+                        Уже есть аккаунт? <Link to='/auth/login' className="text-blue-600 hover:brightness-90 hover:underline">Войти</Link>
+                    </div>
+                </>
                 : <RegisterFormCompany handleCompanySubmit={handleCompanySubmit} handleGoBack={handleGoBack} formData={formData} setFormData={setFormData} ></RegisterFormCompany>
             }
         </div>

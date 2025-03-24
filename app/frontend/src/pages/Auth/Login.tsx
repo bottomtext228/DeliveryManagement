@@ -71,7 +71,7 @@ export default function Login() {
     }
 
     return (<>
-        <div className="my-16 max-w-md w-[90%] mx-auto">
+        <div className="my-4 md:my-16 max-w-md w-[90%] mx-auto">
             {serverError ?
                 <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
                     {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
@@ -114,7 +114,10 @@ export default function Login() {
                         <button type='submit' className="p-2 mt-5 text-xl text-white rounded-lg bg-amber-400 hover:bg-amber-500">Войти</button>
                     </form>
                 </div>
-            </div >
+            </div>
+            <div className="w-full p-4 mx-auto my-4 text-center border border-gray-300 rounded-2xl">
+                Нет аккаунта? <Link to='/auth/register' className="text-blue-600 hover:brightness-90 hover:underline">Создать</Link>
+            </div>
         </div>
     </>)
 }

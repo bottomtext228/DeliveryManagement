@@ -5,7 +5,7 @@ export default function Account() {
     const user = useUser();
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
-    console.log(user);
+
     return <>
         <div className="flex md:flex-row flex-col py-16 md:gap-16 gap-8 max-w-[1440px] w-[90%]  mx-auto justify-center">
             <div className="flex justify-between h-40 border border-gray-200 lg:w-xl md:w-md md:max-w-full max-w-72 rounded-2xl">
@@ -25,7 +25,7 @@ export default function Account() {
                         {user?.roles}
                     </pre>
                     <button onClick={() => {
-                        navigate('/'); logout();
+                        navigate('/'); setTimeout(() => logout(), 100);
                     }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">Выйти</button>
                 </div>
 

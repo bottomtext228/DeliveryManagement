@@ -63,7 +63,7 @@ export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack,
 
                     <button type='submit' className="p-2 mt-5 text-xl text-white rounded-lg bg-amber-400 hover:bg-amber-500">Регистрация</button>
                     <hr className='my-4 mx-auto opacity-20 w-[75%]'></hr>
-                    <span className="mx-auto text-xs text-gray-500">Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 cursor-pointer hover:underline'>условиями пользования.</Link></span>
+                    <span className="mx-auto text-xs text-gray-500">Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 cursor-pointer hover:underline hover:brightness-90'>условиями пользования.</Link></span>
                 </form>
             </div>
         </div>

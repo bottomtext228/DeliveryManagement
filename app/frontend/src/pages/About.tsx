@@ -4,15 +4,15 @@ export default function About() {
         <div className="max-w-[1440px] w-[90%] mx-auto h-[1500px]">
             <h1 className="pt-6 mx-auto text-3xl font-bold w-fit">О нас</h1>
 
-            <div className="flex h-48 pt-6">
-                <pre className="flex flex-wrap w-full mx-auto">
+        {/*     <div className="relative">
+                <pre className="flex mx-auto w-fit">
                     <div className="text-lg font-semibold">Terrapin</div> - проект команды <div className="font-semibold">Stronghold</div> для хакатона CodeRocks 2024
                 </pre>
-                <img className="w-xs md:ml-auto md:relative md:bottom-50" src="Img-page1.png"></img>
+                <img className="absolute w-xs md:ml-auto left-[85%] -top-20" src="Img-page1.png"></img>
             </div>
+ */}
 
-
-{/*             <pre className="mx-auto text-wrap w-fit">
+                        <pre className="mx-auto text-wrap w-fit">
                 Сервис имеет базовую систему регистрации, позволяя зарегистрироваться как покупатель или как продавец-компания.
             </pre>
             <div className="flex items-center">
@@ -37,7 +37,7 @@ export default function About() {
                 <img className="pt-4 w-xs" src="turtle 3page.png"></img>
             </div>
             <img className="mx-auto pt-36" src="/logo.png"></img>
- */}
+
         </div >
     )
 

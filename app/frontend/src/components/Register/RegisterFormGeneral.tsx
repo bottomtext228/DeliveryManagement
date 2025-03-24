@@ -41,7 +41,7 @@ export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, ha
                 <button onClick={() => handleChangeIsCompany(false)} className={`${!isCompany ? 'bg-neutral-500' : 'hover:bg-neutral-400 bg-amber-400'} transition-colors duration-150 ease-in-out text-white md:text-xl text-sm font-semibold rounded-xl md:p-2 md:w-47 min-[375px]:w-34 w-28 h-12`}>Как покупатель</button>
                 <button onClick={() => handleChangeIsCompany(true)} className={`${isCompany ? 'bg-neutral-500' : 'hover:bg-neutral-400 bg-amber-400'} transition-colors duration-150 ease-in-out text-white md:text-xl text-sm font-semibold rounded-xl md:p-2 md:w-47 min-[375px]:w-34 w-28 h-12`}>Как продавец</button>
             </div>
-            <div className=''>
+            <div>
                 <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
                     <div className="relative mt-4">
                         <input id="email" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('email', { required: 'Почта не может быть пустой' })} placeholder=" " />
@@ -73,13 +73,10 @@ export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, ha
 
                     <div className={`${!isCompany ? 'md:h-12 h-16' : 'h-0'} transition-height duration-700 overflow-hidden`}>
                         <hr className={`${!isCompany ? 'opacity-20' : 'opacity-0 invisible pointer-events-none'} transition-all duration-700 my-4 mx-auto w-[75%]`}></hr>
-                        <div className={`${!isCompany ? 'opacity-100' : 'opacity-0 invisible pointer-events-none'} transition-all duration-700 mt-auto text-gray-500 text-xs text-center`}>Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 cursor-pointer hover:underline'>условиями пользования.</Link></div>
+                        <div className={`${!isCompany ? 'opacity-100' : 'opacity-0 invisible pointer-events-none'} transition-all duration-700 mt-auto text-gray-500 text-xs text-center`}>Нажимая Регистрация, вы соглашаетесь с <Link to='/terms' target='_blank' rel="noopener noreferrer" className='text-blue-600 cursor-pointer hover:underline hover:brightness-90'>условиями пользования.</Link></div>
                     </div>
                 </form>
-
             </div>
-
-
         </div>
     )
 }
