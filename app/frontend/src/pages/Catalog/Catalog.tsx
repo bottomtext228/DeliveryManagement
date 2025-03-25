@@ -13,7 +13,7 @@ export default function CatalogAll() {
         queryFn: () => getAllProducts(),
         refetchOnWindowFocus: false
     });
-
+        
     if (isPending) {
         return <Loading></Loading>
     }
@@ -28,7 +28,7 @@ export default function CatalogAll() {
 
     return (<section className="my-4 md:my-16">
 
-   {/*      {user?.roles.includes('company') &&
+        {/*      {user?.roles.includes('company') &&
             <div>
                 <Link to='/catalog/add'>Добавить</Link>
             </div>

@@ -15,7 +15,7 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="flex justify-between pb-2 mx-auto text-lg font-semibold md:w-6xl max-w-screen md:text-2xl">
+                <div className="flex justify-between pb-2 px-2 mx-auto text-lg font-semibold md:w-6xl max-w-screen md:text-2xl">
                     <p className="">Медленно...</p>
                     <p className="">&mdash; это не про черепах!</p>
                 </div>
