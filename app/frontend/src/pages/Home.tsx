@@ -1,18 +1,24 @@
 import { Link } from "react-router-dom";
+import { ScrollAppear } from "../components/Animation/ScrollAppear";
 
 export default function Home() {
     return <>
         <div className="">
             <div className="bg-linear-to-b from-white to-neutral-300">
-                <div className="max-w-[1440px] w-screen h-fit mx-auto md:flex">
+                <div className="max-w-[1440px] w-[90%] h-fit mx-auto md:flex">
+
+                    {/* <ScrollAppear duration={1000} visibleClasses={'opacity-100 translate-x-0'} hiddenClasses={'opacity-0 -translate-x-20'}> */}
                     <div className="flex flex-col p-2 m-4 bg-orange-200 rounded-2xl min-w-70 w-fit max-w-86 h-52 md:m-8 md:p-4">
                         <p className="text-3xl font-bold">Выбирайте товар, </p>
                         <p className="mx-auto text-3xl font-bold">а мы доставим!</p>
                         <p className="mt-auto text-xl">Мы сэкономим ваше время и подберём для вас самый выгодный способ доставки</p>
                     </div>
+
+                    {/* <ScrollAppear duration={1000} visibleClasses="opacity-100 translate-x-0" hiddenClasses="opacity-0 translate-x-20"> */}
                     <div className="m-8 ml-auto">
                         <img src="/Img-page1.png" className="w-lg h-lg"></img>
                     </div>
+                    {/*     </ScrollAppear>  */}
                 </div>
 
                 <div className="flex justify-between pb-2 px-2 mx-auto text-lg font-semibold md:w-6xl max-w-screen md:text-2xl">
@@ -20,7 +26,15 @@ export default function Home() {
                     <p className="">&mdash; это не про черепах!</p>
                 </div>
             </div>
-            <div className="max-w-[1440px] w-screen mx-auto">
+<div className="w-8 h-[1000px]"></div>
+
+             <div className="relative">
+                 
+                 <ScrollAppear duration={1000} visibleClasses="opacity-100 translate-x-0" hiddenClasses="opacity-0 translate-x-100">
+                     <div className="w-62 h-32 bg-amber-300 text-center">vasya</div></ScrollAppear>
+             </div>
+  
+            <div className="max-w-[1440px] w-[90%] mx-auto">
                 <div className="md:flex">
                     <div className="flex flex-col items-center flex-1/6">
                         <img className="w-64 h-64 pt-4" src="/left_top.png" alt=""></img>
@@ -50,7 +64,7 @@ export default function Home() {
                 </div>
             </div>
             <div className="bg-orange-100 ">
-                <div className="max-w-[1440px] w-screen mx-auto h-96 md:my-64 my-24 flex md:flex-row flex-col gap-2 justify-around items-center">
+                <div className="max-w-[1440px] w-[90%] mx-auto h-96 md:my-64 my-24 flex md:flex-row flex-col gap-2 justify-around items-center">
                     <div className="">
                         <div className="p-4 text-2xl font-bold bg-gray-200 shadow-2xl rounded-2xl max-w-96 min-w-70 h-38">
                             МЫ ВСЕГДА НА СВЯЗИ СО СВОИМИ КЛИЕНТАМИ

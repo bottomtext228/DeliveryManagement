@@ -1,44 +1,6 @@
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
-
-function ScrollAppear({ children, visibleClasses, hiddenClasses, duration }: PropsWithChildren & { visibleClasses: string, hiddenClasses: string, duration: number }) {
-
-    const [isVisible, setIsVisible] = useState<boolean>(false);
-    const elementRef = useRef(null);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        if (elementRef.current) {
-            observer.observe(elementRef.current);
-        }
-
-        return () => {
-            if (elementRef.current) {
-                observer.unobserve(elementRef.current);
-            }
-        };
-    }, []);
-
-    return (
-        <div
-            ref={elementRef}
-            className={`transition-all ${isVisible ? visibleClasses : hiddenClasses}`}
-            style={{ transitionDuration: `${duration}ms` }}
-        >
-
-            {children}
-        </div>
-    );
+import { ScrollAppear } from "../components/Animation/ScrollAppear";
 
 
-}
 export default function About() {
     return (
         <div className="overflow-hidden">
