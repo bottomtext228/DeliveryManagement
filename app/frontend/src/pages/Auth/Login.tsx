@@ -4,9 +4,8 @@ import { setTokenToLocalStorage } from "../../helpers/localstorage.helper";
 import { AuthState, useAuthState } from "../../hooks/useAuth";
 import { AuthService } from "../../services/AuthService";
 import useUserStore from "../../store/user/userStore";
-import { IHtppValidationProblemDetails, ILoginResponse, IUser } from "../../types/types";
+import { ILoginResponse, IUser } from "../../types/types";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { isAxiosError } from "axios";
 import ServerError, { IServerError } from "../../components/ServerError";
 
 

@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
-import { IHtppValidationProblemDetails } from '../../types/types';
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface Props {
     handleGeneralSubmit: (e: FormValues) => void,

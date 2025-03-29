@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AuthService } from "../../services/AuthService";
-import { IHtppValidationProblemDetails, ILoginResponse, IUser } from "../../types/types";
+import { ILoginResponse, IUser } from "../../types/types";
 import { setTokenToLocalStorage } from "../../helpers/localstorage.helper";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthState, useAuthState } from "../../hooks/useAuth";
@@ -8,7 +8,6 @@ import useUserStore from "../../store/user/userStore";
 import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
 import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
 import ServerError, { IServerError } from "../../components/ServerError";
-import { isAxiosError } from "axios";
 
 interface FormValues {
     email: string

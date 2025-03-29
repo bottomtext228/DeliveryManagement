@@ -15,20 +15,18 @@ function App() {
 
     const checkAuth = async () => {
         const token = getTokenFromLocalStorage();
-        try {
-            if (token) {
-                const data = await AuthService.getProfile();
-                if (data) {
-                    login(data as IUser);
-                    return;
-                }
+
+        if (token) {
+            try {
+                const response = await AuthService.getProfile();
+                login(response.data as IUser);
+                return;
+            } catch (error: any) {
+                console.error(error);
             }
-           
-        } catch (error) {
-            console.error(error);
         }
-        
-        logout(); 
+
+        logout();
     };
 
     useEffect(() => {
