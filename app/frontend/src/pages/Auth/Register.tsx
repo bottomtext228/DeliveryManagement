@@ -7,6 +7,8 @@ import { AuthState, useAuthState } from "../../hooks/useAuth";
 import useUserStore from "../../store/user/userStore";
 import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
 import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
+import ServerError, { IServerError } from "../../components/ServerError";
+import { isAxiosError } from "axios";
 
 interface FormValues {
     email: string
@@ -29,7 +31,7 @@ enum FormState {
 };
 
 export default function Register() {
-    const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
+    const [serverError, setServerError] = useState<IServerError | null>(null);
     const navigate = useNavigate();
     const authState = useAuthState();
     const location = useLocation();
@@ -51,19 +53,13 @@ export default function Register() {
         try {
             const response = await AuthService.registration(data);
 
-            if (Object.prototype.hasOwnProperty.call(response, 'token')) {
-                const loginData = response as ILoginResponse;
-                setTokenToLocalStorage(loginData.token);
-                login({ email: loginData.email } as IUser);
-                navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
-            } else {
-                const problemDetails = response as IHtppValidationProblemDetails;
-                setServerError(problemDetails);
-            }
-
+            const loginData = response.data as ILoginResponse;
+            setTokenToLocalStorage(loginData.token);
+            login(loginData as IUser);
+            navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
         }
         catch (error: any) {
-            console.error(error);
+            setServerError(error);
         }
 
     }
@@ -83,12 +79,12 @@ export default function Register() {
     const handleGeneralSubmit = async (data: FormValues) => {
         if (isCompany) {
             try {
-                let response = await AuthService.checkEmail(data.email);
+                const response = await AuthService.checkEmail(data.email);
                 if (response.data.available) {
                     setFormState(FormState.COMPANY);
                     setServerError(null);
                 } else {
-                    setServerError({ errors: { Email: response.data.message } });
+                    setServerError(response.data.message);
                 }
             } catch (error: any) {
                 console.error(error);
@@ -114,13 +110,7 @@ export default function Register() {
         <div className="my-4 md:my-16 max-w-md w-[90%] mx-auto">
             {serverError ?
                 <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
-                    {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
-                        <div>
-                            Неправильная почта и/или пароль
-                        </div> : /** Bad Request - validation errors*/
-                        <div>
-                            {serverError.errors && Object.keys(serverError.errors).map(key => <li key={key}>{(serverError.errors as any)[key]}</li>)}
-                        </div>}
+                    <ServerError error={serverError}></ServerError>
                 </div> : <></>}
             {formState == FormState.GENERAL ?
                 <>

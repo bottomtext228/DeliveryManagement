@@ -6,6 +6,8 @@ import { AuthService } from "../../services/AuthService";
 import useUserStore from "../../store/user/userStore";
 import { IHtppValidationProblemDetails, ILoginResponse, IUser } from "../../types/types";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { isAxiosError } from "axios";
+import ServerError, { IServerError } from "../../components/ServerError";
 
 
 interface FormValues {
@@ -15,7 +17,7 @@ interface FormValues {
 
 
 export default function Login() {
-    const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
+    const [serverError, setServerError] = useState<IServerError | null>(null);
     const navigate = useNavigate();
     const authState = useAuthState();
     const location = useLocation();
@@ -35,17 +37,16 @@ export default function Login() {
 
     const loginRequest = async ({ email, password }: FormValues) => {
 
-        const data = await AuthService.login({ email, password });
+        try {
+            const response = await AuthService.login({ email, password });
 
-        if (Object.prototype.hasOwnProperty.call(data, 'token')) {
-            const loginData = data as ILoginResponse;
+            const loginData = response.data as ILoginResponse;
             setTokenToLocalStorage(loginData.token);
             login(loginData as IUser);
             navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
-
-        } else {
-            const problemDetails = data as IHtppValidationProblemDetails;
-            setServerError(problemDetails);
+        }
+        catch (error: any) {
+            setServerError(error);
         }
     }
 
@@ -70,18 +71,15 @@ export default function Login() {
         </div>
     }
 
+
+
     return (<>
         <div className="my-4 md:my-16 max-w-md w-[90%] mx-auto">
-            {serverError ?
+            {serverError &&
                 <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
-                    {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
-                        <div>
-                            <li>Неправильная почта и/или пароль</li>
-                        </div> : /** Bad Request - validation errors*/
-                        <div>
-                            {serverError.errors && Object.keys(serverError.errors).map(key => <li key={key}>{(serverError.errors as any)[key]}</li>)}
-                        </div>}
-                </div> : <></>}
+                    <ServerError error={serverError}></ServerError>
+                </div>
+            }
             <div className="p-6 border border-gray-300 shadow-xl rounded-2xl h-fit">
                 <div className="flex items-center justify-between">
                     <h3 className="text-2xl font-bold text-neutral-800">Войти в Terrapin</h3>
