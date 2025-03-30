@@ -19,7 +19,6 @@ export default function Map() {
     // * implement user map and order system
     // * decide what to do with ordering products from different companies.
     // * fix bugs due to useQuery() when token expires and api returns 401 code
-    // * rewrite AuthService using Axios
     const [selectedPickUpPoints, setSelectedPickUpPoints] = useState<Town[]>([]);
     const [selectedStocks, setSelectedStocks] = useState<Town[]>([]);
     const [currentMode, setCurrentMode] = useState<MapModes>(MapModes.SetStocks);
