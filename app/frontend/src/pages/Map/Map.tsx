@@ -13,7 +13,6 @@ import Loading from '../../components/Loading/Loading';
 
 
 export default function Map() {
-
     // TODO:
     // * implement shopping cart
     // * implement user map and order system
@@ -115,7 +114,7 @@ export default function Map() {
 
     return (<>
 
-        <div className='flex w-[1200px] h-[700px] ml-auto mr-auto gap-12 mb-5 mt-5'>
+        <div className='flex md:flex-row flex-col max-w-7xl   xl w-[90%] h-[456x] ml-auto mr-auto gap-12 mb-5 mt-5'>
             <TownsSidebar stocks={selectedStocks} pickUpPoints={selectedPickUpPoints} currentMode={currentMode} setCurrentMode={setCurrentMode} handleSaveChangesClick={handleSaveChangesClick} handleItemClick={handleSidebarItemClick}></TownsSidebar>
             <TownsMap towns={towns} roads={roads} handleTownClick={handleTownClick}></TownsMap>
         </div>

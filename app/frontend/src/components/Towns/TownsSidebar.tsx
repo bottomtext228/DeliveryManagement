@@ -30,15 +30,17 @@ export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCur
 
     return (
         <>
-            <div className="flex flex-col border-2 rounded-2xl flex-1/4">
+            <div className="flex flex-col border-2 rounded-2xl flex-1/4 max-h-full">
                 <div className="flex-1/12 text-3xl w-[90%] font-semibold ml-auto mr-auto border-b-2 border-black p-2 text-center">
                     {currentMode == MapModes.SetStocks ? 'Склады' : 'Пункты выдачи'}
                 </div>
-                <div className="flex-9/12 overflow-auto h-[100%] mt-2">
-                    <ul>
-                        {currentMode == MapModes.SetStocks ? mapItems(stocks) : mapItems(pickUpPoints)}
+                <div className="flex-9/12 overflow-y-scroll basis-auto  h-92 mt-2">
+                    <div className="">
+                        <ul>
+                            {currentMode == MapModes.SetStocks ? mapItems(stocks) : mapItems(pickUpPoints)}
 
-                    </ul>
+                        </ul>
+                    </div>
                 </div>
                 <div className="flex flex-col border-t-2 flex-2/12">
 
