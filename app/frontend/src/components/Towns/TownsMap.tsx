@@ -35,7 +35,7 @@ export default function TownsMap({ towns, roads, handleTownClick }: Props) {
     </>);
 
     return (
-        <div className='w-full h-full border-2 border-gray-500 rounded-2xl  overflow-auto'>
+        <div className='flex-3/4 w-full min-h-full border-2 border-gray-500 rounded-2xl overflow-auto'>
             <svg className='w-2xl h-120'>
                 <Graph graph={dataSample} linkComponent={DefaultLink} nodeComponent={node} />
             </svg>
