@@ -101,7 +101,7 @@ export default function Map() {
 
         if (currentMode == MapModes.SetPickUpPoints) {
             const pickUpPoints = [...selectedPickUpPoints];
-            pickUpPoints.splice(pickUpPoints.indexOf(town));
+            pickUpPoints.splice(pickUpPoints.indexOf(town), 1);
             setSelectedPickUpPoints(pickUpPoints);
         }
 
@@ -114,9 +114,9 @@ export default function Map() {
 
     return (<>
 
-        <div className='flex md:flex-row flex-col max-w-7xl w-[90%] h-[700px] ml-auto mr-auto gap-12 mb-5 mt-5'>
+        <div className='flex md:flex-row flex-col max-w-7xl w-[90%] h-[700px] min-h-fit ml-auto mr-auto gap-12 mb-5 mt-5'>
                  <TownsSidebar stocks={selectedStocks} pickUpPoints={selectedPickUpPoints} currentMode={currentMode} setCurrentMode={setCurrentMode} handleSaveChangesClick={handleSaveChangesClick} handleItemClick={handleSidebarItemClick}></TownsSidebar>
-            <TownsMap towns={towns} roads={roads} handleTownClick={handleTownClick}></TownsMap>
+            <TownsMap selectedTowns={currentMode == MapModes.SetStocks ? selectedStocks : selectedPickUpPoints} towns={towns} roads={roads} handleTownClick={handleTownClick}></TownsMap>
        
       {/*       <div className='bg-amber-300 flex-1/4'>
                 vasya

@@ -5,14 +5,15 @@ import { NodeProvidedProps } from '@visx/network/lib/types';
 interface Props {
     towns: Town[],
     roads: number[][],
+    selectedTowns: Town[]
     handleTownClick: (id: number) => void;
 }
 
-export default function TownsMap({ towns, roads, handleTownClick }: Props) {
+export default function TownsMap({ towns, roads, selectedTowns, handleTownClick }: Props) {
 
 
     const nodes: CustomeNode[] = towns.map((town: Town) => {
-        return { x: town.position.x, y: town.position.y, name: town.name, id: town.id }
+        return { x: town.position.x, y: town.position.y, name: town.name, id: town.id, selected: selectedTowns.includes(town)}
     });
 
 
@@ -30,12 +31,14 @@ export default function TownsMap({ towns, roads, handleTownClick }: Props) {
     };
 
     const node = ({ node }: NodeProvidedProps<CustomeNode>) => (<>
-        <text x={-10} y={-10}>{node.name}</text>
-        <circle r={10} fill="blue" onClick={() => handleTownClick(node.id)}></circle>
+        <text dominantBaseline='middle' textAnchor='middle' x={0} y={-20} fontWeight={'bold'}>{node.name}</text>
+        <circle r={10} fill={node.selected ? 'red' : 'blue'} onClick={() => handleTownClick(node.id)}></circle>
+        {node.selected && <circle r={12} fill='none' stroke='black'></circle>}
+    
     </>);
 
     return (
-        <div className='flex-3/4 w-full min-h-full border-2 border-gray-500 rounded-2xl overflow-auto'>
+        <div className='w-full min-h-full overflow-auto border-2 border-gray-500 flex-3/4 rounded-2xl'>
             <svg className='w-2xl h-120'>
                 <Graph graph={dataSample} linkComponent={DefaultLink} nodeComponent={node} />
             </svg>

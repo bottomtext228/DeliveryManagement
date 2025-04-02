@@ -60,7 +60,7 @@ export default function Navbar() {
 
 
                 </div>
-                <ul className='mt-1.5'>
+                <ul className='mt-1.5 font-semibold'>
 
                     <li className='p-2'>
                         <NavLink to='/account' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Аккаунт</NavLink>
@@ -83,7 +83,7 @@ export default function Navbar() {
                         </button>
                         <div className='w-full text-lg opacity-80 md:hidden'>Навигация</div>
                     </div>
-                    <ul className="block mt-1.5 md:flex md:ml-2 md:mt-0">
+                    <ul className="block mt-1.5 md:flex md:ml-2 md:mt-0 font-semibold">
                         <li className="flex items-center justify-center p-2 w-18">
                             <NavLink to='/' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleNavbarClick}>Главная</NavLink>
                         </li>

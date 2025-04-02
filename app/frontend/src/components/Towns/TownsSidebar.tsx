@@ -1,5 +1,6 @@
 import { MapModes, Town } from "../../types/types";
 import TrashCan from '../../assets/trash-can.svg';
+import { useState } from "react";
 
 interface Props {
     currentMode: MapModes,
@@ -12,6 +13,8 @@ interface Props {
 
 
 export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCurrentMode, handleSaveChangesClick, handleItemClick }: Props) {
+
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
 
     const mapItems = (array: Town[]): JSX.Element[] => {
@@ -30,7 +33,14 @@ export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCur
 
     return (
         <>
-            <div className="flex flex-col border-2 rounded-2xl flex-1/4">
+            
+            <div className="flex items-center justify-center mr-auto md:hidden">
+                <button className="block w-16 h-16 md:hidden opacity-85" onClick={() => setIsOpen(true)}>
+                    <img className="w-full h-full" src="location.svg"></img>
+                </button>
+                <div className="text-lg font-semibold">- Выбранные города</div>
+            </div>
+            <div className={`md:flex md:flex-col md:border-2 md:rounded-2xl md:flex-1/4 bg-white h-full fixed md:static top-0 w-full max-w-[15em] md:max-w-none ${isOpen ? 'right-0' : '-right-full'} z-50 transition-all duration-300 ease-in-out`}>
                 <div className="flex-1/12 text-3xl w-[90%] font-semibold ml-auto mr-auto border-b-2 border-black p-2 text-center">
                     {currentMode == MapModes.SetStocks ? 'Склады' : 'Пункты выдачи'}
                 </div>
@@ -53,6 +63,7 @@ export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCur
                     </button>
                 </div>
             </div>
+            <div id="overlay" onClick={() => { setIsOpen(false) }} className={`fixed z-[9] inset-0 ${isOpen ? 'block' : 'hidden'} bg-[rgba(0,0,0,0.1)] transition-colors duration-300`}></div>
         </>
     )
 }

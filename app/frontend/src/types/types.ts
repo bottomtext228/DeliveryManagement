@@ -94,7 +94,8 @@ export interface CustomeNode {
     x: number,
     y: number,
     name: string,
-    id: number
+    id: number,
+    selected: boolean
 }
 
 export interface Vector2D {
