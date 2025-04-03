@@ -6,6 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { getProduct } from "../../api/catalog/getProduct";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
+import { InputHTMLAttributes, useEffect } from "react";
 
 
 
@@ -26,6 +27,10 @@ export default function CatalogEdit() {
     const navigate = useNavigate();
 
 
+ /*    useEffect(() => {
+        (document.getElementById('weight') as HTMLInputElement).style.width = product.weight.length + 'ch';
+    }, []);
+ */
     if (isNaN(parseInt(id!))) {
         return <span>Not found...</span>
     }
@@ -69,7 +74,7 @@ export default function CatalogEdit() {
         <form onSubmit={handleSubmit(onSubmit)} className="flex md:flex-row flex-col max-w-[1440px] w-[90%] mx-auto my-16">
 
             <div className="mr-8 flex-1/3">
-                <img  className="border border-gray-200 rounded-xl" src={"data:image/png;base64," + product.image}></img>
+                <img className="border border-gray-200 rounded-xl" src={"data:image/png;base64," + product.image}></img>
             </div>
 
             <div className="mt-8 flex-1/3">
@@ -79,31 +84,33 @@ export default function CatalogEdit() {
                 <div>
                     <table>
                         <caption className="float-left mb-4 font-bold">Характеристики:</caption>
-                        <tbody>
+                        <tbody className="text-left font-bold">
                             <tr>
-                                <td>Артикул</td>
-                                <th>{product.id}</th>
+                                <th className="font-normal">Артикул</th>
+                                <td>{product.id}</td>
                             </tr>
                             <tr>
-                                <td>Вес</td>
-                                <th className="flex h-6">
-                                    <div className="mb-3 input-group">
-                                        <input id="weight" type="number" min="0" step="0.0001" className="w-16" {...register('weight', { required: 'Вес не может быть пустым!' })}></input>
-                                    </div>
+                                <th className="font-normal">Вес</th>
+                                <td className="flex h-6">
+
+                                    <input id="weight" type="number" min="0" step="0.0001" className="w-16" onInput={(e) => {
+                                        e.currentTarget.style.width = (e.currentTarget.value.length) + 'ch';
+                                    }
+                                    } {...register('weight', { required: 'Вес не может быть пустым!' })}></input>
                                     {errors.weight && <div className="text-red-500">{errors.weight.message}</div>} кг
-                                </th>
+                                </td>
                             </tr>
                             <tr>
-                                <td>Длина</td>
-                                <th>{product.size.x} м</th>
+                                <th className="font-normal">Длина</th>
+                                <td>{product.size.x} м</td>
                             </tr>
                             <tr>
-                                <td>Ширина</td>
-                                <th>{product.size.y} м</th>
+                                <th className="font-normal">Ширина</th>
+                                <td>{product.size.y} м</td>
                             </tr>
                             <tr>
-                                <td>Высота</td>
-                                <th>{product.size.z} м</th>
+                                <th className="font-normal">Высота</th>
+                                <td>{product.size.z} м</td>
                             </tr>
                         </tbody>
                     </table>

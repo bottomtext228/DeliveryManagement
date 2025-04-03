@@ -61,32 +61,28 @@ export default function CatalogDetail() {
 
                     </div>
                     <div>
-                        <table>
+                        <table className="text-left font-bold">
                             <caption className="float-left mb-4 font-bold">Характеристики:</caption>
                             <tbody>
                                 <tr>
-                                    <td>Артикул</td>
-                                    <th>{product.id}</th>
+                                    <th className="font-normal">Артикул</th>
+                                    <td>{product.id}</td>
                                 </tr>
                                 <tr>
-                                    <td>Вес</td>
-                                    <th>{product.weight} кг</th>
+                                    <th className="font-normal">Вес</th>
+                                    <td>{product.weight} кг</td>
                                 </tr>
                                 <tr>
-                                    <td>Длина</td>
-                                    <th>{product.size.x} м</th>
+                                    <th className="font-normal">Длина</th>
+                                    <td>{product.size.x} м</td>
                                 </tr>
                                 <tr>
-                                    <td>Ширина</td>
-                                    <th>{product.size.y} м</th>
+                                    <th className="font-normal">Ширина</th>
+                                    <td>{product.size.y} м</td>
                                 </tr>
                                 <tr>
-                                    <td>Высота</td>
-                                    <th>{product.size.z} м</th>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <th></th>
+                                    <th className="font-normal">Высота</th>
+                                    <td>{product.size.z} м</td>
                                 </tr>
                             </tbody>
                         </table>
