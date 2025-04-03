@@ -13,7 +13,7 @@ export default function CatalogAll() {
         queryFn: () => getAllProducts(),
         refetchOnWindowFocus: false
     });
-        
+
     if (isPending) {
         return <Loading></Loading>
     }
@@ -45,10 +45,27 @@ export default function CatalogAll() {
             </div>
         </div> */}
 
-        <div className="max-w-[1440px] w-[90%]  mx-auto grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
-            {products.map((product, index) => {
-                return <Product product={product} key={index}></Product>
-            })}
+        <div className="max-w-[1440px] w-[90%]  mx-auto">
+            {/* <div className='w-fit'> */}
+            {user?.roles.includes('company') &&
+                <Link to='/catalog/add' className="w-fit bg-amber-500 hover:bg-amber-600 flex justify-between gap-2 items-center rounded-xl text-white font-semibold p-2">
+                    <div className="text-lg text-center">Добавить</div>
+                    <img className="w-4 h-4" src='/plus.svg'></img>
+                </Link>
+            }
+            {/* </div> */}
+
+            {products.length > 0 ?
+                <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
+                    {products.map((product, index) => {
+                        return <Product product={product} key={index}></Product>
+                    })}
+                </div>
+                :
+                <div className="mx-auto my-8 text-xl w-fit font-mono">
+                    Пока тут пусто...
+                </div>
+            }
         </div>
 
     </section>
