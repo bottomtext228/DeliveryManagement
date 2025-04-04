@@ -6,8 +6,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { getProduct } from "../../api/catalog/getProduct";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
-import { InputHTMLAttributes, useEffect } from "react";
-
 
 
 interface FormValues {
@@ -27,17 +25,18 @@ export default function CatalogEdit() {
     const navigate = useNavigate();
 
 
- /*    useEffect(() => {
-        (document.getElementById('weight') as HTMLInputElement).style.width = product.weight.length + 'ch';
-    }, []);
- */
+    /*    useEffect(() => {
+           (document.getElementById('weight') as HTMLInputElement).style.width = product.weight.length + 'ch';
+       }, []);
+    */
     if (isNaN(parseInt(id!))) {
         return <span>Not found...</span>
     }
 
     const { isPending, isError, data, error } = useQuery({
         queryKey: ['product', id],
-        queryFn: () => getProduct(parseInt(id!))
+        queryFn: () => getProduct(parseInt(id!)),
+        refetchOnWindowFocus: false
     });
 
     if (isPending) {
@@ -69,7 +68,7 @@ export default function CatalogEdit() {
         editProduct(parseInt(id!), dto).then(() => navigate(`/catalog/${id}`)).catch(e => console.error(e));
 
     }
-
+    console.log(product.weight.toString().length)
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex md:flex-row flex-col max-w-[1440px] w-[90%] mx-auto my-16">
 
@@ -93,15 +92,27 @@ export default function CatalogEdit() {
                                 <th className="font-normal">Вес</th>
                                 <td className="flex h-6">
 
-                                    <input id="weight" type="number" min="0" step="0.0001" className="w-16" onInput={(e) => {
+                                    <input id="weight" type="number" min="0" step="0.0001" className="mr-1" onInput={(e) => {
                                         e.currentTarget.style.width = (e.currentTarget.value.length) + 'ch';
                                     }
-                                    } {...register('weight', { required: 'Вес не может быть пустым!' })}></input>
+                                    } {...register('weight', { required: 'Вес не может быть пустым!' })}
+                                        style={{ width: product.weight.toString().length + 'ch' }}
+                                    />
                                     {errors.weight && <div className="text-red-500">{errors.weight.message}</div>} кг
                                 </td>
                             </tr>
                             <tr>
                                 <th className="font-normal">Длина</th>
+
+                                <input id="price" type="number" min="0" step="0.0001" className="mr-1"
+                                    onInput={(e) => {
+                                        e.currentTarget.style.width = (e.currentTarget.value.length) + 'ch';
+                                    }}
+                                    style={{ width: product.price.toString().length + 'ch' }}
+                                    {...register('price', { required: 'Стоимость не может быть пустой!' })} placeholder=" " />
+
+                                {errors.price && <div className="text-red-500">{errors.price.message}</div>}
+
                                 <td>{product.size.x} м</td>
                             </tr>
                             <tr>

@@ -16,22 +16,26 @@ namespace backend.Dtos.Catalog
         [Display(Name = "Описание")]
         public string Description { get; set; } = string.Empty;
 
+        [Range(0, float.MaxValue)]
         [Required(ErrorMessage = "Стоимость не может быть пустой!")]
         [Display(Name = "Стоимость")]
         public float Price { get; set; }
-
+        [Range(0, float.MaxValue)]
         [Required(ErrorMessage = "Длина не может быть пустой!")]
         [Display(Name = "Длина")]
         public float SizeX { get; set; }
 
+        [Range(0, float.MaxValue)]
         [Required(ErrorMessage = "Ширина не может быть пустой!")]
         [Display(Name = "Ширина")]
         public float SizeY { get; set; }
 
+        [Range(0, float.MaxValue)]
         [Required(ErrorMessage = "Высота не может быть пустой!")]
         [Display(Name = "Высота")]
         public float SizeZ { get; set; }
 
+        [Range(0, float.MaxValue)]
         [Required(ErrorMessage = "Вес не может быть пустым!")]
         [Display(Name = "Вес")]
         public float Weight { get; set; }

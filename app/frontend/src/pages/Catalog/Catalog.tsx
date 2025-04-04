@@ -31,7 +31,7 @@ export default function CatalogAll() {
         <div className="max-w-[1440px] w-[90%]  mx-auto">
      
             {user?.roles.includes('company') &&
-                <Link to='/catalog/add' className="w-fit bg-amber-500 hover:bg-amber-600 flex justify-between gap-1.5 items-center rounded-xl text-white font-semibold p-2">
+                <Link to='/catalog/add' className="mb-8 w-fit bg-amber-500 hover:bg-amber-600 flex justify-between gap-1.5 items-center rounded-xl text-white font-semibold p-2">
                     <div className="text-lg">Добавить</div>
                     <img className="w-4 h-4" src='/plus.svg'></img>
                 </Link>
