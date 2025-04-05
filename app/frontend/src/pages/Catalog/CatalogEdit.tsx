@@ -1,11 +1,12 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { EditProductDto } from "../../types/types";
 import { editProduct } from "../../api/catalog/editProduct";
-
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getProduct } from "../../api/catalog/getProduct";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
+import ServerError, { IServerError } from "../../components/ServerError";
+import { useEffect, useState } from "react";
 
 
 interface FormValues {
@@ -21,23 +22,37 @@ interface FormValues {
 
 export default function CatalogEdit() {
     const { id } = useParams();
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormValues>();
+    const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm<FormValues>();
     const navigate = useNavigate();
+    const [serverError, setServerError] = useState<IServerError | null>(null);
 
-
-    /*    useEffect(() => {
-           (document.getElementById('weight') as HTMLInputElement).style.width = product.weight.length + 'ch';
-       }, []);
-    */
-    if (isNaN(parseInt(id!))) {
-        return <span>Not found...</span>
-    }
+    // TODO: show server errors, fix inputs
+    /*     if (isNaN(parseInt(id!))) {
+            return <span>Not found...</span>
+        } */
 
     const { isPending, isError, data, error } = useQuery({
         queryKey: ['product', id],
         queryFn: () => getProduct(parseInt(id!)),
         refetchOnWindowFocus: false
     });
+
+
+    useEffect(() => {
+        if (data) {
+            const product = data.data;
+            reset({
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                sizeX: product.size.x,
+                sizeY: product.size.y,
+                sizeZ: product.size.z,
+                weight: product.weight
+            });
+        }
+    }, [data, reset]);
+
 
     if (isPending) {
         return <Loading></Loading>
@@ -46,17 +61,17 @@ export default function CatalogEdit() {
     if (isError) {
         return <span>Error: {error.message}</span>
     }
-
     const product = data.data;
-    setValue('name', product.name);
-    setValue('description', product.description);
-    setValue('price', product.price);
-    setValue('weight', product.weight);
-    setValue('sizeX', product.size.x);
-    setValue('sizeY', product.size.y);
-    setValue('sizeZ', product.size.z);
-
-
+    /*     const product = data.data;
+        setValue('name', product.name);
+        setValue('description', product.description);
+        setValue('price', product.price);
+        setValue('weight', product.weight);
+        setValue('sizeX', product.size.x);
+        setValue('sizeY', product.size.y);
+        setValue('sizeZ', product.size.z); */
+    /*  const product = data.data;
+  */
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
 
@@ -65,81 +80,111 @@ export default function CatalogEdit() {
             name: data.name, description: data.description, weight: data.weight,
             price: data.price, sizeX: data.sizeX, sizeY: data.sizeY, sizeZ: data.sizeZ, image: data.image?.[0]
         };
-        editProduct(parseInt(id!), dto).then(() => navigate(`/catalog/${id}`)).catch(e => console.error(e));
+        editProduct(parseInt(id!), dto).then(() => navigate(`/catalog/${id}`)).catch(error => {
+            setServerError(error);
+        });
 
     }
-    console.log(product.weight.toString().length)
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex md:flex-row flex-col max-w-[1440px] w-[90%] mx-auto my-16">
 
-            <div className="mr-8 flex-1/3">
-                <img className="border border-gray-200 rounded-xl" src={"data:image/png;base64," + product.image}></img>
-            </div>
-
-            <div className="mt-8 flex-1/3">
-                <div className="mb-4">
-                    <p className="font-bold">{product.name}</p>
-                </div>
-                <div>
-                    <table>
-                        <caption className="float-left mb-4 font-bold">Характеристики:</caption>
-                        <tbody className="text-left font-bold">
-                            <tr>
-                                <th className="font-normal">Артикул</th>
-                                <td>{product.id}</td>
-                            </tr>
-                            <tr>
-                                <th className="font-normal">Вес</th>
-                                <td className="flex h-6">
-
-                                    <input id="weight" type="number" min="0" step="0.0001" className="mr-1" onInput={(e) => {
-                                        e.currentTarget.style.width = (e.currentTarget.value.length) + 'ch';
-                                    }
-                                    } {...register('weight', { required: 'Вес не может быть пустым!' })}
-                                        style={{ width: product.weight.toString().length + 'ch' }}
-                                    />
-                                    {errors.weight && <div className="text-red-500">{errors.weight.message}</div>} кг
-                                </td>
-                            </tr>
-                            <tr>
-                                <th className="font-normal">Длина</th>
-
-                                <input id="price" type="number" min="0" step="0.0001" className="mr-1"
-                                    onInput={(e) => {
-                                        e.currentTarget.style.width = (e.currentTarget.value.length) + 'ch';
-                                    }}
-                                    style={{ width: product.price.toString().length + 'ch' }}
-                                    {...register('price', { required: 'Стоимость не может быть пустой!' })} placeholder=" " />
-
-                                {errors.price && <div className="text-red-500">{errors.price.message}</div>}
-
-                                <td>{product.size.x} м</td>
-                            </tr>
-                            <tr>
-                                <th className="font-normal">Ширина</th>
-                                <td>{product.size.y} м</td>
-                            </tr>
-                            <tr>
-                                <th className="font-normal">Высота</th>
-                                <td>{product.size.z} м</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div className="mt-12">
-                    <h3 className="font-bold">Описание:</h3>
-                    <p>{product.description}</p>
-                </div>
-            </div>
-            <div className="mt-6 flex-1/3">
-                <div className="flex flex-col h-48 border-2 max-w-72 border-amber-500 rounded-2xl">
-                    <div className="p-6 font-semibold">{product.price} ₽</div>
-                    <div className="mt-auto mb-2 mx-auto w-[75%] flex flex-col gap-2">
-                        <button type="submit" className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">Сохранить</button>
+        <>
+            <div className="max-w-[1440px] w-[90%] mx-auto my-4">
+                <Link to='/catalog' className="flex items-center justify-center w-20 p-2 mb-4 text-white rounded-lg bg-amber-500 hover:bg-amber-600">
+                    <img src="/arrow-left.svg" className="w-8"></img>
+                </Link>
+                {serverError &&
+                    <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit max-w-xl w-[90%] mx-auto ">
+                        <ServerError error={serverError}></ServerError>
                     </div>
-                </div>
+                }
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
+                    <div className="flex-1/3">
+                        <img className="border border-gray-200 rounded-xl" src={"data:image/png;base64," + product.image}></img>
+                    </div>
+
+                    <div className="mt-8 flex-1/3">
+                        <div className="mb-4">
+                            <div>
+                                <input id="name" className="p-0.5 w-full font-bold border border-gray-200 rounded-md outline-none md:w-54" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />
+                                {errors.name && <div className="text-red-500">{errors.name.message}</div>}
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <h2 className="float-left mb-4 font-bold">Характеристики:</h2>
+                            <div className="flex flex-col gap-y-1">
+                                <div className="flex gap-16">
+                                    <div className="w-18">Артикул</div>
+                                    <div className="font-bold">{product.id}</div>
+                                </div>
+                                <div className="flex gap-16">
+                                    <div className="w-18">Вес</div>
+                                    <div className="font-bold">
+                                        <input id="weight" type="number" min={0} max={1000} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
+                                            {...register('weight', { required: 'Вес не может быть пустым!' })}
+                                        />
+                                        <span>кг</span>
+                                        {errors.weight && <div className="text-red-500">{errors.weight.message}</div>}
+                                    </div>
+
+                                </div>
+                                <div className="flex gap-16">
+                                    <div className="w-18">Длина</div>
+                                    <div className="font-bold">
+                                        <input id="sizeX" type="number" min={0} max={10} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
+                                            {...register('sizeX', { required: 'Ширина не может быть пустой!' })} placeholder=" " 
+                                        />
+                                        <span>м</span>
+                                        {errors.sizeX && <div className="text-red-500">{errors.sizeX.message}</div>}
+                                    </div>
+                                </div>
+                                <div className="flex gap-16">
+                                    <div className="w-18">Ширина</div>
+                                    <div className="font-bold">
+                                        <input id="sizeY" type="number" min={0} max={10} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
+                                            {...register('sizeY', { required: 'Ширина не может быть пустой!' })} placeholder=" " 
+                                        />
+                                        <span>м</span>
+                                        {errors.sizeY && <div className="text-red-500">{errors.sizeY.message}</div>}
+                                    </div>
+
+
+                                </div>
+                                <div className="flex gap-16">
+                                    <div className="w-18">Высота</div>
+                                    <div className="font-bold">
+                                        <input id="sizeZ" type="number" min={0} max={10} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
+                                            {...register('sizeZ', { required: 'Высота не может быть пустой!' })} placeholder=" "
+                                        />
+                                        <span>м</span>
+                                        {errors.sizeZ && <div className="text-red-500">{errors.sizeZ.message}</div>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-12">
+                            <h3 className="font-bold">Описание:</h3>
+                            <div>
+                                <textarea id="description" className="w-full border border-gray-200 rounded-md outline-none h-38" {...register('description', { required: 'Описание не может быть пустым!' })} placeholder=" " />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-6 flex-1/3">
+                        <div className="flex flex-col h-48 border-2 max-w-72 border-amber-500 rounded-2xl">
+                            <div className="p-6 font-semibold ">
+                                <input id="price" type="number" min={0} max={1000000} className="border p-0.5 border-gray-200 rounded-md outline-none w-18"
+                                    {...register('price', { required: 'Стоимость не может быть пустой!' })} placeholder=" "
+                                />
+                                <span>₽</span>
+                                {errors.price && <div className="text-red-500">{errors.price.message}</div>} </div>
+                            <div className="mt-auto mb-2 mx-auto w-[75%] flex flex-col gap-2">
+                                <button type="submit" className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">Сохранить</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
+        </>
     )
 
 }

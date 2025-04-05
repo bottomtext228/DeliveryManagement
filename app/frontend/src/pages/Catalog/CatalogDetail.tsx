@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query";
 import { getProduct } from "../../api/catalog/getProduct";
 import { deleteProduct } from "../../api/catalog/deleteProduct";
@@ -46,13 +46,13 @@ export default function CatalogDetail() {
 
     return (
         <div className="max-w-[1440px] w-[90%] mx-auto my-4">
-            <button onClick={() => navigate(-1)} className="w-20 p-2 bg-amber-500 hover:bg-amber-600  rounded-lg mb-4 text-white flex justify-center items-center">
+            <Link to='/catalog' className="flex items-center justify-center w-20 p-2 mb-4 text-white rounded-lg bg-amber-500 hover:bg-amber-600">
                 <img src="/arrow-left.svg" className="w-8"></img>
-            </button>
+            </Link>
 
-            <div className="flex md:flex-row flex-col">
+            <div className="flex flex-col md:flex-row gap-x-8">
 
-                <div className="mr-8 flex-1/3">
+                <div className="flex-1/3">
                     <img className="border border-gray-200 rounded-xl " src={"data:image/png;base64," + product.image}></img>
                 </div>
                 <div className="mt-8 flex-1/3">
@@ -61,7 +61,7 @@ export default function CatalogDetail() {
 
                     </div>
                     <div>
-                        <table className="text-left font-bold">
+                        <table className="font-bold text-left">
                             <caption className="float-left mb-4 font-bold">Характеристики:</caption>
                             <tbody>
                                 <tr>
