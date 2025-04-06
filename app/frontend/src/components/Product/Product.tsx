@@ -2,11 +2,12 @@ import { Link } from "react-router-dom";
 import { IProduct } from "../../types/types";
 
 interface Props {
-    product: IProduct
+    product: IProduct,
+    renderCart: boolean
 }
 
 
-export default function Product({ product }: Props) {
+export default function Product({ product, renderCart }: Props) {
     return (
         <article className="flex flex-col w-full h-full">
             <div className="mx-auto flex-8/10">
@@ -19,9 +20,11 @@ export default function Product({ product }: Props) {
                 <p className="font-bold">{product.price} ₽</p>
                 <p className="overflow-hidden font-semibold whitespace-nowrap">{product.name}</p>
             </div>
-            <button className="flex items-center justify-center w-full p-2 font-semibold text-black rounded-xl bg-amber-500 hover:bg-amber-600">
-                В корзину
-            </button>
+            {renderCart &&
+                <button className="flex items-center justify-center w-full p-2 font-semibold text-black rounded-xl bg-amber-500 hover:bg-amber-600">
+                    В корзину
+                </button>
+            }
         </article>
     )
 }

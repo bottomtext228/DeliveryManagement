@@ -37,7 +37,7 @@ export default function Dropdown() {
                     {user ?
                         <div>
                             <div className="w-full px-4 py-1 text-left text-black opacity-85">
-                                <span className='font-semibold'>{user?.email}</span> <span>{user?.roles[0]}</span>
+                                <div className='font-semibold text-ellipsis whitespace-pre-wrap overflow-hidden'>{user?.email}</div> <span>{user?.roles[0]}</span>
                             </div>
                         </div> :
                         <Link onClick={handleClick} to='/auth/login' className='block px-4 py-2 opacity-85 hover:bg-neutral-200'>
