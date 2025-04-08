@@ -24,7 +24,7 @@ namespace backend.Controllers
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             
-            _dbContext.Orders.AddAsync(new Order { UserId = currentUserId, ProductId = model.ProductId, TownIds = });
+           /*  _dbContext.Orders.AddAsync(new Order { UserId = currentUserId, ProductId = model.ProductId, TownIds = }); */
             return Ok();
         }
 

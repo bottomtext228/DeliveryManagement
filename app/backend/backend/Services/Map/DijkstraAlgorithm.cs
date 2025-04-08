@@ -43,7 +43,7 @@ namespace backend.Services
 
 
 
-        public Tuple<int, int, List<Town>> GetFastestPath(Town from, Town to) // retuns hours, price, path
+        public Tuple<int, int, List<Town>> GetFastestPath(Town from, Town to) // returns hours, price, path
         {
             var TimeAdjacencyMatrix = Graph.CreateTimeAdjacencyMatrix();
             var PriceAdjacencyMatrix = Graph.CreatePriceAdjacencyMatrix();
