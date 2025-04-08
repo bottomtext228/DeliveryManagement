@@ -4,15 +4,18 @@ import { getProduct } from "../../api/catalog/getProduct";
 import { deleteProduct } from "../../api/catalog/deleteProduct";
 import Loading from "../../components/Loading/Loading";
 import { useUser } from "../../hooks/useAuth";
+import useCartStore from "../../store/user/cartStore";
 
 
 export default function CatalogDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const user = useUser();
-    if (isNaN(parseInt(id!))) {
-        return <span>Not found...</span>
-    }
+    const addToCart = useCartStore(state => state.add);
+    const removeFromCart = useCartStore(state => state.remove);
+    const cartList = useCartStore(state => state.list);
+
+
     const { isPending, isError, data, error, } = useQuery({
         queryKey: ['product', id],
         queryFn: () => getProduct(parseInt(id!)),
@@ -28,6 +31,7 @@ export default function CatalogDetail() {
     }
 
     const product = data.data;
+    const cartItem = cartList.find(e => e.productId == product.id);
 
     const handleDelete = async () => {
         if (confirm('Удалить продукт?')) {
@@ -102,7 +106,9 @@ export default function CatalogDetail() {
                                     <button onClick={handleDelete} className="block w-full p-1 font-semibold text-center bg-red-600 shadow-sm shadow-neutral-500 rounded-xl hover:bg-red-700">Удалить</button>
                                 </>
                                 : <>
-                                    <button className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">В корзину</button>
+                                    <button onClick={() => cartItem ? removeFromCart(product.id) : addToCart(product.id)} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">
+                                        {cartItem ? "Убрать из корзины" : "В корзину"}
+                                    </button>
                                     <button className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-400 hover:bg-amber-500">Заказать</button>
                                 </>
                             }

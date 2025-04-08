@@ -39,8 +39,8 @@ export default function CatalogAll() {
             
             {products.length > 0 ?
                 <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
-                    {products.map((product, index) => {
-                        return <Product product={product} key={index} renderCart={user?.roles.includes('client') == true}></Product>
+                    {products.map((product) => {
+                        return <Product product={product} key={product.id} renderCart={user?.roles.includes('client') == true}></Product>
                     })}
                 </div>
                 :

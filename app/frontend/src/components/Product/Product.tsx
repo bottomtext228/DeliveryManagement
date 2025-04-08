@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { IProduct } from "../../types/types";
+import CartSection from "../Cart/CartSection";
 
 interface Props {
     product: IProduct,
     renderCart: boolean
 }
+
 
 
 export default function Product({ product, renderCart }: Props) {
@@ -21,9 +23,7 @@ export default function Product({ product, renderCart }: Props) {
                 <p className="overflow-hidden font-semibold whitespace-nowrap">{product.name}</p>
             </div>
             {renderCart &&
-                <button className="flex items-center justify-center w-full p-2 font-semibold text-black rounded-xl bg-amber-500 hover:bg-amber-600">
-                    В корзину
-                </button>
+                <CartSection productId={product.id}></CartSection>
             }
         </article>
     )
