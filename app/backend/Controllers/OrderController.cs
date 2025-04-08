@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using backend.Services;
+using backend.Dtos.Order;
+using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace backend.Controllers
 {
@@ -18,29 +16,40 @@ namespace backend.Controllers
         {
             _dbContext = dbContext;
         }
-        
+
+        [HttpPost]
+        [Authorize(Roles = "client")]
+        public async Task<IActionResult> Create([FromBody] CreateOrderDto model)
+        {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            
+            _dbContext.Orders.AddAsync(new Order { UserId = currentUserId, ProductId = model.ProductId, TownIds = });
+            return Ok();
+        }
+
         [HttpGet("map")]
         public IActionResult GetMap()
         {
-/* 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var currentCompany = _dbContext.Companies.Include(c => c.Stocks).Include(c => c.PickUpPoints).FirstOrDefault(c => c.UserId == userId);
+            /* 
+                        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var currentCompany = _dbContext.Companies.Include(c => c.Stocks).Include(c => c.PickUpPoints).FirstOrDefault(c => c.UserId == userId);
 
-            if (currentCompany != null)
-            {
-
-
-                var jsonStocks = string.Join(",", currentCompany.Stocks.Select(s => s.TownId));
-                var jsonPickUpPoints = string.Join(",", currentCompany.PickUpPoints.Select(s => s.TownId));
+                        if (currentCompany != null)
+                        {
 
 
-                int?[,] matrix = CountryMap.Graph.CreateAdjacencyMatrix();
+                            var jsonStocks = string.Join(",", currentCompany.Stocks.Select(s => s.TownId));
+                            var jsonPickUpPoints = string.Join(",", currentCompany.PickUpPoints.Select(s => s.TownId));
 
-                IndexModel view = new IndexModel { Towns = _countryMap.Towns, Matrix = matrix, JsonStocks = jsonStocks, JsonPickUpPoints = jsonPickUpPoints };
+
+                            int?[,] matrix = CountryMap.Graph.CreateAdjacencyMatrix();
+
+                            IndexModel view = new IndexModel { Towns = _countryMap.Towns, Matrix = matrix, JsonStocks = jsonStocks, JsonPickUpPoints = jsonPickUpPoints };
 
 
-                return View(view);
-            } */
+                            return View(view);
+                        } */
 
             return BadRequest();
         }
