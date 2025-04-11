@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using backend.Dtos.Map;
-using backend.GraphSearch;
+using backend.Services;
 using backend.Models.Map;
 using backend.Services;
 using Microsoft.AspNetCore.Authorization;

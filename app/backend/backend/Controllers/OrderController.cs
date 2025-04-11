@@ -1,8 +1,11 @@
 using System.Security.Claims;
 using backend.Dtos.Order;
+using backend.Mappers;
 using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace backend.Controllers
@@ -12,19 +15,45 @@ namespace backend.Controllers
     public class OrderController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
-        public OrderController(ApplicationDbContext dbContext)
+        private readonly TownsGraphSearch _graphSearch;
+        private readonly CountryMap _countryMap;
+        public OrderController(ApplicationDbContext dbContext, TownsGraphSearch graphSearch, CountryMap countryMap)
         {
             _dbContext = dbContext;
+            _graphSearch = graphSearch;
+            _countryMap = countryMap;
         }
 
         [HttpPost]
         [Authorize(Roles = "client")]
         public async Task<IActionResult> Create([FromBody] CreateOrderDto model)
         {
+
+            // find product
+            var product = await _dbContext.Products.Include(e => e.Company).FirstOrDefaultAsync(e => e.Id == model.ProductId);
+            if (product == null) return BadRequest();
+
+
+
+            // find pick up point
+            var pickUpPoint = _countryMap.Towns.Find(e => e.Id == model.PickUpPointId);
+            if (pickUpPoint == null) return BadRequest();
+
+            // get towns with stocks of the company
+            var company = product.Company;
+            var towns = company.Stocks.Select(e => _countryMap.Towns.Find(t => t.Id == e.TownId)!).ToList();
+
+
+
+            var route = _graphSearch.ComputeRoute(towns, pickUpPoint);
+
+
+            var chosenRoute = model.Choice == RouteChoice.Fastest ? route.FastestPath : route.CheapestPath;
+
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            
-           /*  _dbContext.Orders.AddAsync(new Order { UserId = currentUserId, ProductId = model.ProductId, TownIds = }); */
+            await _dbContext.Orders.AddAsync(new Order { UserId = currentUserId!, ProductId = model.ProductId, TownIds = chosenRoute.Towns.Select(e => e.Id).ToList() });
+
             return Ok();
         }
 

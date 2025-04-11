@@ -11,45 +11,41 @@ namespace backend.Services
             Graph = graph;
         }
 
-        public Tuple<int, int, List<Town>> GetCheapestPath(Town from, Town to) // returns hours, price, path
+
+        public TownsPath GetCheapestPath(Town from, Town to) // returns hours, price, path
         {
             var TimeAdjacencyMatrix = Graph.CreateTimeAdjacencyMatrix();
             var PriceAdjacencyMatrix = Graph.CreatePriceAdjacencyMatrix();
 
             var list = Graph.Dijkstar(PriceAdjacencyMatrix, Graph.AllNodes.FindIndex(n => n.Town == from), Graph.AllNodes.FindIndex(n => n.Town == to));
-            List<Town> result = new();
+            List<Town> result = [];
 
 
+            int hoursSum = 0;
             int priceSum = 0;
             for (int i = 0; i < list.Count - 1; i++)
             {
-                priceSum += (int)PriceAdjacencyMatrix[list[i], list[i + 1]];
-            }
-
-
-            list = Graph.Dijkstar(TimeAdjacencyMatrix, Graph.AllNodes.FindIndex(n => n.Town == from), Graph.AllNodes.FindIndex(n => n.Town == to));
-            int hoursSum = 0;
-            for (int i = 0; i < list.Count - 1; i++)
-            {
+                result.Add(Graph.AllNodes[list[i]].Town); // end point is not included
                 hoursSum += (int)TimeAdjacencyMatrix[list[i], list[i + 1]];
+                priceSum += (int)PriceAdjacencyMatrix[list[i], list[i + 1]];
             }
 
 
             result.Add(to); // add endpoint
 
-            return Tuple.Create(hoursSum, priceSum, result);
+            return new TownsPath { Time = hoursSum, Price = priceSum, Towns = result };
         }
 
 
 
 
-        public Tuple<int, int, List<Town>> GetFastestPath(Town from, Town to) // returns hours, price, path
+        public TownsPath GetFastestPath(Town from, Town to) // returns hours, price, path
         {
             var TimeAdjacencyMatrix = Graph.CreateTimeAdjacencyMatrix();
             var PriceAdjacencyMatrix = Graph.CreatePriceAdjacencyMatrix();
 
             var list = Graph.Dijkstar(TimeAdjacencyMatrix, Graph.AllNodes.FindIndex(n => n.Town == from), Graph.AllNodes.FindIndex(n => n.Town == to));
-            List<Town> result = new();
+            List<Town> result = [];
 
 
             int hoursSum = 0;
@@ -63,9 +59,17 @@ namespace backend.Services
 
             result.Add(to); // add endpoint
 
-            return Tuple.Create(hoursSum, priceSum, result);
+            return new TownsPath { Time = hoursSum, Price = priceSum, Towns = result };
         }
 
+    }
+
+    public class TownsPath
+    {
+        public int Time { get; set; }
+        public int Price { get; set; }
+
+        public List<Town> Towns { get; set; } = [];
     }
 
     public class Edge

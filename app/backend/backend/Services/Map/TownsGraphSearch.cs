@@ -1,67 +1,71 @@
-using backend.Models;
 using backend.Models.Map;
-using backend.Services;
 
-namespace backend.GraphSearch
+namespace backend.Services
 {
     public class TownsGraphSearch
     {
 
         private readonly CountryMap _countryMap;
-        private readonly ApplicationDbContext _dbContext;
-        public TownsGraphSearch(CountryMap countryMap, ApplicationDbContext dbContext)
+        public TownsGraphSearch(CountryMap countryMap)
         {
             _countryMap = countryMap;
-            _dbContext = dbContext;
         }
-        // first is bestChepeastPath, second is bestFastestPath
-        public Tuple<Tuple<int, int, List<Town>>, Tuple<int, int, List<Town>>> ComputeRoute(Company company, Town pickUpPointTown)
+
+        public Route ComputeRoute(List<Town> stockTowns, Town pickUpPointTown)
         {
 
             var pathSystem = new DijkstraAlgorithm(_countryMap.Graph);
 
 
             var mostSuitableStockTimeWeight = int.MaxValue;
-            Stock mostSuitableStockTime = null;
+            Town mostSuitableStockTime;
 
             var mostSuitableStockPriceWeight = int.MaxValue;
-            Stock mostSuitableStockPrice = null;
+            Town mostSuitableStockPrice;
 
 
-            Tuple<int, int, List<Town>> bestCheapestPath = Tuple.Create(0, 0, new List<Town>());
-            Tuple<int, int, List<Town>> bestFastestPath = Tuple.Create(0, 0, new List<Town>());
+            TownsPath bestCheapestPath = new();
+            TownsPath bestFastestPath = new();
 
-            foreach (var stock in company.Stocks)
+            foreach (var stockTown in stockTowns)
             {
-                if (stock.TownId == pickUpPointTown.Id)
+                if (stockTown.Id == pickUpPointTown.Id)
                 {
                     break;
                 }
-                var stockTown = _countryMap.Towns.FirstOrDefault(t => t.Id == stock.TownId);
-                Tuple<int, int, List<Town>> cheapestPath;
-                Tuple<int, int, List<Town>> fastestPath;
+                /*     var stockTown = _countryMap.Towns.FirstOrDefault(t => t.Id == stockTown.Id); */
+                TownsPath cheapestPath;
+                TownsPath fastestPath;
                 fastestPath = pathSystem.GetFastestPath(stockTown, pickUpPointTown);
                 cheapestPath = pathSystem.GetCheapestPath(stockTown, pickUpPointTown);
 
 
-                if (mostSuitableStockTimeWeight > fastestPath.Item1)
+                if (mostSuitableStockTimeWeight > fastestPath.Time)
                 {
-                    mostSuitableStockTimeWeight = fastestPath.Item1;
-                    mostSuitableStockTime = stock;
+                    mostSuitableStockTimeWeight = fastestPath.Time;
+                    mostSuitableStockTime = stockTown;
                     bestFastestPath = fastestPath;
                 }
 
-                if (mostSuitableStockPriceWeight > cheapestPath.Item1)
+                if (mostSuitableStockPriceWeight > cheapestPath.Price)
                 {
-                    mostSuitableStockPriceWeight = cheapestPath.Item1;
-                    mostSuitableStockPrice = stock;
+                    mostSuitableStockPriceWeight = cheapestPath.Price;
+                    mostSuitableStockPrice = stockTown;
                     bestCheapestPath = cheapestPath;
                 }
 
             }
-            return Tuple.Create(bestCheapestPath, bestFastestPath);
+            return new Route { CheapestPath = bestCheapestPath, FastestPath = bestFastestPath };
+        }
+
+
+        public class Route
+        {
+            public required TownsPath CheapestPath { get; set; }
+            public required TownsPath FastestPath { get; set; }
         }
 
 
     }
+
 }

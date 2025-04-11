@@ -78,6 +78,9 @@ namespace backend.Services
             Volgograd.AddEdge(RostovNaDonu, 340, 5);
             RostovNaDonu.AddEdge(Tambov, 500, 6);
             Tambov.AddEdge(Tula, 135, 3);
+
+
+            
         }
     }
 }
