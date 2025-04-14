@@ -1,5 +1,6 @@
 using backend.Dtos.Catalog;
 using backend.Models;
+using backend.Services;
 
 namespace backend.Mappers
 {
@@ -7,7 +8,7 @@ namespace backend.Mappers
     {
         public static ProductDto ToProductDto(this Product product)
         {
-            return new ProductDto { Id = product.Id, Name = product.Name, Price = product.Price, Image = Convert.ToBase64String(product.Image) };
+            return new ProductDto { Id = product.Id, Name = product.Name, Price = product.Price, Image = FileService.GetPath(product.Image) };
         }
 
         public static ProductDetailDto ToProductDetailDto(this Product product)
@@ -20,11 +21,11 @@ namespace backend.Mappers
                 Price = product.Price,
                 Weight = product.Weight,
                 Size = product.Size,
-                Image = Convert.ToBase64String(product.Image),
+                Image = FileService.GetPath(product.Image),
             };
         }
 
-        public static Product? ToProduct(this EditProductDto productDto)
+     /*    public static Product? ToProduct(this EditProductDto productDto)
         {
             var product = new Product
             {
@@ -56,6 +57,6 @@ namespace backend.Mappers
             }
 
             return product;
-        }
+        } */
     }
 }

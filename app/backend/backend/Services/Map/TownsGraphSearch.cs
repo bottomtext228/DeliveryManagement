@@ -55,13 +55,13 @@ namespace backend.Services
                 }
 
             }
-            return new Route { CheapestPath = bestCheapestPath, FastestPath = bestFastestPath };
+            return new Route { Fastest = bestCheapestPath, FastestPath = bestFastestPath };
         }
 
 
         public class Route
         {
-            public required TownsPath CheapestPath { get; set; }
+            public required TownsPath Fastest { get; set; }
             public required TownsPath FastestPath { get; set; }
         }
 

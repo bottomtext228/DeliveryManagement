@@ -48,7 +48,7 @@ namespace backend.Controllers
             var route = _graphSearch.ComputeRoute(towns, pickUpPoint);
 
 
-            var chosenRoute = model.Choice == RouteChoice.Fastest ? route.FastestPath : route.CheapestPath;
+            var chosenRoute = model.Choice == RouteChoice.Fastest ? route.FastestPath : route.Fastest;
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

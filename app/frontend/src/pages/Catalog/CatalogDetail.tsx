@@ -57,7 +57,7 @@ export default function CatalogDetail() {
             <div className="flex flex-col md:flex-row gap-x-8">
 
                 <div className="flex-1/3">
-                    <img className="border border-gray-200 rounded-xl " src={"data:image/png;base64," + product.image}></img>
+                    <img className="border border-gray-200 rounded-xl " src={product.image}></img>
                 </div>
                 <div className="mt-8 flex-1/3">
                     <div className="mb-4">

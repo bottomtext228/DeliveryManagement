@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using backend.Localisation;
+using Microsoft.Extensions.DependencyInjection;
+using backend.Interfaces;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -92,8 +94,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddSingleton<IFileService>(new FileService(Path.Combine(builder.Environment.WebRootPath, "images"), [".jpg", ".jpeg", ".png"]));
 builder.Services.AddSingleton<CountryMap>();
 builder.Services.AddScoped<TownsGraphSearch>();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        {
+            policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -136,6 +148,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseStaticFiles();
 
 app.Run();
 

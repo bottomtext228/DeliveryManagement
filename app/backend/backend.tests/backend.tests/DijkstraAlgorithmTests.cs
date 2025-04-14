@@ -20,8 +20,8 @@ namespace backend.tests
         public void CheapestPath_Yaroslavl_Moscow_Equals_240()
         {
             // Arrange
-            var Yaroslavl = _countryMap.Towns.Find(e => e.Name == "Ярославль");
-            var Moscow = _countryMap.Towns.Find(e => e.Name == "Москва");
+            var Yaroslavl = _countryMap.Towns.Find(e => e.Name == "Ярославль")!;
+            var Moscow = _countryMap.Towns.Find(e => e.Name == "Москва")!;
 
             // Act
             var path = _pathSystem.GetCheapestPath(Yaroslavl, Moscow);
@@ -34,8 +34,8 @@ namespace backend.tests
         public void CheapestPath_Price_SaintPetesburg_Ijevsk_Equals_1245()
         {
             // Arrange
-            var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург");
-            var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск");
+            var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург")!;
+            var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск")!;
 
             // Act
             var path = _pathSystem.GetCheapestPath(SaintPetersburg, Ijevsk);
@@ -49,8 +49,8 @@ namespace backend.tests
         public void CheapestPath_Time_SaintPetesburg_Ijevsk_Equals_18()
         {
             // Arrange
-            var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург");
-            var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск");
+            var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург")!;
+            var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск")!;
 
             // Act
             var path = _pathSystem.GetCheapestPath(SaintPetersburg, Ijevsk);
@@ -64,8 +64,8 @@ namespace backend.tests
         public void FastestPath_Time_SaintPetesburg_Ijevsk_Equals_18()
         {
             // Arrange
-            var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург");
-            var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск");
+            var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург")!;
+            var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск")!;
 
             // Act
             var path = _pathSystem.GetFastestPath(SaintPetersburg, Ijevsk);
@@ -78,8 +78,8 @@ namespace backend.tests
         public void FastestPath_Price_SaintPetesburg_Ijevsk_Equals_1365()
         {
             // Arrange
-            var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург");
-            var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск");
+            var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург")!;
+            var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск")!;
 
             // Act
             var path = _pathSystem.GetFastestPath(SaintPetersburg, Ijevsk);

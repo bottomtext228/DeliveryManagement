@@ -1,10 +1,9 @@
 ﻿using System.Security.Claims;
-using System.Threading.Tasks;
 using backend.Dtos.Catalog;
+using backend.Interfaces;
 using backend.Mappers;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +18,12 @@ namespace backend.Controllers
 
         private readonly UserManager<User> _userManager;
         private readonly ApplicationDbContext _dbContext;
-        public CatalogController(UserManager<User> userManager, ApplicationDbContext dbContext)
+        private readonly IFileService _fileService;
+        public CatalogController(UserManager<User> userManager, ApplicationDbContext dbContext, IFileService fileService)
         {
             _userManager = userManager;
             _dbContext = dbContext;
+            _fileService = fileService;
         }
 
         [HttpGet]
@@ -74,27 +75,14 @@ namespace backend.Controllers
 
         [HttpPost]
         [Authorize(Roles = "company")]
-        public async Task<IActionResult> Create([FromForm]CreateProductDto model)
+        public async Task<IActionResult> Create([FromForm] CreateProductDto model)
         {
             var company = await _dbContext.Companies.Include(c => c.Products).FirstOrDefaultAsync(e => e.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
             if (company == null) return BadRequest();
 
-            var Image = model.Image;
+            var fileName = await _fileService.SaveFileAsync(model.Image);
 
-            if (Image.Length <= 0 || !(
-                Image.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
-                Image.ContentType.Equals("image/jpg", StringComparison.OrdinalIgnoreCase) ||
-                Image.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase)))
-                return Problem("Bad image value", statusCode: StatusCodes.Status400BadRequest);
 
-            //Convert Image to byte and save to database
-            byte[]? ImageBytes = null;
-            using (var fs1 = Image.OpenReadStream())
-            using (var ms1 = new MemoryStream())
-            {
-                fs1.CopyTo(ms1);
-                ImageBytes = ms1.ToArray();
-            }
 
 
             var product = new Product
@@ -104,7 +92,7 @@ namespace backend.Controllers
                 Size = new Vector(model.SizeX, model.SizeY, model.SizeZ),
                 Weight = model.Weight,
                 Price = model.Price,
-                Image = ImageBytes
+                Image = fileName
             };
 
 
@@ -114,9 +102,53 @@ namespace backend.Controllers
             await _dbContext.SaveChangesAsync();
             return Created();
         }
+
+
+        /*   [HttpPost]
+          [Authorize(Roles = "company")]
+          public async Task<IActionResult> Create([FromForm]CreateProductDto model)
+          {
+              var company = await _dbContext.Companies.Include(c => c.Products).FirstOrDefaultAsync(e => e.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+              if (company == null) return BadRequest();
+
+              var Image = model.Image;
+
+              if (Image.Length <= 0 || !(
+                  Image.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                  Image.ContentType.Equals("image/jpg", StringComparison.OrdinalIgnoreCase) ||
+                  Image.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase)))
+                  return Problem("Bad image value", statusCode: StatusCodes.Status400BadRequest);
+
+              //Convert Image to byte and save to database
+              byte[]? ImageBytes = null;
+              using (var fs1 = Image.OpenReadStream())
+              using (var ms1 = new MemoryStream())
+              {
+                  fs1.CopyTo(ms1);
+                  ImageBytes = ms1.ToArray();
+              }
+
+
+              var product = new Product
+              {
+                  Name = model.Name,
+                  Description = model.Description,
+                  Size = new Vector(model.SizeX, model.SizeY, model.SizeZ),
+                  Weight = model.Weight,
+                  Price = model.Price,
+                  Image = ImageBytes
+              };
+
+
+
+              await _dbContext.Products.AddAsync(product);
+              company.Products.Add(product);
+              await _dbContext.SaveChangesAsync();
+              return Created();
+          } */
         [HttpPut("{id:int}")]
         [Authorize(Roles = "company")]
-        public async Task<IActionResult> Edit([FromRoute]int id, [FromForm]EditProductDto model)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductDto model)
         {
             var product = await _dbContext.Products.FindAsync(id);
             if (product == null) return NotFound();
@@ -133,7 +165,12 @@ namespace backend.Controllers
             product.Weight = model.Weight;
             product.Size = new Vector(model.SizeX, model.SizeY, model.SizeZ);
 
-            var Image = model.Image;
+            if (model.Image != null) {
+                var fileName = await _fileService.SaveFileAsync(model.Image);
+                product.Image = fileName;
+            }
+
+   /*          var Image = model.Image;
             if (Image != null)
             {
 
@@ -152,7 +189,7 @@ namespace backend.Controllers
                 }
                 product.Image = ImageBytes;
             }
-
+ */
             await _dbContext.SaveChangesAsync();
 
             return NoContent();

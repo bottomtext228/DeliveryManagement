@@ -17,7 +17,7 @@ namespace backend.Models
         //public float SizeZ { get; set; }
         public float Weight { get; set; }
 
-        public byte[] Image { get; set; }
+        public string Image { get; set; }
 
 
         public int CompanyId { get; set; }

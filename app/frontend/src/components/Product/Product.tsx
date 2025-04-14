@@ -14,7 +14,7 @@ export default function Product({ product, renderCart }: Props) {
         <article className="flex flex-col w-full h-full">
             <div className="mx-auto flex-8/10">
                 <Link to={`/catalog/${product.id}`} className="">
-                    <img className="rounded-xl" src={"data:image/png;base64," + product.image}>
+                    <img className="rounded-xl" src={product.image}>
                     </img>
                 </Link>
             </div>

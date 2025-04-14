@@ -17,12 +17,12 @@ interface FormValues {
     sizeY: number,
     sizeZ: number,
     weight: number,
-    image: FileList
+    image?: FileList
 }
 
 export default function CatalogEdit() {
     const { id } = useParams();
-    const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm<FormValues>();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>();
     const navigate = useNavigate();
     const [serverError, setServerError] = useState<IServerError | null>(null);
 
@@ -100,7 +100,24 @@ export default function CatalogEdit() {
                 }
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">
-                        <img className="border border-gray-200 rounded-xl" src={"data:image/png;base64," + product.image}></img>
+                        <img id ="image-preview" className="border border-gray-200 rounded-xl" src={product.image}></img>
+                        <div className="w-full mt-4">
+                            <label htmlFor="image" className="flex w-full h-12 my-4 border border-gray-300 rounded-lg">
+                                <div id='image-label' className="flex items-center justify-start p-3 overflow-hidden flex-4/5 text-ellipsis whitespace-nowrap">Выберите файл...</div>
+                                <div className="flex items-center justify-center border-l border-gray-300 flex-1/5"><img src="/upload-file.svg" className="w-12 h-12"></img></div>
+                            </label>
+                            <input className="w-0 h-0 opacity-0 overflow-hidden absolute -z-[1]" id="image" {...register("image")} type="file" accept=".jpg, .jpeg, .png" onChange={
+                                (e: React.ChangeEvent<HTMLInputElement>) => {
+                                    const file = e.target.files?.item(0);
+                                    if (file !== null && file !== undefined) {
+                                        const image = (document.querySelector('#image-preview')! as HTMLImageElement);
+                                        image.src = URL.createObjectURL(file);                           
+                                        (document.querySelector('#image-label')! as HTMLLabelElement).innerText = file.name;
+                                    }
+                                }
+                            }></input>
+
+                        </div>
                     </div>
 
                     <div className="mt-8 flex-1/3">
@@ -132,7 +149,7 @@ export default function CatalogEdit() {
                                     <div className="w-18">Длина</div>
                                     <div className="font-bold">
                                         <input id="sizeX" type="number" min={0} max={10} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
-                                            {...register('sizeX', { required: 'Ширина не может быть пустой!' })} placeholder=" " 
+                                            {...register('sizeX', { required: 'Ширина не может быть пустой!' })} placeholder=" "
                                         />
                                         <span>м</span>
                                         {errors.sizeX && <div className="text-red-500">{errors.sizeX.message}</div>}
@@ -142,7 +159,7 @@ export default function CatalogEdit() {
                                     <div className="w-18">Ширина</div>
                                     <div className="font-bold">
                                         <input id="sizeY" type="number" min={0} max={10} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
-                                            {...register('sizeY', { required: 'Ширина не может быть пустой!' })} placeholder=" " 
+                                            {...register('sizeY', { required: 'Ширина не может быть пустой!' })} placeholder=" "
                                         />
                                         <span>м</span>
                                         {errors.sizeY && <div className="text-red-500">{errors.sizeY.message}</div>}
