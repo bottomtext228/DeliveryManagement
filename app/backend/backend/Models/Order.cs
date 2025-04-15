@@ -16,7 +16,9 @@ namespace backend.Models
         //public Stock Stock { get; set; }
         //public int PickUpPointId { get; set; }
         //public PickUpPoint PickUpPoint { get; set; }
-        //public float FinalPrice { get; set; }
+
+        public int Quantity { get; set; }
+        public float FinalPrice { get; set; }
 
         public List<int> TownIds { get; set; }
 

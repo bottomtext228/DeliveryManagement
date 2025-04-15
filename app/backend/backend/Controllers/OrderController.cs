@@ -30,31 +30,48 @@ namespace backend.Controllers
         {
 
             // find product
-            var product = await _dbContext.Products.Include(e => e.Company).FirstOrDefaultAsync(e => e.Id == model.ProductId);
+            var product = await _dbContext.Products.Include(e => e.Company).ThenInclude(e => e.Stocks).FirstOrDefaultAsync(e => e.Id == model.ProductId);
             if (product == null) return BadRequest();
 
 
 
             // find pick up point
-            var pickUpPoint = _countryMap.Towns.Find(e => e.Id == model.PickUpPointId);
+            var pickUpPoint = _countryMap.Towns.Find(e => e.Id == model.PickUpPointTownId);
             if (pickUpPoint == null) return BadRequest();
 
             // get towns with stocks of the company
             var company = product.Company;
-            var towns = company.Stocks.Select(e => _countryMap.Towns.Find(t => t.Id == e.TownId)!).ToList();
 
+            var townIdsWithStocks = company.Stocks.Where(e => e.CompanyId == product.CompanyId).Select(e => e.TownId).ToList();
 
+            var towns = townIdsWithStocks.Select(e => _countryMap.Towns.Find(t => t.Id == e)!).ToList();
 
             var route = _graphSearch.ComputeRoute(towns, pickUpPoint);
-
-
-            var chosenRoute = model.Choice == RouteChoice.Fastest ? route.FastestPath : route.Fastest;
+            var chosenRoute = model.Choice == RouteChoice.Fastest ? route.Fastest : route.Cheapest;
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            await _dbContext.Orders.AddAsync(new Order { UserId = currentUserId!, ProductId = model.ProductId, TownIds = chosenRoute.Towns.Select(e => e.Id).ToList() });
+            await _dbContext.Orders.AddAsync(new Order
+            {
+                UserId = currentUserId!,
+                ProductId = model.ProductId,
+                Quantity = model.Quantity,
+                FinalPrice = model.Quantity * product.Price,
+                TownIds = chosenRoute.Towns.Select(e => e.Id).ToList()
+            });
+            await _dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Created();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "client")]
+        public async Task<IActionResult> GetAll()
+        {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var orders = await _dbContext.Orders.Where(e => e.UserId == currentUserId)/* .Select(e => e.ToOrderDto()) */.ToListAsync();
+            return Ok(orders);
         }
 
         [HttpGet("map")]

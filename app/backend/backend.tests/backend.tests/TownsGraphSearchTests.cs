@@ -29,7 +29,7 @@ namespace backend.tests
 
             // Act
             var route = _graphSearch.ComputeRoute(towns, Ijevsk);
-            var cheapestPath = route.Fastest;
+            var cheapestPath = route.Cheapest;
 
             // Assert
             Assert.Equal(910, cheapestPath.Price);
@@ -47,7 +47,7 @@ namespace backend.tests
 
             // Act
             var route = _graphSearch.ComputeRoute(towns, Ijevsk);
-            var fastestPath = route.FastestPath;
+            var fastestPath = route.Fastest;
 
             // Assert
             Assert.Equal(1015, fastestPath.Price);
