@@ -31,9 +31,10 @@ namespace backend.Services
             {
                 if (stockTown.Id == pickUpPointTown.Id)
                 {
-                    break;
+                    var path = new TownsPath { Time = 1, Price = 50, Towns = [pickUpPointTown] };
+                    return new Route { Cheapest = path, Fastest = path };
                 }
-                /*     var stockTown = _countryMap.Towns.FirstOrDefault(t => t.Id == stockTown.Id); */
+ 
                 TownsPath cheapestPath;
                 TownsPath fastestPath;
                 fastestPath = pathSystem.GetFastestPath(stockTown, pickUpPointTown);

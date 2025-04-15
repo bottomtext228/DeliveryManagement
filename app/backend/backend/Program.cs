@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using backend.Localisation;
-using Microsoft.Extensions.DependencyInjection;
 using backend.Interfaces;
 
 

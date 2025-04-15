@@ -1,6 +1,4 @@
 ﻿
-using backend.Models.Map;
-
 namespace backend.Models
 {
     public class Order
@@ -12,14 +10,16 @@ namespace backend.Models
 
         public int ProductId { get; set; }
         public Product Product { get; set; }
-        //public int StockId { get; set; }
-        //public Stock Stock { get; set; }
-        //public int PickUpPointId { get; set; }
-        //public PickUpPoint PickUpPoint { get; set; }
+
+        public float ProductPrice { get; set; }
+
+        public float ShippingPrice { get; set; }
 
         public int Quantity { get; set; }
+
         public float FinalPrice { get; set; }
 
+        public int Time { get; set; }
         public List<int> TownIds { get; set; }
 
     }
@@ -27,7 +27,10 @@ namespace backend.Models
 
 
 
-
+//public int StockId { get; set; }
+//public Stock Stock { get; set; }
+//public int PickUpPointId { get; set; }
+//public PickUpPoint PickUpPoint { get; set; }
 
 
 

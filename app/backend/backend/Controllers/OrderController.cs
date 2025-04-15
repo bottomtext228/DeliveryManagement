@@ -56,7 +56,10 @@ namespace backend.Controllers
                 UserId = currentUserId!,
                 ProductId = model.ProductId,
                 Quantity = model.Quantity,
-                FinalPrice = model.Quantity * product.Price,
+                ProductPrice = product.Price,
+                ShippingPrice = chosenRoute.Price,
+                FinalPrice = model.Quantity * product.Price + chosenRoute.Price,
+                Time = chosenRoute.Time,
                 TownIds = chosenRoute.Towns.Select(e => e.Id).ToList()
             });
             await _dbContext.SaveChangesAsync();
@@ -70,7 +73,7 @@ namespace backend.Controllers
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var orders = await _dbContext.Orders.Where(e => e.UserId == currentUserId)/* .Select(e => e.ToOrderDto()) */.ToListAsync();
+            var orders = await _dbContext.Orders.Where(e => e.UserId == currentUserId).Select(e => e.ToOrderDto()).ToListAsync();
             return Ok(orders);
         }
 
