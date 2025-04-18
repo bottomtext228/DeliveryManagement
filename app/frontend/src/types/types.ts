@@ -40,8 +40,7 @@ export interface IProduct {
     id: number,
     name: string,
     price: number,
-    image: string,
-    companyId: number
+    image: string
 }
 
 export interface IVector {
@@ -57,7 +56,8 @@ export interface IProductDetail {
     price: number,
     weight: number,
     size: IVector,
-    image: string
+    image: string,
+    companyId: number
 }
 
 export interface EditProductDto {
@@ -95,11 +95,13 @@ export interface CreateOrderDto {
 }
 
 export interface PickUpPoint {
-
+    id: number,
+    companyId: number,
+    townId: number,
 }
 
 export interface Stock {
-    
+
 }
 
 

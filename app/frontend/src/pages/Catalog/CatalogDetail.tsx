@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query";
-import { getProduct } from "../../api/catalog/getProduct";
+import { getProductDetail } from "../../api/catalog/getProduct";
 import { deleteProduct } from "../../api/catalog/deleteProduct";
 import Loading from "../../components/Loading/Loading";
 import { useUser } from "../../hooks/useAuth";
@@ -18,7 +18,7 @@ export default function CatalogDetail() {
 
     const { isPending, isError, data, error, } = useQuery({
         queryKey: ['product', id],
-        queryFn: () => getProduct(parseInt(id!)),
+        queryFn: () => getProductDetail(parseInt(id!)),
     });
 
 
@@ -109,7 +109,7 @@ export default function CatalogDetail() {
                                     <button onClick={() => cartItem ? removeFromCart(product.id) : addToCart(product.id)} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">
                                         {cartItem ? "Убрать из корзины" : "В корзину"}
                                     </button>
-                                    <button className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-400 hover:bg-amber-500">Заказать</button>
+                                    <Link to={`/orders/add/${product.id}`} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-400 hover:bg-amber-500">Заказать</Link>
                                 </>
                             }
                         </div>

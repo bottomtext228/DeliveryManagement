@@ -38,7 +38,6 @@ export default function Map() {
                 queryKey: ['pickuppoints'],
                 queryFn: getPickUpPoints,
                 refetchOnWindowFocus: false,
-
             },
             {
                 queryKey: ['stocks'],

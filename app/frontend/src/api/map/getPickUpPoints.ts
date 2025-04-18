@@ -5,7 +5,3 @@ export const getPickUpPoints = () => {
     return response;
 }
 
-export const getCompanyPickUpPoints = (companyId: number) => {
-    const response = instance.get(`/api/pickuppoint/${companyId}`);
-    return response;
-}

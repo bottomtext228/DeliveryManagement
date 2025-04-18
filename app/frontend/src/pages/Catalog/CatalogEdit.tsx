@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { EditProductDto } from "../../types/types";
 import { editProduct } from "../../api/catalog/editProduct";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { getProduct } from "../../api/catalog/getProduct";
+import { getProductDetail } from "../../api/catalog/getProduct";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
 import ServerError, { IServerError } from "../../components/ServerError";
@@ -33,7 +33,7 @@ export default function CatalogEdit() {
 
     const { isPending, isError, data, error } = useQuery({
         queryKey: ['product', id],
-        queryFn: () => getProduct(parseInt(id!)),
+        queryFn: () => getProductDetail(parseInt(id!)),
         refetchOnWindowFocus: false
     });
 

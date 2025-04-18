@@ -9,5 +9,5 @@ interface Order {
 }
 
 export const getOrders = () => {
-    return instance.get<Order[]>('/api/orders');
+    return instance.get<Order[]>('/api/order');
 }

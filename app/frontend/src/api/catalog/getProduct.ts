@@ -1,5 +1,6 @@
+import { IProductDetail } from "../../types/types";
 import { instance } from "../axios.api";
 
-export const getProduct = (id: number) => {
-    return instance.get(`/api/catalog/${id}`);
+export const getProductDetail = (id: number) => {
+    return instance.get<IProductDetail>(`/api/catalog/${id}`);
 }

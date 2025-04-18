@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace backend.Dtos.PickUpPoint
 {
-    public class GetPickUpPointsDto
+    public class PickUpPointDto
     {
         public int Id { get; set; }
         public int CompanyId { get; set; }

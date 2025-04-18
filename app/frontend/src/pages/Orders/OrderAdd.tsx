@@ -1,12 +1,15 @@
 import { isAxiosError } from 'axios';
 import React, { useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { data, Link, useNavigate, useParams } from 'react-router-dom';
 import { createProduct } from '../../api/catalog/createProduct';
 import { IHtppValidationProblemDetails, CreateProductDto, RouteChoice, CreateOrderDto, IProduct } from '../../types/types';
-import { useQuery } from '@tanstack/react-query';
-import { getProduct } from '../../api/catalog/getProduct';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import { getProductDetail } from '../../api/catalog/getProduct';
 import Loading from '../../components/Loading/Loading';
+import { getPickUpPoints } from '../../api/map/getPickUpPoints';
+import { getCompanyPickUpPoints } from '../../api/map/getCompanyPickUpPoints';
+import { createOrder } from '../../api/orders/createOrder';
 
 
 
@@ -23,17 +26,26 @@ export default function OrderAdd() {
     const { id } = useParams();
 
 
-    const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormValues>();
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
     const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
 
     const navigate = useNavigate();
 
-    const { isPending, isError, data, error } = useQuery({
+    const { data: productData } = useQuery({
         queryKey: ['product', id],
-        queryFn: () => getProduct(parseInt(id!)),
+        queryFn: () => getProductDetail(parseInt(id!)),
         refetchOnWindowFocus: false
     });
 
+    const product = productData?.data!;
+    const companyId = product?.companyId;
+
+    const { isPending, isError, error, data: pickUpPointsData } = useQuery({
+        queryKey: ['pickuppoints', companyId],
+        queryFn: () => getCompanyPickUpPoints(companyId!),
+        refetchOnWindowFocus: false,
+        enabled: !!companyId
+    })
 
     if (isPending) {
         return <Loading></Loading>
@@ -43,27 +55,20 @@ export default function OrderAdd() {
         return <span>Error: {error.message}</span>
     }
 
-    const product: IProduct = data.data;
 
-    
+    const pickUpPoints = pickUpPointsData?.data;
+
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
-        console.log(data);
 
         const dto: CreateOrderDto = {
-            productId: 228,
+            productId: product.id,
             pickUpPointTownId: data.pickUpPointTownId,
-            choice: data.choice,
+            choice: parseInt(data.choice.toString()), // enums must be numbers
             quantity: data.quantity
         };
         try {
-            /*         const result = await createProduct(dto); */
-            /*   if (result.status) {
-                  navigate('/catalog');
-              } else {
-                  setServerError(result as IHtppValidationProblemDetails);
-              } */
-
+            await createOrder(dto);
             navigate('/catalog');
         } catch (error) {
             if (isAxiosError(error)) {
@@ -96,8 +101,11 @@ export default function OrderAdd() {
 
                         <label htmlFor="choice">Пункт выдачи заказов:</label>
                         <select id="pickUpPointTown" {...register('pickUpPointTownId', { required: 'Необходимо выбрать маршрут!' })}>
-                            <option value={RouteChoice.Fastest}>Быстрый</option>
-                            <option value={RouteChoice.Cheapest}>Дешевый</option>
+                            {pickUpPoints.map(e => {
+                                return <>
+                                    <option key={e.id} value={e.townId}>{e.townId}</option>
+                                </>
+                            })}
                         </select>
 
 
@@ -108,21 +116,12 @@ export default function OrderAdd() {
                         </select>
 
                         <div className="relative mt-4">
-                            <input id="quantity" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('quantity', { required: 'Количество не может быть пустым' })} placeholder=" " />
+                            <input id="quantity" min={1} max={100} type="number" step={1} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('quantity', { required: 'Количество не может быть пустым' })} placeholder=" " />
                             <label htmlFor="quantity" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                                 Количество
                             </label>
                         </div>
                         {errors.quantity && <div className="text-red-500">{errors.quantity.message}</div>}
-
-
-                        {/*   <div className="relative mt-4">
-                            <input id="quantity" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('quantity', { required: 'Количество не может быть пустым' })} placeholder=" " />
-                            <label htmlFor="quantity" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
-                                Количество
-                            </label>
-                        </div>
-                       {errors.quantity && <div className="text-red-500">{errors.quantity.message}</div>} */}
 
 
                         <button type="submit" className="w-full p-2 mt-4 text-xl font-semibold text-white rounded-lg cursor-pointer bg-amber-400 hover:bg-amber-500">

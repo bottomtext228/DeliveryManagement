@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using backend.Dtos.PickUpPoint;
+using backend.Mappers;
 using backend.Models.Map;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,7 @@ namespace backend.Controllers
         public async Task<IActionResult> GetAll()
         {
             var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
-            return Ok(await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).Select(p =>
-            new GetPickUpPointsDto { Id = p.Id, CompanyId = p.CompanyId, TownId = p.TownId }).ToListAsync());
+            return Ok(await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).Select(e => e.ToPickUpPointDto()).ToListAsync());
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByCompanyId(int companyId)
         {
-            var pickUpPoints = await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).ToListAsync();
+            var pickUpPoints = await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).Select(e => e.ToPickUpPointDto()).ToListAsync();
             return Ok(pickUpPoints);
         }
 
