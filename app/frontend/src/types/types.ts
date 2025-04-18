@@ -40,7 +40,8 @@ export interface IProduct {
     id: number,
     name: string,
     price: number,
-    image: string
+    image: string,
+    companyId: number
 }
 
 export interface IVector {
@@ -79,6 +80,18 @@ export interface CreateProductDto {
     sizeZ: number,
     weight: number,
     image: File
+}
+
+export enum RouteChoice {
+    Fastest,
+    Cheapest
+}
+
+export interface CreateOrderDto {
+    productId: number,
+    pickUpPointTownId: number,
+    choice: RouteChoice,
+    quantity: number
 }
 
 export interface PickUpPoint {

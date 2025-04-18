@@ -13,6 +13,8 @@ import CatalogEdit from "./pages/Catalog/CatalogEdit";
 import Map from "./pages/Map/Map";
 import Login from "./pages/Auth/Login";
 import Terms from "./pages/Terms";
+import Orders from "./pages/Orders/Orders";
+import OrderAdd from "./pages/Orders/OrderAdd";
 
 const router = createBrowserRouter(
     [
@@ -66,12 +68,20 @@ const router = createBrowserRouter(
                     element: (<ProtectedRoute><CatalogDetail /></ProtectedRoute>)
                 },
                 {
+                    path: 'orders',
+                    element: (<ProtectedRoute allowedRoles={['client']}><Orders /></ProtectedRoute>)
+                },
+                {
+                    path: 'orders/add/:id',
+                    element: (<ProtectedRoute allowedRoles={['client']}><OrderAdd /></ProtectedRoute>)
+                },
+                {
                     path: 'map',
                     element: (<ProtectedRoute><Map /></ProtectedRoute>)
                 },
                 {
                     path: 'terms',
-                    element: <Terms/>
+                    element: <Terms />
                 }
 
             ]

@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using backend.Dtos.Map;
 using backend.Dtos.PickUpPoint;
 using backend.Models.Map;
 using Microsoft.AspNetCore.Authorization;
@@ -65,6 +60,20 @@ namespace backend.Controllers
             return NoContent();
         }
 
+
+        /// <summary>
+        /// Get pick up points of the company by company id
+        /// </summary>
+        [HttpGet("{companyId:int}")]
+        [Authorize(Roles = "client")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetByCompanyId(int companyId)
+        {
+            var pickUpPoints = await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).ToListAsync();
+            return Ok(pickUpPoints);
+        }
 
     }
 }

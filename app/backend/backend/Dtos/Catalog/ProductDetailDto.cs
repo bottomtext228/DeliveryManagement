@@ -11,5 +11,7 @@ namespace backend.Dtos.Catalog
         public float Weight { get; set; }
         public Vector Size { get; set; } = null!;
         public string Image { get; set; } = string.Empty;
+
+        public int CompanyId { get; set; }
     }
 }
