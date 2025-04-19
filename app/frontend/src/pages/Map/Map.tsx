@@ -72,7 +72,7 @@ export default function Map() {
     const roads = roadsResult.data.data;
 
     const handleTownClick = (id: number) => {
-        const town: Town = towns.find((e: Town) => e.id == id);
+        const town: Town = towns.find((e: Town) => e.id == id)!;
 
         if (currentMode == MapModes.SetStocks) {
             const stocks = [...selectedStocks];

@@ -26,7 +26,6 @@ namespace backend.Controllers
         [HttpGet("towns")]
         public IActionResult GetMap()
         {
-
             return Ok(_countryMap.Towns);
         }
         [HttpGet("roads")]

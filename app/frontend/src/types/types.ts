@@ -133,3 +133,27 @@ export enum MapModes {
     SetStocks,
     SetPickUpPoints
 }
+
+export interface IOrder {
+    id: number,
+    product: IProduct,
+    towns: Town[],
+    productPrice: number,
+    shippingPrice: number,
+    finalPrice: number,
+    shippingTime: number,
+    quantity: number,
+    status: OrderStatus,
+    createdAt: string
+}
+
+export enum OrderStatus {
+    Pending = 0,         // Order received but not yet processed
+    Processing = 1,      // Order is being prepared/processed
+    Shipped = 2,         // Order has been shipped
+    Delivered = 3,       // Order delivered to the customer
+    Cancelled = 4,       // Order was cancelled
+    Returned = 5         // Order was returned by the customer
+}
+
+

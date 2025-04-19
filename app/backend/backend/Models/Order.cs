@@ -19,10 +19,24 @@ namespace backend.Models
 
         public float FinalPrice { get; set; }
 
-        public int Time { get; set; }
+        public int ShippingTime { get; set; }
         public List<int> TownIds { get; set; }
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     }
+
+    public enum OrderStatus
+    {
+        Pending = 0,         // Order received but not yet processed
+        Processing = 1,      // Order is being prepared/processed
+        Shipped = 2,         // Order has been shipped
+        Delivered = 3,       // Order delivered to the customer
+        Cancelled = 4,       // Order was cancelled
+        Returned = 5         // Order was returned by the customer
+    }
+
 }
 
 
