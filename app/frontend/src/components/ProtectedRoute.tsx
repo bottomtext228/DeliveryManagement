@@ -18,10 +18,6 @@ export const ProtectedRoute = ({ allowedRoles, children }: PropsWithChildren & {
 
         return (<>
             <Navigate to='/auth/login' replace={true} state={{ returnUrl: location }}></Navigate>
-            {/*   <div >
-                <h1>Нет доступа.</h1>
-                <Link to='/auth/login' replace state={{ returnUrl: location }} >Login</Link>
-            </div > */}
         </>)
     }
 

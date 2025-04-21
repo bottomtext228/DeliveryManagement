@@ -22,7 +22,7 @@ export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCur
             return (
                 <li key={e.id} className="flex items-center h-16 m-2 border-2 border-gray-300 even:bg-neutral-50 rounded-xl group hover:bg-neutral-100">
                     <div className="mt-auto mb-auto ml-2 overflow-hidden text-xl font-semibold max-w-48 text-ellipsis whitespace-nowrap">{e.name}</div>
-                    <button className="invisible w-10 h-10 p-2 ml-auto mr-2 border-transparent group-hover:visible hover:bg-neutral-300 rounded-xl" onClick={() => { handleItemClick(e) }}>
+                    <button className="lg:invisible lg:w-10 lg:h-10 w-9 h-9  p-2 ml-auto mr-2 border-transparent group-hover:visible hover:bg-neutral-300 rounded-xl" onClick={() => { handleItemClick(e) }}>
                         <img className='w-full h-full brightness-90' src={TrashCan}></img>
                     </button>
                 </li>
@@ -34,13 +34,13 @@ export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCur
     return (
         <>
             
-            <div className="flex items-center justify-center mr-auto md:hidden">
-                <button className="block w-16 h-16 md:hidden opacity-85" onClick={() => setIsOpen(true)}>
+            <div className="flex items-center justify-center mr-auto md:hidden gap-x-2">
+                <button className="block w-18 h-18 md:hidden opacity-85 border border-gray-300 p-2 rounded-xl" onClick={() => setIsOpen(true)}>
                     <img className="w-full h-full" src="location.svg"></img>
                 </button>
-                <div className="text-lg font-semibold">- Выбранные города</div>
+                <div className="text-lg font-semibold">- Выбранные {currentMode == MapModes.SetStocks ? 'склады' : 'пункты выдачи'}</div>
             </div>
-            <div className={`md:flex md:flex-col md:border-2 md:rounded-2xl md:flex-1/4 bg-white h-full fixed md:static top-0 w-full max-w-[15em] md:max-w-none ${isOpen ? 'right-0' : '-right-full'} z-50 transition-all duration-300 ease-in-out`}>
+            <div className={`flex flex-col md:border-2 md:rounded-2xl flex-1/4 bg-white h-full fixed md:static top-0 w-full max-w-[15em] md:max-w-none ${isOpen ? 'right-0' : '-right-full'} z-50 transition-all duration-300 ease-in-out`}>
                 <div className="flex-1/12 text-3xl w-[90%] font-semibold ml-auto mr-auto border-b-2 border-black p-2 text-center">
                     {currentMode == MapModes.SetStocks ? 'Склады' : 'Пункты выдачи'}
                 </div>
@@ -58,7 +58,7 @@ export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCur
                             ПВЗ
                         </button>
                     </div>  
-                    <button className="flex items-center justify-center w-full ml-auto mr-auto text-white bg-green-600 flex-1/3 border-t-black rounded-b-xl hover:bg-green-700" onClick={() => handleSaveChangesClick()}>
+                    <button className="flex items-center justify-center w-full ml-auto mr-auto text-white bg-green-600 flex-1/3 border-t-black md:rounded-b-xl hover:bg-green-700" onClick={() => handleSaveChangesClick()}>
                         Сохранить
                     </button>
                 </div>

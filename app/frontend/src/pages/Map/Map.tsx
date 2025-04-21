@@ -114,17 +114,9 @@ export default function Map() {
     return (<>
 
         <div className='flex md:flex-row flex-col max-w-7xl w-[90%] h-[700px] min-h-fit ml-auto mr-auto gap-12 mb-5 mt-5'>
-                 <TownsSidebar stocks={selectedStocks} pickUpPoints={selectedPickUpPoints} currentMode={currentMode} setCurrentMode={setCurrentMode} handleSaveChangesClick={handleSaveChangesClick} handleItemClick={handleSidebarItemClick}></TownsSidebar>
+            <TownsSidebar stocks={selectedStocks} pickUpPoints={selectedPickUpPoints} currentMode={currentMode} setCurrentMode={setCurrentMode} handleSaveChangesClick={handleSaveChangesClick} handleItemClick={handleSidebarItemClick}></TownsSidebar>
             <TownsMap selectedTowns={currentMode == MapModes.SetStocks ? selectedStocks : selectedPickUpPoints} towns={towns} roads={roads} handleTownClick={handleTownClick}></TownsMap>
-       
-      {/*       <div className='bg-amber-300 flex-1/4'>
-                vasya
-            </div>
-            <div className='bg-red-600 flex-3/4'>
-
-            </div>
-        </div> */}
-         </div>
+        </div>
     </>)
 
 }

@@ -26,17 +26,32 @@ export default function Account() {
                     </pre>
                     <button onClick={() => {
                         navigate('/'); setTimeout(() => logout(), 100);
-                    }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">Выйти</button>
+                    }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">
+                        Выйти
+                    </button>
                 </div>
             </div>
-            <Link to='/catalog' className="flex flex-col h-40 transition-transform transform border border-gray-200 max-w-full md:w-44 rounded-2xl hover:scale-102 group">
-                <img className="w-20 h-20 m-4 mx-auto" src="/box.svg"></img>
-                <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400">Товары</div>
-            </Link>
-            <Link to='/orders' className="flex flex-col h-40 transition-transform transform border border-gray-200 max-w-full md:w-44 rounded-2xl hover:scale-102 group">
-                <img className="w-20 h-20 m-4 mx-auto" src="/cart.svg"></img>
-                <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400 ">Заказы</div>
-            </Link>
+            {user?.roles.includes('company') &&
+                <>
+                    <Link to='/catalog' className="flex flex-col h-40 transition-transform transform border border-gray-200 max-w-full md:w-44 rounded-2xl hover:scale-102 group">
+                        <img className="w-20 h-20 m-4 mx-auto" src="/box.svg"></img>
+                        <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400">Товары</div>
+                    </Link>
+                    <Link to='/map' className="flex flex-col h-40 transition-transform transform border border-gray-200 max-w-full md:w-44 rounded-2xl hover:scale-102 group">
+                        <img className="w-20 h-20 m-4 mx-auto" src="/location.svg"></img>
+                        <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400">Карта</div>
+                    </Link>
+                </>
+            }
+
+            {user?.roles.includes('client') &&
+                <>
+                    <Link to='/orders' className="flex flex-col h-40 transition-transform transform border border-gray-200 max-w-full md:w-44 rounded-2xl hover:scale-102 group">
+                        <img className="w-20 h-20 m-4 mx-auto" src="/cart.svg"></img>
+                        <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400 ">Заказы</div>
+                    </Link>
+                </>
+            }
         </div>
     </>
 }

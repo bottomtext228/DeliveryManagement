@@ -76,30 +76,20 @@ namespace backend.Controllers
             return Ok(orders);
         }
 
-        [HttpGet("map")]
-        public IActionResult GetMap()
+        /// <summary>
+        /// Deletes order by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id:int}")]
+        [Authorize(Roles = "client")]
+        public async Task<IActionResult> Delete(int id)
         {
-            /* 
-                        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                        var currentCompany = _dbContext.Companies.Include(c => c.Stocks).Include(c => c.PickUpPoints).FirstOrDefault(c => c.UserId == userId);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _dbContext.Orders.Where(e => e.Id == id && e.UserId == currentUserId).ExecuteDeleteAsync();
+            if (result != 1) return NotFound();
+            return NoContent();
 
-                        if (currentCompany != null)
-                        {
-
-
-                            var jsonStocks = string.Join(",", currentCompany.Stocks.Select(s => s.TownId));
-                            var jsonPickUpPoints = string.Join(",", currentCompany.PickUpPoints.Select(s => s.TownId));
-
-
-                            int?[,] matrix = CountryMap.Graph.CreateAdjacencyMatrix();
-
-                            IndexModel view = new IndexModel { Towns = _countryMap.Towns, Matrix = matrix, JsonStocks = jsonStocks, JsonPickUpPoints = jsonPickUpPoints };
-
-
-                            return View(view);
-                        } */
-
-            return BadRequest();
         }
         /*  [Authorize(Roles = "company")]
  public IActionResult Index() // country map

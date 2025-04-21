@@ -1,44 +1,22 @@
 import { useState } from 'react'
-import { AuthState, useAuthState } from '../../../hooks/useAuth'
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { AuthState, useAuthState, useUser } from '../../../hooks/useAuth'
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Dropdown from './Dropdown';
+import RoleBadge from '../../RoleBadge';
+import useUserStore from '../../../store/user/userStore';
 
-interface NavigationItem {
-    name: string,
-    link: string,
-    current: boolean
-}
 
 export default function Navbar() {
-    const location = useLocation();
     const [isNavbarOpen, setIsNavbarOpen] = useState<boolean>(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-    const [activeTab, setActiveTab] = useState<string>('');
-
+    const logout = useUserStore(state => state.logout);
+    const navigate = useNavigate();
+    const user = useUser();
     const authState = useAuthState();
-    function handleNavbarClick(/* item: NavigationItem */) {
-        /*     navigationList.forEach(item => item.current = false);
-            item.current = true; */
-        setIsNavbarOpen(false);
-        /*     console.log(navigationList); */
-    }
 
-    const navigationList: NavigationItem[] = [
-        {
-            name: 'Главная',
-            link: '/',
-            current: true
-        },
-        {
-            name: 'Каталог',
-            link: '/catalog',
-            current: false
-        }, {
-            name: 'О нас',
-            link: '/about',
-            current: false
-        }
-    ];
+    function handleNavbarClick() {
+        setIsNavbarOpen(false);
+    }
 
     function handleDropdownClick() {
         setIsDropdownOpen(false);
@@ -57,21 +35,56 @@ export default function Navbar() {
                         <img src='/cross.svg' className="w-4 h-4"></img>
                     </button>
                     <div className='w-full text-lg opacity-80'>Меню профиля</div>
-
-
                 </div>
-                <ul className='mt-1.5 font-semibold'>
 
-                    <li className='p-2'>
-                        <NavLink to='/account' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Аккаунт</NavLink>
-                    </li>
-                    <li className='p-2'>
-                        <NavLink to='/cart' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Корзина</NavLink>
-                    </li>
-                    <li className='p-2'>
-                        <NavLink to='/orders' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Заказы</NavLink>
-                    </li>
-                </ul>
+                {authState == AuthState.AUTHORIZED ? <>
+                    <div className='p-2 font-mono flex flex-col gap-y-1 border rounded-lg border-gray-300 w-[90%] mx-auto'>
+                        <div>{user?.email}</div>
+                        <RoleBadge roles={user?.roles!}></RoleBadge>
+                        <button onClick={() => {
+                            navigate('/'); setTimeout(() => logout(), 100);
+                        }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">
+                            Выйти
+                        </button>
+                    </div>
+
+                    <ul className='mt-1.5 font-semibold'>
+                        <li className='p-2'>
+                            <NavLink to='/account' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Аккаунт</NavLink>
+                        </li>
+                        {user?.roles.includes('company') && <>
+                            <li className='p-2'>
+                                <NavLink to='/map' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Карта</NavLink>
+                            </li>
+                        </>}
+                        {user?.roles.includes('client') &&
+                            <>
+                                <li className='p-2'>
+                                    <NavLink to='/cart' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Корзина</NavLink>
+                                </li>
+                                <li className='p-2'>
+                                    <NavLink to='/orders' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Заказы</NavLink>
+                                </li>
+                            </>
+                        }
+                    </ul>
+                </>
+                    :
+                    <>
+                        <ul className='mt-1.5 font-semibold'>
+                            <li className='p-2'>
+                                <NavLink to='/auth/login' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Войти</NavLink>
+                            </li>
+                            <li className='p-2'>
+                                <NavLink to='/auth/register' state className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Создать аккаунт</NavLink>
+                            </li>
+                        </ul>
+                    </>
+                }
+
+
+
+
             </div >
 
             <nav id='nav' className={`md:flex md:justify-around md:static  md:items-center md:bg-transparent bg-white p-0.5 md:w-8xl md:max-w-full md:h-24 h-full fixed top-0 w-full max-w-[15em] ${isNavbarOpen ? 'right-0' : '-right-full'} z-50 transition-all duration-300 ease-in-out`}>

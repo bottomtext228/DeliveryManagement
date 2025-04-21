@@ -45,9 +45,16 @@ export default function Dropdown() {
                         </Link>
                     }
                     <div className='flex flex-col'>
-                        <Link onClick={handleClick} to='/account'  className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Аккаунт</Link>
-                        <Link onClick={handleClick} to='/cart' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Корзина</Link>
-                        <Link onClick={handleClick} to='/orders' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Заказы</Link>
+                        <Link onClick={handleClick} to='/account' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Аккаунт</Link>
+                        {user?.roles.includes('company') && <>
+                            <Link onClick={handleClick} to='/map' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Карта</Link>
+                        </>}
+                        {user?.roles.includes('client') &&
+                            <>
+                                <Link onClick={handleClick} to='/cart' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Корзина</Link>
+                                <Link onClick={handleClick} to='/orders' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Заказы</Link>
+                            </>
+                        }
                     </div>
                     {user &&
                         <div>
