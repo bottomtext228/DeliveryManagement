@@ -47,7 +47,7 @@ export default function Orders() {
 
         <>
             <section className="my-4 md:my-16">
-                <div className="max-w-[1440px] w-[90%]  mx-auto">
+                <div className="max-w-[1440px] w-[90%] mx-auto">
                     <div className="flex h-8 gap-8 items-end mb-8">
                         <div className="font-bold text-2xl">Ваши заказы</div>
                         <div className="">Всего: {orders.length}</div>

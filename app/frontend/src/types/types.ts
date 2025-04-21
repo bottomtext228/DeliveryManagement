@@ -156,4 +156,7 @@ export enum OrderStatus {
     Returned = 5         // Order was returned by the customer
 }
 
-
+export interface CartItem {
+    productId: number,
+    quantity: number
+}

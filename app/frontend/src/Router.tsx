@@ -15,6 +15,7 @@ import Login from "./pages/Auth/Login";
 import Terms from "./pages/Terms";
 import Orders from "./pages/Orders/Orders";
 import OrderAdd from "./pages/Orders/OrderAdd";
+import Cart from "./pages/Cart";
 
 const router = createBrowserRouter(
     [
@@ -82,6 +83,10 @@ const router = createBrowserRouter(
                 {
                     path: 'terms',
                     element: <Terms />
+                }, 
+                {
+                    path: 'cart',
+                    element: (<ProtectedRoute allowedRoles={['client']}><Cart/></ProtectedRoute>)
                 }
 
             ]

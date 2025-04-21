@@ -1,5 +1,4 @@
 import { MapModes, Town } from "../../types/types";
-import TrashCan from '../../assets/trash-can.svg';
 import { useState } from "react";
 
 interface Props {
@@ -23,7 +22,7 @@ export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCur
                 <li key={e.id} className="flex items-center h-16 m-2 border-2 border-gray-300 even:bg-neutral-50 rounded-xl group hover:bg-neutral-100">
                     <div className="mt-auto mb-auto ml-2 overflow-hidden text-xl font-semibold max-w-48 text-ellipsis whitespace-nowrap">{e.name}</div>
                     <button className="lg:invisible lg:w-10 lg:h-10 w-9 h-9  p-2 ml-auto mr-2 border-transparent group-hover:visible hover:bg-neutral-300 rounded-xl" onClick={() => { handleItemClick(e) }}>
-                        <img className='w-full h-full brightness-90' src={TrashCan}></img>
+                        <img className='w-full h-full brightness-90' src='trash-can.svg'></img>
                     </button>
                 </li>
             )
