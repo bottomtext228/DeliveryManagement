@@ -6,7 +6,7 @@ import { CartItem } from "../../types/types";
 interface CartState {
     list: CartItem[],
     add: (productId: number) => void,
-    remove: (productId: number) => void,
+    remove: (productId: number, decreaseQuantity?: boolean) => void,
 }
 
 const useCartStore = create<CartState>()(persist((set) => (
@@ -16,14 +16,14 @@ const useCartStore = create<CartState>()(persist((set) => (
             const item = list.find(e => e.productId == productId)
             if (item) {
                 item.quantity++;
-                return { list: list };
+                return { list: [...list] };
             }
             return { list: [...list, { productId: productId, quantity: 1 }] };
         }),
-        remove: (productId) => set(({ list }) => {
-            var index = list.findIndex(e => e.productId == productId);
+        remove: (productId, decreaseQuantity) => set(({ list }) => {
+            const index = list.findIndex(e => e.productId == productId);
             if (index !== -1) {
-                list.splice(index, 1);
+                if (decreaseQuantity) list[index].quantity--; else list.splice(index, 1);
             }
             return { list: [...list] };
         })

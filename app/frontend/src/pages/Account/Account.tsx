@@ -1,10 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useAuth"
 import useUserStore from "../../store/user/userStore";
+import RoleBadge from "../../components/RoleBadge";
 export default function Account() {
     const user = useUser();
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
+    
+    if (!user) return;
 
     return <>
         <div className="flex md:flex-row flex-col py-16 lg:gap-16 gap-8 max-w-[1440px] w-[90%]  mx-auto justify-center">
@@ -17,12 +20,12 @@ export default function Account() {
                         Профиль:
                     </div>
                     <div className="pt-2 text-xl break-all font-mono">
-                        {user?.email}
+                        {user.email}
                     </div>
                 </div>
                 <div className="flex flex-col justify-around">
                     <pre>
-                        {user?.roles}
+                        <RoleBadge roles={user.roles}></RoleBadge>
                     </pre>
                     <button onClick={() => {
                         navigate('/'); setTimeout(() => logout(), 100);
@@ -31,7 +34,7 @@ export default function Account() {
                     </button>
                 </div>
             </div>
-            {user?.roles.includes('company') &&
+            {user.roles.includes('company') &&
                 <>
                     <Link to='/catalog' className="flex flex-col h-40 transition-transform transform border border-gray-200 max-w-full md:w-44 rounded-2xl hover:scale-102 group">
                         <img className="w-20 h-20 m-4 mx-auto" src="/box.svg"></img>
@@ -44,7 +47,7 @@ export default function Account() {
                 </>
             }
 
-            {user?.roles.includes('client') &&
+            {user.roles.includes('client') &&
                 <>
                     <Link to='/orders' className="flex flex-col h-40 transition-transform transform border border-gray-200 max-w-full md:w-44 rounded-2xl hover:scale-102 group">
                         <img className="w-20 h-20 m-4 mx-auto" src="/cart.svg"></img>

@@ -6,11 +6,13 @@ import { Link } from "react-router-dom";
 
 interface Props {
     cartItem: CartItem,
-    handleDeleteClick: (productId: number) => void
+    handleDeleteClick: (productId: number) => void,
+    handleIncreaseQuantityClick: (productId: number) => void,
+    handleDecreaseQuantityClick: (productId: number) => void,
 }
 
 
-export default function CartItemCard({ cartItem, handleDeleteClick }: Props) {
+export default function CartItemCard({ cartItem, handleDeleteClick, handleIncreaseQuantityClick, handleDecreaseQuantityClick }: Props) {
     const { isPending, isError, error, data } = useQuery({
         queryKey: ['product', cartItem.productId],
         queryFn: () => getProductDetail(cartItem.productId),
@@ -32,18 +34,17 @@ export default function CartItemCard({ cartItem, handleDeleteClick }: Props) {
             <div>
                 = {product.price * cartItem.quantity}₽
             </div>
-            
-            <button>
-                
+
+            <button onClick={() => handleIncreaseQuantityClick(product.id)} className="w-2 h-2 bg-gray-200">
                 +
             </button>
-            <button>
+            <button onClick={() => handleDecreaseQuantityClick(product.id)}>
                 -
             </button>
             <button className="ml-auto w-8 h-8" onClick={() => handleDeleteClick(product.id)}>
                 <img src="./trash-can.svg"></img>
             </button>
-            
+
         </div>
     )
 }

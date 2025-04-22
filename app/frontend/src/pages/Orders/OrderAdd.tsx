@@ -31,13 +31,13 @@ export default function OrderAdd() {
 
     const navigate = useNavigate();
 
-    const { data: productData } = useQuery({
+    const { data: productData, isPending: isProductPending } = useQuery({
         queryKey: ['product', id],
         queryFn: () => getProductDetail(parseInt(id!)),
         refetchOnWindowFocus: false
     });
 
-    const product = productData?.data!;
+    const product = productData?.data;
     const companyId = product?.companyId;
 
     const { isPending, isError, error, data: pickUpPointsData } = useQuery({
@@ -69,7 +69,7 @@ export default function OrderAdd() {
         };
         try {
             await createOrder(dto);
-            navigate('/catalog');
+            navigate('/orders');
         } catch (error) {
             if (isAxiosError(error)) {
                 setServerError(error.response?.data);
@@ -101,11 +101,9 @@ export default function OrderAdd() {
 
                         <label htmlFor="choice">Пункт выдачи заказов:</label>
                         <select id="pickUpPointTown" {...register('pickUpPointTownId', { required: 'Необходимо выбрать маршрут!' })}>
-                            {pickUpPoints.map(e => {
-                                return <>
-                                    <option key={e.id} value={e.townId}>{e.townId}</option>
-                                </>
-                            })}
+                            {pickUpPoints.map(e =>
+                                <option key={e.id} value={e.townId}>{e.townId}</option>
+                            )}
                         </select>
 
 

@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import useUserStore from '../../../store/user/userStore';
 import { useUser } from '../../../hooks/useAuth';
+import RoleBadge from '../../RoleBadge';
 
 export default function Dropdown() {
-
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const logout = useUserStore(store => store.logout);
     const navigate = useNavigate();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const user = useUser();
+
     // close on outside click
     useEffect(() => {
         const handler = (e: MouseEvent) => {
@@ -25,7 +26,7 @@ export default function Dropdown() {
     function handleClick() {
         setIsOpen(false);
     }
-
+    
     return (<>
         <div ref={dropdownRef} className='relative'>
             <button onClick={() => setIsOpen(!isOpen)} className={`w-20 rounded-lg px-3 py-1.5 border border-transparent hover:border-neutral-400  hover:bg-neutral-300 ${isOpen && 'bg-gray-300'} flex justify-center items-center mx-auto duration-300 transition-all`}>
@@ -37,7 +38,8 @@ export default function Dropdown() {
                     {user ?
                         <div>
                             <div className="w-full px-4 py-1 text-left text-black opacity-85">
-                                <div className='font-semibold text-ellipsis whitespace-pre-wrap overflow-hidden'>{user?.email}</div> <span>{user?.roles[0]}</span>
+                                <div className='font-semibold text-ellipsis whitespace-pre-wrap overflow-hidden'>{user?.email}</div>
+                                <RoleBadge roles={user.roles}></RoleBadge>
                             </div>
                         </div> :
                         <Link onClick={handleClick} to='/auth/login' className='block px-4 py-2 opacity-85 hover:bg-neutral-200'>
