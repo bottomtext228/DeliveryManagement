@@ -4,7 +4,7 @@ export default function AlreadyLoggedIn() {
     const navigate = useNavigate();
 
     return (
-        <div className="mx-auto w-96 md:my-16 my-4 gap-y-10 flex flex-col items-center justify-center h-36 border border-gray-200 rounded-xl p-3">
+        <div className="mx-auto w-[90%] max-w-96 md:my-16 my-4 gap-y-10 flex flex-col items-center justify-center h-36 border border-gray-200 rounded-xl p-3">
             <div className="text-xl font-semibold">
                 Вы уже вошли в аккаунт.
             </div>
