@@ -7,6 +7,7 @@ import useUserStore from "../../store/user/userStore";
 import { ILoginResponse, IUser } from "../../types/types";
 import { useForm, SubmitHandler } from "react-hook-form";
 import ServerError, { IServerError } from "../../components/ServerError";
+import AlreadyLoggedIn from "./AlreadyLoggedIn";
 
 
 interface FormValues {
@@ -61,14 +62,9 @@ export default function Login() {
 
 
 
-    if (authState == AuthState.AUTHORIZED) {
-        return <div className="p-4 text-center border rounded bg-neutral-600">
-            <div>
-                <div className="text-white">You already logged in.</div>
-                <Link className="text-blue-400 hover:underline" to='/'>Home page</Link>
-            </div>
-        </div>
-    }
+    if (authState == AuthState.AUTHORIZED) return <AlreadyLoggedIn></AlreadyLoggedIn>
+    
+
 
 
 

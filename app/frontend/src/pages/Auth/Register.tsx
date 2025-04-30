@@ -8,6 +8,7 @@ import useUserStore from "../../store/user/userStore";
 import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
 import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
 import ServerError, { IServerError } from "../../components/ServerError";
+import AlreadyLoggedIn from "./AlreadyLoggedIn";
 
 interface FormValues {
     email: string
@@ -64,16 +65,7 @@ export default function Register() {
     }
 
 
-
-
-    if (authState == AuthState.AUTHORIZED) {
-        return <div className="p-4 text-center border rounded bg-neutral-600">
-            <div>
-                <div className="text-white">You already logged in.</div>
-                <Link className="text-blue-400 hover:underline" to='/'>Home page</Link>
-            </div>
-        </div>
-    }
+    if (authState == AuthState.AUTHORIZED) return <AlreadyLoggedIn></AlreadyLoggedIn>
 
     const handleGeneralSubmit = async (data: FormValues) => {
         if (isCompany) {
