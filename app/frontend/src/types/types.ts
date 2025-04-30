@@ -57,7 +57,8 @@ export interface IProductDetail {
     weight: number,
     size: IVector,
     image: string,
-    companyId: number
+    companyId: number,
+    companyName: string
 }
 
 export interface EditProductDto {
@@ -159,4 +160,9 @@ export enum OrderStatus {
 export interface CartItem {
     productId: number,
     quantity: number
+}
+
+export interface Company {
+    id: number,
+    name: string
 }

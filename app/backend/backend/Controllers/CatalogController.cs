@@ -54,7 +54,7 @@ namespace backend.Controllers
         public async Task<IActionResult> GetById(int id)
         {
 
-            var product = await _dbContext.Products.FindAsync(id);
+            var product = await _dbContext.Products.Include(e => e.Company).FirstOrDefaultAsync(e => e.Id == id);
             if (product != null)
             {
                 if (User.IsInRole("company"))
@@ -165,31 +165,32 @@ namespace backend.Controllers
             product.Weight = model.Weight;
             product.Size = new Vector(model.SizeX, model.SizeY, model.SizeZ);
 
-            if (model.Image != null) {
+            if (model.Image != null)
+            {
                 var fileName = await _fileService.SaveFileAsync(model.Image);
                 product.Image = fileName;
             }
 
-   /*          var Image = model.Image;
-            if (Image != null)
-            {
+            /*          var Image = model.Image;
+                     if (Image != null)
+                     {
 
-                if (Image.Length <= 0 || !(
-                    Image.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
-                    Image.ContentType.Equals("image/jpg", StringComparison.OrdinalIgnoreCase) ||
-                    Image.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase)))
-                    return Problem("Bad image value", statusCode: StatusCodes.Status400BadRequest);
-                //Convert Image to byte and save to database
-                byte[]? ImageBytes = null;
-                using (var fs1 = Image.OpenReadStream())
-                using (var ms1 = new MemoryStream())
-                {
-                    fs1.CopyTo(ms1);
-                    ImageBytes = ms1.ToArray();
-                }
-                product.Image = ImageBytes;
-            }
- */
+                         if (Image.Length <= 0 || !(
+                             Image.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                             Image.ContentType.Equals("image/jpg", StringComparison.OrdinalIgnoreCase) ||
+                             Image.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase)))
+                             return Problem("Bad image value", statusCode: StatusCodes.Status400BadRequest);
+                         //Convert Image to byte and save to database
+                         byte[]? ImageBytes = null;
+                         using (var fs1 = Image.OpenReadStream())
+                         using (var ms1 = new MemoryStream())
+                         {
+                             fs1.CopyTo(ms1);
+                             ImageBytes = ms1.ToArray();
+                         }
+                         product.Image = ImageBytes;
+                     }
+          */
             await _dbContext.SaveChangesAsync();
 
             return NoContent();

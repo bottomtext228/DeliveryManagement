@@ -13,5 +13,6 @@ namespace backend.Dtos.Catalog
         public string Image { get; set; } = string.Empty;
 
         public int CompanyId { get; set; }
+        public string CompanyName { get; set; }
     }
 }

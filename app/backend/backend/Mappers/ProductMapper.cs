@@ -22,7 +22,8 @@ namespace backend.Mappers
                 Weight = product.Weight,
                 Size = product.Size,
                 Image = FileService.GetPath(product.Image),
-                CompanyId = product.CompanyId
+                CompanyId = product.CompanyId,
+                CompanyName = product.Company.Name
             };
         }
 
