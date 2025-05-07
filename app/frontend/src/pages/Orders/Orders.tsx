@@ -54,7 +54,7 @@ export default function Orders() {
                     </div>
                     <div className="flex flex-col gap-y-8">
                         {orders.length ? orders.map((order) => <>
-                            <Order order={order} handelDeleteClick={handleDeleteClick} key={order.id}></Order>
+                            <Order order={order} handleDeleteClick={handleDeleteClick} key={order.id}></Order>
                         </>) : <div>Здесь пока пусто...</div>}
                     </div>
                 </div>

@@ -2,6 +2,7 @@ using System.Security.Claims;
 using backend.Dtos.PickUpPoint;
 using backend.Mappers;
 using backend.Models.Map;
+using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,11 @@ namespace backend.Controllers
     public class PickUpPointController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
-        public PickUpPointController(ApplicationDbContext dbContext)
+        private readonly CountryMap _countryMap;
+        public PickUpPointController(ApplicationDbContext dbContext, CountryMap countryMap)
         {
             _dbContext = dbContext;
+            _countryMap = countryMap;
         }
 
         /// <summary>
@@ -28,7 +31,7 @@ namespace backend.Controllers
         public async Task<IActionResult> GetAll()
         {
             var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
-            return Ok(await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).Select(e => e.ToPickUpPointDto()).ToListAsync());
+            return Ok(await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).Select(e => e.ToPickUpPointDto(_countryMap.Towns)).ToListAsync());
         }
 
         /// <summary>
@@ -71,7 +74,7 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByCompanyId(int companyId)
         {
-            var pickUpPoints = await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).Select(e => e.ToPickUpPointDto()).ToListAsync();
+            var pickUpPoints = await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).Select(e => e.ToPickUpPointDto(_countryMap.Towns)).ToListAsync();
             return Ok(pickUpPoints);
         }
 

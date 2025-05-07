@@ -99,6 +99,7 @@ export interface PickUpPoint {
     id: number,
     companyId: number,
     townId: number,
+    townName: string
 }
 
 export interface Stock {

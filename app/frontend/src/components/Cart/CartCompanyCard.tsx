@@ -4,6 +4,7 @@ import CartItemCard from "./CartItemCard"
 import { getCompany } from "../../api/company/getCompany"
 import LoadingSpinner from "../Loading/LoadingSpinner"
 import { createOrder } from "../../api/orders/createOrder"
+import { Link } from "react-router-dom"
 
 interface Props {
     companyId: number,
@@ -55,7 +56,7 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
                 ></CartItemCard>
             ))}
             <div className="my-8">
-                <button onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</button>
+                <Link to={`/orders/add_batch/${companyId}`} onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</Link>
             </div>
         </div>
     )

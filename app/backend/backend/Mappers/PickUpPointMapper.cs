@@ -9,9 +9,15 @@ namespace backend.Mappers
 {
     public static class PickUpPointMapper
     {
-        public static PickUpPointDto ToPickUpPointDto(this PickUpPoint pickUpPoint)
+        public static PickUpPointDto ToPickUpPointDto(this PickUpPoint pickUpPoint, List<Town> towns)
         {
-            return new PickUpPointDto { Id = pickUpPoint.Id, CompanyId = pickUpPoint.CompanyId, TownId = pickUpPoint.TownId };
+            return new PickUpPointDto
+            {
+                Id = pickUpPoint.Id,
+                CompanyId = pickUpPoint.CompanyId,
+                TownId = pickUpPoint.TownId,
+                TownName = towns.Find(e => e.Id == pickUpPoint.TownId)!.Name
+            };
         }
     }
 }

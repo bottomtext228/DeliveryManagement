@@ -5,5 +5,6 @@ namespace backend.Dtos.PickUpPoint
         public int Id { get; set; }
         public int CompanyId { get; set; }
         public int TownId { get; set; }
+        public string TownName { get; set; } = string.Empty;
     }
 }

@@ -1,13 +1,12 @@
-import { deleteOrder } from "../../api/orders/deleterOrder"
 import { IOrder } from "../../types/types"
 
 interface Props {
     order: IOrder
-    handelDeleteClick: (id: number) => void
+    handleDeleteClick: (id: number) => void
 }
 
 // TODO: display most order fields
-export default function Order({ order, handelDeleteClick }: Props) {
+export default function Order({ order, handleDeleteClick }: Props) {
     return (
         <>
             <div className="border border-gray-200 w-full min-h-32 gap-8 p-8 rounded-lg flex flex-wrap">
@@ -48,7 +47,7 @@ export default function Order({ order, handelDeleteClick }: Props) {
                 </div>
 
                 <div className="ml-auto">
-                    <button onClick={() => handelDeleteClick(order.id)} className="bg-red-500 font-semibold text-white p-2 rounded-lg">Отменить</button>
+                    <button onClick={() => handleDeleteClick(order.id)} className="bg-red-500 font-semibold text-white p-2 rounded-lg">Отменить</button>
                 </div>
             </div>
         </>
