@@ -97,7 +97,7 @@ export default function Cart() {
                             )}
                         </div>
                         <div className="my-8">
-                            <button onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</button>
+                            <button onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700 transition-colors duration-150">Заказать всё</button>
                         </div>
                     </>
                     : <>

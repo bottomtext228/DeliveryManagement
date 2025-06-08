@@ -43,19 +43,24 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
     }
 
     return (
-        <div className="border border-gray-200 p-3 rounded-lg w-full">
-            <div className="font-bold m-2">{company.name}</div>
-            {products.map(product => (
-                <CartItemCard
-                    key={product.id}
-                    cartItem={cartList.find(e => e.productId == product.id)!}
-                    product={product}
-                    handleDeleteClick={handleDeleteClick}
-                    handleIncreaseQuantityClick={handleIncreaseQuantityClick}
-                    handleDecreaseQuantityClick={handleDecreaseQuantityClick}
-                ></CartItemCard>
-            ))}
-            <div className="my-8">
+        <div className="border border-gray-200 p-3 rounded-lg">
+            <div className="flex items-end gap-x-2 mb-1">
+                <div className="text-sm text-neutral-600">Компания:</div>
+                <h2 className="font-bold">{company.name}</h2>
+            </div>
+            <div className="flex flex-col gap-y-6">
+                {products.map(product => (
+                    <CartItemCard
+                        key={product.id}
+                        cartItem={cartList.find(e => e.productId == product.id)!}
+                        product={product}
+                        handleDeleteClick={handleDeleteClick}
+                        handleIncreaseQuantityClick={handleIncreaseQuantityClick}
+                        handleDecreaseQuantityClick={handleDecreaseQuantityClick}
+                    ></CartItemCard>
+                ))}
+            </div>
+            <div className="mt-4 mb-2">
                 <Link to={`/orders/add_batch/${companyId}`} onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</Link>
             </div>
         </div>
