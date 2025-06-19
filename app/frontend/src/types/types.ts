@@ -24,7 +24,8 @@ export interface ILoginResponse {
      refreshToken: string */
     email: string,
     roles: string[],
-    token: string
+    token: string,
+    refreshToken: string
 }
 
 export interface IHtppValidationProblemDetails {
@@ -84,14 +85,18 @@ export interface CreateProductDto {
 }
 
 export enum RouteChoice {
-    Fastest,
-    Cheapest
+    Fastest = 0,
+    Cheapest = 1
 }
 
 export interface CreateOrderDto {
-    productId: number,
+    products: ProductOrderDto[],
     pickUpPointTownId: number,
-    choice: RouteChoice,
+    choice: RouteChoice
+}
+
+export interface ProductOrderDto {
+    productId: number,
     quantity: number
 }
 
@@ -130,23 +135,27 @@ export interface Road {
 
 }
 
-
 export enum MapModes {
     SetStocks,
     SetPickUpPoints
 }
 
 export interface IOrder {
-    id: number,
-    product: IProduct,
-    towns: Town[],
-    productPrice: number,
-    shippingPrice: number,
-    finalPrice: number,
-    shippingTime: number,
-    quantity: number,
-    status: OrderStatus,
-    createdAt: string
+    id: number;
+    items: OrderItemDto[];
+    towns: Town[];
+    shippingPrice: number;
+    finalPrice: number;
+    shippingTime: number;
+    status: OrderStatus;
+    createdAt: Date;
+}
+
+export interface OrderItemDto {
+    product: IProduct;
+    productPrice: number;
+    quantity: number;
+    finalPrice: number; // calculated as productPrice * quantity
 }
 
 export enum OrderStatus {
@@ -166,4 +175,26 @@ export interface CartItem {
 export interface Company {
     id: number,
     name: string
+}
+
+export interface PreviewOrderResponse {
+    shippingPrice: number,
+    shippingTime: number,
+    towns: string[],
+    isRoutesEqual: boolean
+}
+
+export interface PreviewOrderRequest {
+    productId: number,
+    pickUpPointTownId: number,
+    choice: number
+}
+
+export interface RefreshTokenRequestDto {
+    refreshToken: string
+};
+
+export interface RefreshTokenResponseDto {
+    token: string,
+    refreshToken: string
 }

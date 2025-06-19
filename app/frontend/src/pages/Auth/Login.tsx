@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { setTokenToLocalStorage } from "../../helpers/localstorage.helper";
+import { setRefreshTokenFromLocalStorage, setTokenToLocalStorage } from "../../helpers/localstorage.helper";
 import { AuthState, useAuthState } from "../../hooks/useAuth";
 import { AuthService } from "../../services/AuthService";
 import useUserStore from "../../store/user/userStore";
@@ -42,6 +42,7 @@ export default function Login() {
 
             const loginData = response.data as ILoginResponse;
             setTokenToLocalStorage(loginData.token);
+            setRefreshTokenFromLocalStorage(loginData.refreshToken);
             login(loginData as IUser);
             navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
         }
@@ -63,7 +64,7 @@ export default function Login() {
 
 
     if (authState == AuthState.AUTHORIZED) return <AlreadyLoggedIn></AlreadyLoggedIn>
-    
+
 
 
 

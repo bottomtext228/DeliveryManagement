@@ -1,6 +1,6 @@
+// access token
 export function getTokenFromLocalStorage(): string {
-    const token = localStorage.getItem('token');
-    return token ? token : '';
+    return localStorage.getItem('token') ?? '';
 }
 
 export function setTokenToLocalStorage(token: string) {
@@ -9,4 +9,17 @@ export function setTokenToLocalStorage(token: string) {
 
 export function removeTokenFromLocalStorage() {
     localStorage.removeItem('token');
+}
+
+// refresh token
+export function getRefreshTokenFromLocalStoage(): string {
+    return localStorage.getItem('refreshToken') ?? '';
+}
+
+export function setRefreshTokenFromLocalStorage(refreshToken: string) {
+    localStorage.setItem('refreshToken', refreshToken);
+}
+
+export function removeRefreshTokenFromLocalStorage() {
+    localStorage.removeItem('refreshToken');
 }

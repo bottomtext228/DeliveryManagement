@@ -43,7 +43,7 @@ export default function CartItemCard({ cartItem, product, handleDeleteClick, han
                     className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 after:w-4 after:h-1 after:bg-neutral-600 hover:after:bg-neutral-900 after:rotate-90 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow">
                 </button>
             </div>
-            <div>
+            <div className="h-8 flex justify-center items-center font-bold">
                 {product.price * cartItem.quantity}₽
             </div>
 

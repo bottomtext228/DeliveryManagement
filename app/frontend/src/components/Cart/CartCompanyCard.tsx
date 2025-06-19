@@ -28,18 +28,27 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
     const company = data.data;
 
     function handleOrderClick() {
-      /*   try {
-            products.forEach(product => {
-                const dto: CreateOrderDto = {
-                    productId: product.id,
-                    quantity: cartList.find(e => e.productId == product.id)!.quantity,
-                    pickUpPointTownId
-                };
-                createOrder(dto)
-            }
-        } catch (error) {
+        /*   try {
+              products.forEach(product => {
+                  const dto: CreateOrderDto = {
+                      productId: product.id,
+                      quantity: cartList.find(e => e.productId == product.id)!.quantity,
+                      pickUpPointTownId
+                  };
+                  createOrder(dto)
+              }
+          } catch (error) {
+  
+          } */
+    }
 
-        } */
+    const calculateFinalPrice = () => {
+        let price = 0;
+        for (const product of products) {
+            const cartItem = cartList.find(cartItem => cartItem.productId == product.id)!;
+            price += product.price * cartItem.quantity;
+        }
+        return price;
     }
 
     return (
@@ -60,8 +69,12 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
                     ></CartItemCard>
                 ))}
             </div>
+            <div className='mt-2 flex text-lg gap-2'>
+                <div className='font-semibold'>Итоговая цена:</div>
+                <div className='font-medium'>{calculateFinalPrice()}₽</div>
+            </div>
             <div className="mt-4 mb-2">
-                <Link to={`/orders/add_batch/${companyId}`} onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</Link>
+                <Link to={`/orders/add?ids=${products.map(e => e.id).join(',')}`} onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</Link>
             </div>
         </div>
     )

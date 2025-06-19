@@ -109,7 +109,7 @@ export default function CatalogDetail() {
                                     <button onClick={() => cartItem ? removeFromCart(product.id) : addToCart(product.id)} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">
                                         {cartItem ? "Убрать из корзины" : "В корзину"}
                                     </button>
-                                    <Link to={`/orders/add/${product.id}`} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-400 hover:bg-amber-500">Заказать</Link>
+                                    <Link to={`/orders/add?ids=${product.id}`} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-400 hover:bg-amber-500">Заказать</Link>
                                 </>
                             }
                         </div>

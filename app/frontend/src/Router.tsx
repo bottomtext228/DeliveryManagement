@@ -16,7 +16,6 @@ import Terms from "./pages/Terms";
 import Orders from "./pages/Orders/Orders";
 import OrderAdd from "./pages/Orders/OrderAdd";
 import Cart from "./pages/Cart";
-import OrdersAdd from "./pages/Orders/OrdersAdd";
 
 const router = createBrowserRouter(
     [
@@ -74,12 +73,8 @@ const router = createBrowserRouter(
                     element: (<ProtectedRoute allowedRoles={['client']}><Orders /></ProtectedRoute>)
                 },
                 {
-                    path: 'orders/add/:id',
+                    path: 'orders/add',
                     element: (<ProtectedRoute allowedRoles={['client']}><OrderAdd /></ProtectedRoute>)
-                },
-                {
-                    path: 'orders/add_batch/:companyId',
-                    element: (<ProtectedRoute allowedRoles={['client']}><OrdersAdd /></ProtectedRoute>)
                 },
                 {
                     path: 'map',

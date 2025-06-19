@@ -13,9 +13,6 @@ import Loading from '../../components/Loading/Loading';
 
 
 export default function Map() {
-    // TODO:
-    // * implement shopping cart
-    // * decide what to do with ordering products from different companies.
     // * fix bugs due to useQuery() when token expires and api returns 401 code
     const [selectedPickUpPoints, setSelectedPickUpPoints] = useState<Town[]>([]);
     const [selectedStocks, setSelectedStocks] = useState<Town[]>([]);

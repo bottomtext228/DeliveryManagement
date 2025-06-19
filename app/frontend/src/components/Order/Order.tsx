@@ -1,4 +1,6 @@
+import { formatHours } from "../../helpers/format.helper"
 import { IOrder, OrderStatus } from "../../types/types"
+import OrderItem from "./OrderItem"
 
 interface Props {
     order: IOrder
@@ -22,48 +24,41 @@ function getOrderStatusText(status: OrderStatus) {
     }
 }
 
-// TODO: display most order fields
+
 export default function Order({ order, handleDeleteClick }: Props) {
     return (
         <>
-            <div className="border border-gray-200 w-full min-h-32 gap-8 p-2 rounded-lg flex flex-wrap">
-                <div className="flex">
-                    <div className="w-22 h-22">
-                        <img className="object-contain w-full h-full" src={order.product.image}></img>
-                    </div>
-                    <div className="font-bold">
-                        {order.product.name}
-                    </div>
+            <div className="border border-gray-200 w-full min-h-32 gap-8 p-4 rounded-lg">
+                <div className="flex flex-col gap-4">
+                    {order.items.map(e => <OrderItem key={e.product.id} orderItem={e}></OrderItem>)}
                 </div>
 
-                <div>
-                    <div>Стоимость</div>
-                    <div>{order.productPrice}₽<span>&times;{order.quantity}</span><span>&#61;{order.productPrice * order.quantity}₽</span></div>
-                </div>
-                <div>
-                    <div>Доставка</div>
-                    <div>{order.shippingPrice}₽</div>
-                </div>
-                <div className="font-bold">
-                    <div>Итого</div>
-                    <div>{order.finalPrice}₽</div>
-                </div>
-                <div>
-                    <div>Заказ от</div>
+                <div className="flex gap-6 mt-4">
                     <div>
-                        {new Date(order.createdAt).toLocaleDateString()}
+                        <div>Доставка</div>
+                        <div>{order.shippingPrice}₽</div>
                     </div>
-                </div>
-                <div>
-                    <div>Время пути</div>
-                    <div>{order.shippingTime}</div>
-                </div>
-                <div>
-                    <div>Статус</div>
-                    <div>{getOrderStatusText(order.status)}</div>
-                </div>
-                <div className="ml-auto">
-                    <button onClick={() => handleDeleteClick(order.id)} className="bg-red-600 hover:bg-red-700 transition-colors duration-150 font-semibold text-white p-2 rounded-lg">Отменить</button>
+                    <div className="font-bold">
+                        <div>Итого</div>
+                        <div>{order.finalPrice}₽</div>
+                    </div>
+                    <div>
+                        <div>Заказ от</div>
+                        <div>
+                            {new Date(order.createdAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                    <div>
+                        <div>Время пути</div>
+                        <div>{formatHours(order.shippingTime)}</div>
+                    </div>
+                    <div>
+                        <div>Статус</div>
+                        <div>{getOrderStatusText(order.status)}</div>
+                    </div>
+                    <div className="ml-auto">
+                        <button onClick={() => handleDeleteClick(order.id)} className="bg-red-600 hover:bg-red-700 transition-colors duration-150 font-semibold text-white p-2 rounded-lg">Отменить</button>
+                    </div>
                 </div>
             </div>
         </>

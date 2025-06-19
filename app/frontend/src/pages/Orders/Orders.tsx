@@ -1,4 +1,4 @@
-import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query"
 import { getOrders } from "../../api/orders/getOrders";
 import Loading from "../../components/Loading/Loading";
 import { getTowns } from "../../api/map/getTowns";
@@ -7,6 +7,7 @@ import { deleteOrder } from "../../api/orders/deleterOrder";
 
 export default function Orders() {
     const queryClient = useQueryClient();
+
     const [ordersResult, townsResult] = useQueries({
         queries: [
             {
@@ -53,9 +54,9 @@ export default function Orders() {
                         <div className="">Всего: {orders.length}</div>
                     </div>
                     <div className="flex flex-col gap-y-8">
-                        {orders.length ? orders.map((order) => <>
-                            <Order order={order} handleDeleteClick={handleDeleteClick} key={order.id}></Order>
-                        </>) : <div>Здесь пока пусто...</div>}
+                        {orders.length ? orders.map((order) =>
+                            <Order key={order.id} order={order} handleDeleteClick={handleDeleteClick}></Order>
+                        ) : <div>Здесь пока пусто...</div>}
                     </div>
                 </div>
             </section>
