@@ -1,6 +1,13 @@
 export interface IUser {
     email: string,
-    roles: string[]
+    roles: string[],
+    company?: Company
+}
+
+export interface Company {
+    id: number,
+    name: string,
+    description: string
 }
 
 export interface IRegisterRequest {
@@ -18,12 +25,7 @@ export interface ILoginRequest {
 }
 
 export interface ILoginResponse {
-    /*  tokenType: string,
-     accessToken: string,
-     expiresIn: number,
-     refreshToken: string */
-    email: string,
-    roles: string[],
+    user: IUser,
     token: string,
     refreshToken: string
 }

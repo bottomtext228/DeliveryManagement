@@ -43,7 +43,7 @@ export default function Login() {
             const loginData = response.data as ILoginResponse;
             setTokenToLocalStorage(loginData.token);
             setRefreshTokenFromLocalStorage(loginData.refreshToken);
-            login(loginData as IUser);
+            login(loginData.user);
             navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
         }
         catch (error: any) {

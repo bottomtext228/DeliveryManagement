@@ -22,6 +22,9 @@ export default function Account() {
                     <div className="pt-2 text-xl break-all font-mono">
                         {user.email}
                     </div>
+                    <div>
+                        {}
+                    </div>
                 </div>
                 <div className="flex flex-col justify-around">
                     <pre>
