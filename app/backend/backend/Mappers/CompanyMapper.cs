@@ -10,7 +10,8 @@ namespace backend.Mappers
             return new CompanyDto
             {
                 Id = company.Id,
-                Name = company.Name
+                Name = company.Name,
+                Description = company.Description
             };
         }
     }

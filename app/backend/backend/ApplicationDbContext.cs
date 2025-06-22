@@ -18,6 +18,7 @@ namespace backend
         public DbSet<PickUpPoint> PickUpPoints { get; set; }
 
         public DbSet<Order> Orders { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 

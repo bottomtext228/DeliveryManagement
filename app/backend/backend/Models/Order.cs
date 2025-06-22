@@ -8,23 +8,36 @@ namespace backend.Models
         public string UserId { get; set; }
         public User User { get; set; }
 
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
-
-        public float ProductPrice { get; set; }
+        public List<OrderItem> Items { get; set; } = [];
 
         public float ShippingPrice { get; set; }
 
-        public int Quantity { get; set; }
-
-        public float FinalPrice { get; set; }
+        public float FinalPrice { get; set; } // it's another field in case of sale system, etc.
 
         public int ShippingTime { get; set; }
-        public List<int> TownIds { get; set; }
+
+        public List<int> TownIds { get; set; } = [];
+
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
 
+    public class OrderItem
+    {
+        public int Id { get; set; }
+
+        public int OrderId { get; set; }
+        public Order Order { get; set; }
+
+        public int ProductId { get; set; }
+        public Product Product { get; set; }
+
+        public float ProductPrice { get; set; }  // we must store product price at the moment of order creation
+
+        public int Quantity { get; set; }
+
+        public float FinalPrice => ProductPrice * Quantity;
     }
 
     public enum OrderStatus

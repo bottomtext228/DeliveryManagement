@@ -25,10 +25,10 @@ namespace backend.tests
             var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург")!;
             var Tambov = _countryMap.Towns.Find(e => e.Name == "Тамбов")!;
             var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск")!;
-            List<Town> towns = [Yaroslavl, SaintPetersburg, Tambov];
+            List<Town> stockTowns = [Yaroslavl, SaintPetersburg, Tambov];
 
             // Act
-            var route = _graphSearch.ComputeRoute(towns, Ijevsk);
+            var route = _graphSearch.ComputeRoute(stockTowns, Ijevsk);
             var cheapestPath = route.Cheapest;
 
             // Assert
@@ -43,14 +43,32 @@ namespace backend.tests
             var SaintPetersburg = _countryMap.Towns.Find(e => e.Name == "Санкт-Петербург")!;
             var Tambov = _countryMap.Towns.Find(e => e.Name == "Тамбов")!;
             var Ijevsk = _countryMap.Towns.Find(e => e.Name == "Ижевск")!;
-            List<Town> towns = [Yaroslavl, Moscow, SaintPetersburg, Tambov];
+            List<Town> stockTowns = [Yaroslavl, Moscow, SaintPetersburg, Tambov];
 
             // Act
-            var route = _graphSearch.ComputeRoute(towns, Ijevsk);
+            var route = _graphSearch.ComputeRoute(stockTowns, Ijevsk);
             var fastestPath = route.Fastest;
 
             // Assert
             Assert.Equal(1015, fastestPath.Price);
+        }
+        [Fact]
+        public void t()
+        {
+            // Arrange
+            var Moscow = _countryMap.Towns.Find(e => e.Name == "Москва")!;
+            var Vladimir = _countryMap.Towns.Find(e => e.Name == "Владимир")!;
+            var Tula = _countryMap.Towns.Find(e => e.Name == "Тула")!;
+            List<Town> stockTowns = [Moscow, Tula];
+
+            // Act
+            var route = _graphSearch.ComputeRoute(stockTowns, Vladimir);
+            var fastestPath = route.Fastest;
+            Console.OutputEncoding = Encoding.UTF8;
+            // Assert
+            fastestPath.Towns.ForEach(e => Console.WriteLine(e.Name));
+            Assert.Equal(4, fastestPath.Time);
+
         }
     }
 }

@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using backend.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Services
@@ -10,12 +10,10 @@ namespace backend.Services
     {
         private readonly IConfiguration _configuration;
         private readonly SymmetricSecurityKey _key;
-        private readonly UserManager<User> _userManager;
-        public TokenService(IConfiguration configuration, UserManager<User> userManager)
+        public TokenService(IConfiguration configuration)
         {
             _configuration = configuration;
             _key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["JWT:SigningKey"]!));
-            _userManager = userManager;
         }
 
         public string CreateToken(User user, IList<string> roles, int? companyId)
@@ -33,7 +31,7 @@ namespace backend.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(1),
+                Expires = DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("JWT:AccessTokenExpireTimeInMinutes")),
                 SigningCredentials = credentials,
                 Issuer = _configuration["JWT:Issuer"],
                 Audience = _configuration["JWT:Audience"]
@@ -44,6 +42,20 @@ namespace backend.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public RefreshToken CreateRefreshToken(User user)
+        {
+            return new RefreshToken
+            {
+                UserId = user.Id,
+                Token = GenerateRefreshToken(),
+                ExpiresOn = DateTime.UtcNow.AddDays(_configuration.GetValue<int>("JWT:RefreshTokenExpireTimeInDays"))
+            };
+        }
+        private string GenerateRefreshToken()
+        {
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace backend.Services
                     var path = new TownsPath { Time = 1, Price = 50, Towns = [pickUpPointTown] };
                     return new Route { Cheapest = path, Fastest = path };
                 }
- 
+
                 TownsPath cheapestPath;
                 TownsPath fastestPath;
                 fastestPath = pathSystem.GetFastestPath(stockTown, pickUpPointTown);
@@ -56,7 +56,29 @@ namespace backend.Services
                 }
 
             }
-            return new Route { Cheapest = bestCheapestPath, Fastest = bestFastestPath };
+
+
+            var route = new Route
+            {
+                Cheapest = bestCheapestPath,
+                Fastest = bestFastestPath,
+            };
+
+            // this two if statements handle the situation when user can get the same shipping time for different price
+            // or the same price for different shipping time.
+            if (route.Fastest.Time == route.Cheapest.Time) // if fastest route has the same time as cheapest we make fastest route the same price as cheapest
+            {
+                route.Fastest = route.Cheapest;
+                route.IsEqual = true; // and tell the client that route choice doesn't matter
+            }
+
+            if (route.Cheapest.Price == route.Fastest.Price) // if cheapest route has the same price as fastest we make cheapest route the same time as fastest
+            {
+                route.Cheapest = route.Fastest;
+                route.IsEqual = true; // and tell the client that route choice doesn't matter
+            }
+
+            return route;
         }
 
 
@@ -64,6 +86,7 @@ namespace backend.Services
         {
             public required TownsPath Cheapest { get; set; }
             public required TownsPath Fastest { get; set; }
+            public bool IsEqual { get; set; }
         }
 
 

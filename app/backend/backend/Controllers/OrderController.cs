@@ -24,55 +24,128 @@ namespace backend.Controllers
             _countryMap = countryMap;
         }
 
+        /*         [HttpPost]
+                [Authorize(Roles = "client")]
+                public async Task<IActionResult> Create([FromBody] CreateOrderDto model)
+                {
+
+                    // find product
+                    var product = await _dbContext.Products.Include(e => e.Company).ThenInclude(e => e.Stocks).FirstOrDefaultAsync(e => e.Id == model.ProductId);
+                    if (product == null) return BadRequest();
+
+
+
+                    // find pick up point
+                    var pickUpPoint = _countryMap.Towns.Find(e => e.Id == model.PickUpPointTownId);
+                    if (pickUpPoint == null) return BadRequest();
+
+                    // get towns with stocks of the company
+                    var company = product.Company;
+
+                    var townIdsWithStocks = company.Stocks.Where(e => e.CompanyId == product.CompanyId).Select(e => e.TownId).ToList();
+
+                    var towns = townIdsWithStocks.Select(e => _countryMap.Towns.Find(t => t.Id == e)!).ToList();
+
+                    var route = _graphSearch.ComputeRoute(towns, pickUpPoint);
+                    var chosenRoute = model.Choice == RouteChoice.Fastest ? route.Fastest : route.Cheapest;
+
+                    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    await _dbContext.Orders.AddAsync(new Order
+                    {
+                        UserId = currentUserId!,
+                        ProductId = model.ProductId,
+                        Quantity = model.Quantity,
+                        ProductPrice = product.Price,
+                        ShippingPrice = chosenRoute.Price,
+                        FinalPrice = model.Quantity * product.Price + chosenRoute.Price,
+                        ShippingTime = chosenRoute.Time,
+                        TownIds = chosenRoute.Towns.Select(e => e.Id).ToList()
+                    });
+                    await _dbContext.SaveChangesAsync();
+
+                    return Created();
+                }
+         */
         [HttpPost]
         [Authorize(Roles = "client")]
         public async Task<IActionResult> Create([FromBody] CreateOrderDto model)
         {
+            var pickUpPoint = _countryMap.Towns.Find(t => t.Id == model.PickUpPointTownId);
+            if (pickUpPoint == null)
+                return BadRequest("Invalid pickup point.");
 
-            // find product
-            var product = await _dbContext.Products.Include(e => e.Company).ThenInclude(e => e.Stocks).FirstOrDefaultAsync(e => e.Id == model.ProductId);
-            if (product == null) return BadRequest();
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var productIds = model.Products.Select(p => p.ProductId).ToList();
 
+            // Fetch all products in one query
+            var products = await _dbContext.Products
+                .Include(p => p.Company)
+                .ThenInclude(c => c.Stocks)
+                .Where(p => productIds.Contains(p.Id))
+                .ToListAsync();
 
+            // Check all products exist
+            if (products.Count != model.Products.Count)
+                return BadRequest("One or more products not found.");
 
-            // find pick up point
-            var pickUpPoint = _countryMap.Towns.Find(e => e.Id == model.PickUpPointTownId);
-            if (pickUpPoint == null) return BadRequest();
+            // Check all products belong to the same company
+            var distinctCompanyIds = products.Select(p => p.CompanyId).Distinct().ToList();
+            if (distinctCompanyIds.Count > 1)
+                return BadRequest("All products must belong to the same company.");
 
-            // get towns with stocks of the company
-            var company = product.Company;
+            var company = products.First().Company;
 
-            var townIdsWithStocks = company.Stocks.Where(e => e.CompanyId == product.CompanyId).Select(e => e.TownId).ToList();
-
-            var towns = townIdsWithStocks.Select(e => _countryMap.Towns.Find(t => t.Id == e)!).ToList();
+            // Get towns with stock
+            var townIdsWithStock = company.Stocks.Select(s => s.TownId).ToList();
+            var towns = townIdsWithStock.Select(id => _countryMap.Towns.Find(t => t.Id == id)!).ToList();
 
             var route = _graphSearch.ComputeRoute(towns, pickUpPoint);
             var chosenRoute = model.Choice == RouteChoice.Fastest ? route.Fastest : route.Cheapest;
 
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            await _dbContext.Orders.AddAsync(new Order
+            var order = new Order
             {
                 UserId = currentUserId!,
-                ProductId = model.ProductId,
-                Quantity = model.Quantity,
-                ProductPrice = product.Price,
                 ShippingPrice = chosenRoute.Price,
-                FinalPrice = model.Quantity * product.Price + chosenRoute.Price,
                 ShippingTime = chosenRoute.Time,
-                TownIds = chosenRoute.Towns.Select(e => e.Id).ToList()
-            });
+                TownIds = chosenRoute.Towns.Select(t => t.Id).ToList(),
+                Items = []
+            };
+
+            float totalProductPrice = 0;
+
+            foreach (var productOrder in model.Products)
+            {
+                if (productOrder.Quantity <= 0) return BadRequest($"Invalid quantity for product {productOrder.ProductId}.");
+
+                var product = products.First(p => p.Id == productOrder.ProductId);
+
+                var item = new OrderItem
+                {
+                    ProductId = product.Id,
+                    Quantity = productOrder.Quantity,
+                    ProductPrice = product.Price
+                };
+
+                order.Items.Add(item);
+                totalProductPrice += product.Price * productOrder.Quantity;
+            }
+
+            order.FinalPrice = totalProductPrice + order.ShippingPrice;
+
+            await _dbContext.Orders.AddAsync(order);
             await _dbContext.SaveChangesAsync();
 
-            return Created();
+            return Created("", new { order.Id });
         }
+
 
         [HttpGet]
         [Authorize(Roles = "client")]
         public async Task<IActionResult> GetAll()
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var orders = await _dbContext.Orders.Include(e => e.Product).Where(e => e.UserId == currentUserId).Select(e => e.ToOrderDto(_countryMap.Towns)).ToListAsync();
+            var orders = await _dbContext.Orders.Include(e => e.Items).ThenInclude(e => e.Product).Where(e => e.UserId == currentUserId).Select(e => e.ToOrderDto(_countryMap.Towns)).ToListAsync();
             return Ok(orders);
         }
 
@@ -91,6 +164,40 @@ namespace backend.Controllers
             return NoContent();
 
         }
+
+        [HttpPost("preview")]
+        [Authorize(Roles = "client")]
+        public async Task<IActionResult> ComputeRoute([FromBody] PreviewOrderRequestDto model)
+        {
+
+            // find product
+            var product = await _dbContext.Products.Include(e => e.Company).ThenInclude(e => e.Stocks).FirstOrDefaultAsync(e => e.Id == model.ProductId);
+            if (product == null) return Problem("Product is not found.", statusCode: StatusCodes.Status400BadRequest);
+
+
+            // find pick up point
+            var pickUpPoint = _countryMap.Towns.Find(e => e.Id == model.PickUpPointTownId);
+            if (pickUpPoint == null) return Problem("PickUpPoint is not found.", statusCode: StatusCodes.Status400BadRequest);
+
+            // get towns with stocks of the company
+            var company = product.Company;
+
+            var townIdsWithStocks = company.Stocks.Where(e => e.CompanyId == product.CompanyId).Select(e => e.TownId).ToList();
+
+            var towns = townIdsWithStocks.Select(e => _countryMap.Towns.Find(t => t.Id == e)!).ToList();
+
+            var route = _graphSearch.ComputeRoute(towns, pickUpPoint);
+            var chosenRoute = model.Choice == RouteChoice.Fastest ? route.Fastest : route.Cheapest;
+
+            return Ok(new PreviewOrderResponseDto
+            {
+                ShippingPrice = chosenRoute.Price,
+                ShippingTime = chosenRoute.Time,
+                Towns = chosenRoute.Towns.Select(e => e.Name).ToList(),
+                IsRoutesEqual = route.IsEqual
+            });
+        }
+
         /*  [Authorize(Roles = "company")]
  public IActionResult Index() // country map
  {

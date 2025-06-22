@@ -9,6 +9,8 @@ using backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using backend.Dtos.Company;
+using backend.Mappers;
 
 namespace backend.Controllers
 {
@@ -86,11 +88,15 @@ namespace backend.Controllers
                     var roles = await _userManager.GetRolesAsync(user);
 
 
+                    var refreshToken = _tokenService.CreateRefreshToken(user);
+                    await _dbContext.RefreshTokens.AddAsync(refreshToken);
+                    await _dbContext.SaveChangesAsync();
+
                     return Ok(new NewLoginDto
                     {
-                        Email = user.Email,
-                        Roles = roles.ToList(),
-                        Token = _tokenService.CreateToken(user, roles, company?.Id)
+                        User = new UserDto { Email = user.Email, Roles = roles.ToList(), Company = company?.ToCompanyDto() },
+                        Token = _tokenService.CreateToken(user, roles, company?.Id),
+                        RefreshToken = refreshToken.Token
                     });
                 }
                 else
@@ -113,22 +119,22 @@ namespace backend.Controllers
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
 
             var user = await _userManager.FindByIdAsync(userId);
-            
+
             var roles = await _userManager.GetRolesAsync(user);
 
 
             if (User.IsInRole("company"))
             {
                 var company = await _dbContext.Companies.FirstOrDefaultAsync(e => e.UserId == userId);
-                return Ok(new ProfileDto
-                { CompanyName = company.Name, Email = userEmail, CompanyDescription = company.Description, IsCompany = true, Roles = roles.ToList() });
+                return Ok(new UserDto
+                { Email = userEmail, Roles = roles.ToList(), Company = company?.ToCompanyDto() });
             }
             else
             {
-                return Ok(new ProfileDto { Email = userEmail, IsCompany = false, Roles = roles.ToList() });
+                return Ok(new UserDto { Email = userEmail, Roles = roles.ToList() });
             }
         }
- 
+
 
         [HttpPost("login")]
         [Consumes("application/json")]
@@ -148,12 +154,23 @@ namespace backend.Controllers
 
                 if (result.Succeeded)
                 {
-                    var company = _dbContext.Companies.FirstOrDefault(c => c.UserId == user.Id);
+                    var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+                    // create refresh token and save it
+                    var refreshToken = _tokenService.CreateRefreshToken(user);
+                    await _dbContext.RefreshTokens.AddAsync(refreshToken);
+                    await _dbContext.SaveChangesAsync();
+
                     return Ok(new NewLoginDto
                     {
-                        Email = user.Email!,
-                        Roles = roles.ToList(),
-                        Token = _tokenService.CreateToken(user, roles, company?.Id)
+                        User = new UserDto
+                        {
+                            Email = user.Email,
+                            Roles = roles.ToList(),
+                            Company = company?.ToCompanyDto()
+                        },
+                        Token = _tokenService.CreateToken(user, roles, company?.Id),
+                        RefreshToken = refreshToken.Token
                     });
                 }
                 else
@@ -167,6 +184,39 @@ namespace backend.Controllers
             }
 
         }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // check refresh token
+            var refreshToken = await _dbContext.RefreshTokens.Include(e => e.User).FirstOrDefaultAsync(e => e.Token == dto.RefreshToken);
+            if (refreshToken == null || refreshToken.ExpiresOn < DateTime.UtcNow)
+            {
+                return BadRequest("The refresh token has expired.");
+            }
+
+            // get user
+            var user = refreshToken.User;
+
+            // create access token
+            var roles = await _userManager.GetRolesAsync(user);
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
+            string accessToken = _tokenService.CreateToken(user, roles, company?.Id);
+
+            // update refrsh token
+            var newRefreshToken = _tokenService.CreateRefreshToken(user);
+            refreshToken.Token = newRefreshToken.Token;
+            refreshToken.ExpiresOn = newRefreshToken.ExpiresOn;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new RefreshTokenResponseDto { Token = accessToken, RefreshToken = refreshToken.Token });
+
+        }
+
+        // TODO: implement revoke tokens endpoint?
 
         /// <summary>
         /// Checks if provided email is not used by another account.

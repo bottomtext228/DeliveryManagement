@@ -12,16 +12,26 @@ namespace backend.Mappers
             return new OrderDto
             {
                 Id = order.Id,
-                Product = order.Product.ToProductDto(),
+                Items = order.Items.Select(e => e.ToOrderItemDto()).ToList(),
                 Towns = [.. order.TownIds.Select(e => towns.Find(t => t.Id == e)!)],
-                ProductPrice = order.ProductPrice,
-                ShippingPrice = order.ShippingPrice,
-                Quantity = order.Quantity,
                 FinalPrice = order.FinalPrice,
+                ShippingPrice = order.ShippingPrice,
                 ShippingTime = order.ShippingTime,
                 Status = order.Status,
                 CreatedAt = order.CreatedAt
             };
         }
+
+        public static OrderItemDto ToOrderItemDto(this OrderItem orderItem)
+        {
+            return new OrderItemDto
+            {
+                Product = orderItem.Product.ToProductDto(),
+                ProductPrice = orderItem.ProductPrice,
+                Quantity = orderItem.Quantity
+            };
+
+        }
+
     }
 }
