@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { AuthState, useAuthState, useUser } from '../../../hooks/useAuth'
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Dropdown from './Dropdown';
 import RoleBadge from '../../RoleBadge';
 import useUserStore from '../../../store/user/userStore';
+import { useAuthState, AuthState } from '../../../hooks/useAuthState';
+import { useUser } from '../../../hooks/useUser';
 
 
 export default function Navbar() {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import useUserStore from '../../../store/user/userStore';
-import { useUser } from '../../../hooks/useAuth';
+import { useUser } from '../../../hooks/useUser';
 import RoleBadge from '../../RoleBadge';
 
 export default function Dropdown() {

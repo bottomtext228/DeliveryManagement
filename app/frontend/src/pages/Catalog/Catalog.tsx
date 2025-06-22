@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getAllProducts } from "../../api/catalog/getAllProducts";
 import Loading from "../../components/Loading/Loading";
-import { useUser } from "../../hooks/useAuth";
+import { useUser } from "../../hooks/useUser";
 
 export default function CatalogAll() {
     const user = useUser();

@@ -7,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
 import ServerError, { IServerError } from "../../components/ServerError";
 import { useEffect, useState } from "react";
+import NotFound from "../NotFound";
+import Error from "../../components/Error/Error";
 
 
 interface FormValues {
@@ -26,14 +28,12 @@ export default function CatalogEdit() {
     const navigate = useNavigate();
     const [serverError, setServerError] = useState<IServerError | null>(null);
 
-    // TODO: show server errors, fix inputs
-    /*     if (isNaN(parseInt(id!))) {
-            return <span>Not found...</span>
-        } */
+    // TODO: fix inputs
+
 
     const { isPending, isError, data, error } = useQuery({
         queryKey: ['product', id],
-        queryFn: () => getProductDetail(parseInt(id!)),
+        queryFn: () => {let t = getProductDetail(Number(id)); console.log(t); return t;},
         refetchOnWindowFocus: false
     });
 
@@ -53,14 +53,21 @@ export default function CatalogEdit() {
         }
     }, [data, reset]);
 
+    if (isNaN(Number(id!))) {
+        return <Error message="Неправильный формат"></Error>
+    }
 
     if (isPending) {
         return <Loading></Loading>
     }
 
     if (isError) {
-        return <span>Error: {error.message}</span>
+        console.log(data);
+        if (data?.status == 404) return <NotFound></NotFound> 
+        return <Error message={"dd"}></Error>
     }
+
+
     const product = data.data;
     /*     const product = data.data;
         setValue('name', product.name);
@@ -100,7 +107,7 @@ export default function CatalogEdit() {
                 }
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">
-                        <img id ="image-preview" className="border border-gray-200 rounded-xl" src={product.image}></img>
+                        <img id="image-preview" className="border border-gray-200 rounded-xl" src={product.image}></img>
                         <div className="w-full mt-4">
                             <label htmlFor="image" className="flex w-full h-12 my-4 border border-gray-300 rounded-lg">
                                 <div id='image-label' className="flex items-center justify-start p-3 overflow-hidden flex-4/5 text-ellipsis whitespace-nowrap">Выберите файл...</div>
@@ -111,7 +118,7 @@ export default function CatalogEdit() {
                                     const file = e.target.files?.item(0);
                                     if (file !== null && file !== undefined) {
                                         const image = (document.querySelector('#image-preview')! as HTMLImageElement);
-                                        image.src = URL.createObjectURL(file);                           
+                                        image.src = URL.createObjectURL(file);
                                         (document.querySelector('#image-label')! as HTMLLabelElement).innerText = file.name;
                                     }
                                 }
@@ -205,66 +212,3 @@ export default function CatalogEdit() {
     )
 
 }
-
-
-/**
- * 
- *    <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="modal-body">
-                            <div></div>
-                            <label htmlFor="name" className="form-label">Название</label>
-                            <div className="mb-3 input-group">
-                                <input id="name" type="text" className="form-control" {...register('name', { required: 'Название не может быть пустым!' })}></input>
-                            </div>
-                            {errors.name && <div>{errors.name.message}</div>}
-                            <label htmlFor="description" className="form-label">Описание</label>
-                            <div className="mb-3 input-group">
-                                <textarea id="description" className="form-control" {...register('description', { required: 'Описание не может быть пустым!' })}></textarea>
-                            </div>
-                            {errors.description && <div>{errors.description.message}</div>}
-                            <label htmlFor="weight" className="form-label">Вес</label>
-                            <div className="mb-3 input-group">
-                                <input id="weight" type="number" min="0" step="0.0001" className="form-control" {...register('weight', { required: 'Вес не может быть пустым!' })}></input>
-                            </div>
-                            {errors.weight && <div>{errors.weight.message}</div>}
-                            <label htmlFor="price">Стоимость</label>
-                            <div>
-                                <input id="price" type="number" min="0" step="0.0001" className="" {...register('price', { required: 'Стоимость не может быть пустой!' })}></input>
-                            </div>
-                            {errors.price && <div>{errors.price.message}</div>}
-                            <label htmlFor="sizeX" className="form-label">Длина</label>
-                            <div className="mb-3 input-group">
-                                <input id="sizeX" type="number" min="0" step="0.0001" className="form-control" {...register('sizeX', { required: 'Длина не может быть пустой!' })}></input>
-                            </div>
-                            {errors.sizeX && <div>{errors.sizeX.message}</div>}
-                            <label htmlFor="sizeY" className="form-label">Ширина</label>
-                            <div className="mb-3 input-group">
-                                <input id="sizeY" type="number" min="0" step="0.0001" className="form-control" {...register('sizeY', { required: 'Ширина не может быть пустой!' })}></input>
-                            </div>
-                            {errors.sizeY && <div>{errors.sizeY.message}</div>}
-                            <label htmlFor="sizeZ" className="form-label">Высота</label>
-                            <div className="mb-3 input-group">
-                                <input id="sizeZ" type="number" min="0" step="0.0001" className="form-control" {...register('sizeZ', { required: 'Высота не может быть пустой!' })}></input>
-                            </div>
-                            {errors.sizeZ && <div>{errors.sizeZ.message}</div>}
-                            <div className="mb-3 input-group">
-                                <input {...register("image")} type="file" accept=".jpg, .jpeg, .png" onChange={
-                                    (e: React.ChangeEvent<HTMLInputElement>) => {
-                                        const file = e.target.files?.item(0);
-                                        if (file !== null) {
-                                            (document.querySelector('#image-preview')! as HTMLImageElement).src = URL.createObjectURL(file!);
-                                        }
-                                    }}
-                                >
-                                </input>
-                            </div>
-                            <div className="overflow-scroll w-52 h-52">
-                                <img id="image-preview" src={`data:image/png;base64,${product.image}`}></img>
-                            </div>
-                            {errors.image && <div>{errors.image.message}</div>}
-                        </div>
-                        <div className="modal-footer">
-                            <button type="submit" className="btn btn-primary" >Применить изменения</button>
-                        </div>
-                    </form>
- */

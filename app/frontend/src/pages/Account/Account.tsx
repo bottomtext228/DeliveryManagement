@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useUser } from "../../hooks/useAuth"
+import { useUser } from "../../hooks/useUser";
 import useUserStore from "../../store/user/userStore";
 import RoleBadge from "../../components/RoleBadge";
 export default function Account() {
     const user = useUser();
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
-    
+
     if (!user) return;
 
     return <>
@@ -22,14 +22,16 @@ export default function Account() {
                     <div className="pt-2 text-xl break-all font-mono">
                         {user.email}
                     </div>
-                    <div>
-                        {}
-                    </div>
                 </div>
-                <div className="flex flex-col justify-around">
+                <div className="flex flex-col justify-around items-end">
                     <pre>
                         <RoleBadge roles={user.roles}></RoleBadge>
                     </pre>
+                    {user.company &&
+                        <div className="pt-2 text-lg mb-2">
+                            {user.company.name}
+                        </div>
+                    }
                     <button onClick={() => {
                         navigate('/'); setTimeout(() => logout(), 100);
                     }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">

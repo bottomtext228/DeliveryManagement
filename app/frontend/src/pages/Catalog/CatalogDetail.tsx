@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProductDetail } from "../../api/catalog/getProduct";
 import { deleteProduct } from "../../api/catalog/deleteProduct";
 import Loading from "../../components/Loading/Loading";
-import { useUser } from "../../hooks/useAuth";
+import { useUser } from "../../hooks/useUser";
 import useCartStore from "../../store/user/cartStore";
 
 

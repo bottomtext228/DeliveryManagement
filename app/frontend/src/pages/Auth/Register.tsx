@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { AuthService } from "../../services/AuthService";
 import { ILoginResponse, IUser } from "../../types/types";
-import { setRefreshTokenFromLocalStorage, setTokenToLocalStorage } from "../../helpers/localstorage.helper";
+import { setRefreshTokenToLocalStorage, setTokenToLocalStorage } from "../../helpers/localstorage.helper";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { AuthState, useAuthState } from "../../hooks/useAuth";
+import { AuthState, useAuthState } from "../../hooks/useAuthState";
 import useUserStore from "../../store/user/userStore";
 import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
 import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
@@ -55,7 +55,7 @@ export default function Register() {
 
             const loginData = response.data as ILoginResponse;
             setTokenToLocalStorage(loginData.token);
-            setRefreshTokenFromLocalStorage(loginData.refreshToken);
+            setRefreshTokenToLocalStorage(loginData.refreshToken);
             login(loginData.user);
             navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
         }

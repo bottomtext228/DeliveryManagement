@@ -9,11 +9,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
+let hasCheckedAuth = false;
 function App() {
     const login = useUserStore(state => state.login);
     const logout = useUserStore(state => state.logout);
 
     const checkAuth = async () => {
+
+        if (hasCheckedAuth) return; // only do it once when user loads the page first time
+        hasCheckedAuth = true;
+        
         const token = getTokenFromLocalStorage();
 
         if (token) {

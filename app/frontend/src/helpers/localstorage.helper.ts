@@ -12,11 +12,11 @@ export function removeTokenFromLocalStorage() {
 }
 
 // refresh token
-export function getRefreshTokenFromLocalStoage(): string {
+export function getRefreshTokenFromLocalStorage(): string {
     return localStorage.getItem('refreshToken') ?? '';
 }
 
-export function setRefreshTokenFromLocalStorage(refreshToken: string) {
+export function setRefreshTokenToLocalStorage(refreshToken: string) {
     localStorage.setItem('refreshToken', refreshToken);
 }
 

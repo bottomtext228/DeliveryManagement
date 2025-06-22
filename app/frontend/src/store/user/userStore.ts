@@ -1,4 +1,4 @@
-import { removeTokenFromLocalStorage } from "../../helpers/localstorage.helper";
+import { removeRefreshTokenFromLocalStorage, removeTokenFromLocalStorage } from "../../helpers/localstorage.helper";
 import { IUser } from "../../types/types";
 import { create } from "zustand";
 
@@ -16,6 +16,7 @@ const useUserStore = create<UserState>((set) => ({
     logout: () => {
         set({ user: null });
         removeTokenFromLocalStorage();
+        removeRefreshTokenFromLocalStorage();
     }
 }));
 

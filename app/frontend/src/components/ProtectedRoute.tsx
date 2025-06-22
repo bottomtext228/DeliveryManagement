@@ -1,7 +1,8 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { AuthState, useAuthState, useUser } from "../hooks/useAuth"
+import { AuthState, useAuthState } from "../hooks/useAuthState"
 import Loading from "./Loading/Loading";
 import { PropsWithChildren } from "react";
+import { useUser } from "../hooks/useUser";
 
 
 
