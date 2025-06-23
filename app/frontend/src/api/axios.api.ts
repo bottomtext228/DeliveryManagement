@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { getTokenFromLocalStorage, getRefreshTokenFromLocalStorage, setTokenToLocalStorage, setRefreshTokenToLocalStorage, removeTokenFromLocalStorage, removeRefreshTokenFromLocalStorage } from '../helpers/localstorage.helper';
+import { getTokenFromLocalStorage, setTokenToLocalStorage, removeTokenFromLocalStorage } from '../helpers/localstorage.helper';
+import useUserStore from '../store/user/userStore';
 
 const instance = axios.create();
 
@@ -8,6 +9,8 @@ instance.interceptors.request.use((config) => {
     config.headers.Authorization = 'Bearer ' + getTokenFromLocalStorage()
     return config;
 });
+
+//TODO: store refresh token in HttpOnly cookie
 
 // Indicates whether a token refresh is currently in progress
 let isRefreshing = false;
@@ -38,6 +41,10 @@ const processQueue = (error: any) => {
 instance.interceptors.response.use(
     response => response, // Pass through successful responses
     async error => {
+        
+        // only attempt refresh if user has token
+        if (!getTokenFromLocalStorage()) return Promise.reject(error); 
+
         const originalRequest = error.config;
 
         // If the response is 401 (unauthorized) and the request hasn't been retried yet
@@ -61,14 +68,11 @@ instance.interceptors.response.use(
 
             try {
                 // Attempt to refresh the token using the refresh token
-                const refreshToken = getRefreshTokenFromLocalStorage();
-                const response = await axios.post('/api/account/refresh', { refreshToken });
+                const response = await axios.post('/api/account/refresh', {}, { withCredentials: true });
 
                 // Store the new tokens
                 const newToken = response.data.token;
-                const newRefreshToken = response.data.refreshToken;
                 setTokenToLocalStorage(newToken);
-                setRefreshTokenToLocalStorage(newRefreshToken);
 
                 // Retry all failed requests in the queue
                 processQueue(null);
@@ -76,13 +80,9 @@ instance.interceptors.response.use(
                 // Retry the original request that caused the 401
                 return instance(originalRequest);
             } catch (err) {
-                // If refresh fails, reject all queued requests and clear tokens
+                // If refresh fails, reject all queued requests and logout
                 processQueue(err);
-                removeTokenFromLocalStorage();
-                removeRefreshTokenFromLocalStorage();
-
-                // Redirect the user to the login page
-                window.location.href = '/auth/login';
+                useUserStore.getState().logout();
 
                 return Promise.reject(err);
             } finally {

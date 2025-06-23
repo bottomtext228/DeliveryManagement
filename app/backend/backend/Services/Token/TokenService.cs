@@ -57,5 +57,6 @@ namespace backend.Services
         {
             return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         }
+
     }
 }

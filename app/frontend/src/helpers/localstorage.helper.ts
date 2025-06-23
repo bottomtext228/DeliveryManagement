@@ -12,7 +12,7 @@ export function removeTokenFromLocalStorage() {
 }
 
 // refresh token
-export function getRefreshTokenFromLocalStorage(): string {
+/* export function getRefreshTokenFromLocalStorage(): string {
     return localStorage.getItem('refreshToken') ?? '';
 }
 
@@ -22,4 +22,4 @@ export function setRefreshTokenToLocalStorage(refreshToken: string) {
 
 export function removeRefreshTokenFromLocalStorage() {
     localStorage.removeItem('refreshToken');
-}
+} */

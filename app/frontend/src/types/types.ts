@@ -26,8 +26,7 @@ export interface ILoginRequest {
 
 export interface ILoginResponse {
     user: IUser,
-    token: string,
-    refreshToken: string
+    token: string
 }
 
 export interface IHtppValidationProblemDetails {
@@ -192,11 +191,6 @@ export interface PreviewOrderRequest {
     choice: number
 }
 
-export interface RefreshTokenRequestDto {
-    refreshToken: string
-};
-
 export interface RefreshTokenResponseDto {
-    token: string,
-    refreshToken: string
+    token: string
 }
