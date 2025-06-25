@@ -9,7 +9,6 @@ using backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using backend.Dtos.Company;
 using backend.Mappers;
 
 namespace backend.Controllers
@@ -76,23 +75,16 @@ namespace backend.Controllers
                     Company? company = null;
                     if (dto.AsCompany)
                     {
-                        var _user = await _userManager.FindByEmailAsync(dto.Email);
-                        if (_user != null)
-                        {
-                            company = new Company { Name = dto.CompanyName!, Description = dto.CompanyDescription!, UserId = _user.Id };
-                            await _dbContext.Companies.AddAsync(company);
-                            await _dbContext.SaveChangesAsync();
-                        }
+                        company = new Company { Name = dto.CompanyName!, Description = dto.CompanyDescription!, UserId = user.Id };
+                        await _dbContext.Companies.AddAsync(company);
+                        await _dbContext.SaveChangesAsync();
                     }
 
                     var roles = await _userManager.GetRolesAsync(user);
 
-
-                    var refreshToken = _tokenService.CreateRefreshToken(user);
-                    await _dbContext.RefreshTokens.AddAsync(refreshToken);
+                    // issue new token and save changes
+                    await _tokenService.IssueRefreshTokenAsync(user, Response);
                     await _dbContext.SaveChangesAsync();
-
-                    Response.SetRefreshToken(refreshToken);
 
                     return Ok(new NewLoginDto
                     {
@@ -107,6 +99,7 @@ namespace backend.Controllers
             }
             catch (Exception)
             {
+                // TODO: return error
                 return StatusCode(500);
             }
         }
@@ -157,12 +150,9 @@ namespace backend.Controllers
                 {
                     var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
-                    // create refresh token and save it
-                    var refreshToken = _tokenService.CreateRefreshToken(user);
-                    await _dbContext.RefreshTokens.AddAsync(refreshToken);
-                    await _dbContext.SaveChangesAsync();
 
-                    Response.SetRefreshToken(refreshToken);
+                    await _tokenService.IssueRefreshTokenAsync(user, Response);
+                    await _dbContext.SaveChangesAsync();
 
                     return Ok(new NewLoginDto
                     {
@@ -177,12 +167,16 @@ namespace backend.Controllers
                 }
                 else
                 {
-                    return Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
+                    return Unauthorized();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return Problem(
+                    detail: "An unexpected error occurred. Please try again later.",
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "Internal Server Error"
+                );
             }
 
         }
@@ -192,7 +186,7 @@ namespace backend.Controllers
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
-            if (string.IsNullOrEmpty(refreshToken)) return Unauthorized();
+            if (string.IsNullOrEmpty(refreshToken)) return Unauthorized("Missing refresh token.");
 
             // check refresh token
             var storedRefreshToken = await _dbContext.RefreshTokens.Include(e => e.User).FirstOrDefaultAsync(e => e.Token == refreshToken);
@@ -209,14 +203,9 @@ namespace backend.Controllers
             var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
             string accessToken = _tokenService.CreateToken(user, roles, company?.Id);
 
-            // update refrsh token
-            var newRefreshToken = _tokenService.CreateRefreshToken(user);
-            storedRefreshToken.Token = newRefreshToken.Token;
-            storedRefreshToken.ExpiresOn = newRefreshToken.ExpiresOn;
-
+            // update refresh token
+            _tokenService.RotateRefreshToken(storedRefreshToken, user, Response);
             await _dbContext.SaveChangesAsync();
-
-            Response.SetRefreshToken(storedRefreshToken);
 
             return Ok(new RefreshTokenResponseDto { Token = accessToken });
 

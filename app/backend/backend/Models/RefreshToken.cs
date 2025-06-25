@@ -12,5 +12,6 @@ namespace backend.Models
         public string UserId { get; set; } = string.Empty;
         public User User { get; set; }
         public DateTime ExpiresOn { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }

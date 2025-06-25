@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using backend.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Services
@@ -10,10 +11,12 @@ namespace backend.Services
     {
         private readonly IConfiguration _configuration;
         private readonly SymmetricSecurityKey _key;
-        public TokenService(IConfiguration configuration)
+        private readonly ApplicationDbContext _dbContext;
+        public TokenService(IConfiguration configuration, ApplicationDbContext dbContext)
         {
             _configuration = configuration;
             _key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["JWT:SigningKey"]!));
+            _dbContext = dbContext;
         }
 
         public string CreateToken(User user, IList<string> roles, int? companyId)
@@ -43,19 +46,50 @@ namespace backend.Services
 
             return tokenHandler.WriteToken(token);
         }
+        // Issuing new refresh token and storing it in the database and Cookie. Caller must save db changes! 
+        public async Task IssueRefreshTokenAsync(User user, HttpResponse response)
+        {
+            var refreshToken = CreateRefreshToken(user);
+            await _dbContext.RefreshTokens.AddAsync(refreshToken);
+            response.SetRefreshToken(refreshToken);
+        }
+        // Rotating old refresh token from the db and saving new version in Cookie. Caller must save db changes!
+        public void RotateRefreshToken(RefreshToken existingToken, User user, HttpResponse response)
+        {
+            var newToken = CreateRefreshToken(user);
 
-        public RefreshToken CreateRefreshToken(User user)
+            existingToken.Token = newToken.Token;
+            existingToken.ExpiresOn = newToken.ExpiresOn;
+            existingToken.CreatedOn = newToken.CreatedOn;
+
+            response.SetRefreshToken(existingToken);
+        }
+        private RefreshToken CreateRefreshToken(User user)
         {
             return new RefreshToken
             {
                 UserId = user.Id,
                 Token = GenerateRefreshToken(),
-                ExpiresOn = DateTime.UtcNow.AddDays(_configuration.GetValue<int>("JWT:RefreshTokenExpireTimeInDays"))
+                ExpiresOn = DateTime.UtcNow.AddDays(_configuration.GetValue<int>("JWT:RefreshTokenExpireTimeInDays")),
+                CreatedOn = DateTime.UtcNow
             };
         }
         private string GenerateRefreshToken()
         {
             return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        }
+        private async Task CleanupOldRefreshTokensAsync(string userId, int keepLatest = 5)
+        {
+            var oldTokens = await _dbContext.RefreshTokens
+                .Where(t => t.UserId == userId)
+                .OrderByDescending(t => t.CreatedOn)
+                .Skip(keepLatest)
+                .ToListAsync();
+
+            if (oldTokens.Count > 0)
+            {
+                _dbContext.RefreshTokens.RemoveRange(oldTokens); // the caller should save db changes
+            }
         }
 
     }
