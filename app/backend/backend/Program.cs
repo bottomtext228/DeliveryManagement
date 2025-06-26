@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using backend.Localisation;
 using backend.Interfaces;
+using backend.Infrastructure;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -51,6 +52,9 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails(); // needed for exception handler
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -143,7 +147,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 

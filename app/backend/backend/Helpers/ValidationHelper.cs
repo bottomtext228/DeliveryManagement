@@ -5,17 +5,18 @@ namespace backend.Helpers
 {
     public static class ValidationHelper
     {
-        public static ValidationProblemDetails CreateValidationProblemDetails(IdentityResult result)
+        public static Dictionary<string, string> CreateValidationProblemDetails(IdentityResult result)
         {
-
-            var errorDictionary = new Dictionary<string, string[]>(1);
+            var errors = new Dictionary<string, string>();
 
             foreach (var error in result.Errors)
             {
-                errorDictionary[error.Code] = [error.Description];
+                // Identity errors don’t always have a field name, so use Code or "General" key as fallback
+                var key = string.IsNullOrWhiteSpace(error.Code) ? "General" : error.Code;
+                errors[key] = error.Description;
             }
 
-            return new ValidationProblemDetails { Errors = errorDictionary };
+            return errors;
         }
     }
 }

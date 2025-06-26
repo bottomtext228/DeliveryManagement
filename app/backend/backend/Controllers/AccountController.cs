@@ -30,7 +30,14 @@ namespace backend.Controllers
             _tokenService = tokenService;
         }
 
-
+        /// <summary>
+        /// Registers a new user as either a client or a company. Sets a refresh token to Cookie.
+        /// </summary>
+        /// <param name="dto">Registration details including email, password, and optional company info.</param>
+        /// <returns>Returns the newly created user details along with an access token.</returns>
+        /// <response code="200">User successfully registered.</response>
+        /// <response code="400">Validation error on input or duplicate company name.</response>
+        /// <response code="500">Internal server error.</response>
         [HttpPost("register")]
         [Consumes("application/json")]
         [ProducesResponseType<NewLoginDto>(StatusCodes.Status200OK)]
@@ -38,75 +45,78 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            try
+            if (dto.AsCompany)
             {
+                {
+                    var errors = new Dictionary<string, string>();
+
+                    if (string.IsNullOrEmpty(dto.CompanyName))
+                        errors.Add(nameof(dto.CompanyName), "CompanyName can't be null with AsCompany = true");
+
+                    if (string.IsNullOrEmpty(dto.CompanyDescription))
+                        errors.Add(nameof(dto.CompanyDescription), "CompanyDescription can't be null with AsCompany = true");
+
+                    if (errors.Count != 0)
+                        return ApiResponseHelper.ValidationProblem(HttpContext, errors);
+                }
+
+                bool exists = await _dbContext.Companies.AnyAsync(c => c.Name.Equals(dto.CompanyName));
+                if (exists)
+                {
+                    var errors = new Dictionary<string, string>
+                        {
+                            { "CompanyName",  $"Имя компании '{dto.CompanyName}' уже занято."  }
+                        };
+                    return ApiResponseHelper.ValidationProblem(HttpContext, errors);
+                }
+            }
+
+            User user = new User { Email = dto.Email, UserName = dto.Email };
+
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (result.Succeeded)
+            {
+
+                await _userManager.AddToRoleAsync(user, dto.AsCompany ? "company" : "client");
+
+
+                Company? company = null;
                 if (dto.AsCompany)
                 {
-                    if (string.IsNullOrEmpty(dto.CompanyName)) return Problem("CompanyName can't be null with AsCompany = true", statusCode: StatusCodes.Status400BadRequest);
-                    if (string.IsNullOrEmpty(dto.CompanyDescription)) return Problem("CompanyDescription can't be null with AsCompany = true", statusCode: StatusCodes.Status400BadRequest);
-
-
-                    bool exists = await _dbContext.Companies.AnyAsync(c => c.Name.Equals(dto.CompanyName));
-                    if (exists)
-                    {
-                        var errors = new Dictionary<string, string[]>
-                        {
-                            { "CompanyName", new[] { $"Имя компании '{dto.CompanyName}' уже занято." } }
-                        };
-                        return ValidationProblem(new ValidationProblemDetails(errors)
-                        {
-                            Title = "Invalid input",
-                            Detail = "One or more validation errors occurred.",
-                            Status = StatusCodes.Status400BadRequest
-                        });
-                    }
+                    company = new Company { Name = dto.CompanyName!, Description = dto.CompanyDescription!, UserId = user.Id };
+                    await _dbContext.Companies.AddAsync(company);
                 }
 
-                User user = new User { Email = dto.Email, UserName = dto.Email };
+                var roles = await _userManager.GetRolesAsync(user);
 
+                // issue new token and save changes
+                await _tokenService.IssueRefreshTokenAsync(user, Response);
+                await _dbContext.SaveChangesAsync();
 
-                var result = await _userManager.CreateAsync(user, dto.Password);
-                if (result.Succeeded)
+                return Ok(new NewLoginDto
                 {
-
-                    await _userManager.AddToRoleAsync(user, dto.AsCompany ? "company" : "client");
-
-
-                    Company? company = null;
-                    if (dto.AsCompany)
-                    {
-                        company = new Company { Name = dto.CompanyName!, Description = dto.CompanyDescription!, UserId = user.Id };
-                        await _dbContext.Companies.AddAsync(company);
-                        await _dbContext.SaveChangesAsync();
-                    }
-
-                    var roles = await _userManager.GetRolesAsync(user);
-
-                    // issue new token and save changes
-                    await _tokenService.IssueRefreshTokenAsync(user, Response);
-                    await _dbContext.SaveChangesAsync();
-
-                    return Ok(new NewLoginDto
-                    {
-                        User = new UserDto { Email = user.Email, Roles = roles.ToList(), Company = company?.ToCompanyDto() },
-                        Token = _tokenService.CreateToken(user, roles, company?.Id)
-                    });
-                }
-                else
-                {
-                    return ValidationProblem(ValidationHelper.CreateValidationProblemDetails(result));
-                }
+                    User = new UserDto { Email = user.Email, Roles = roles.ToList(), Company = company?.ToCompanyDto() },
+                    Token = _tokenService.CreateToken(user, roles, company?.Id)
+                });
             }
-            catch (Exception)
+            else
             {
-                // TODO: return error
-                return StatusCode(500);
+                return ApiResponseHelper.ValidationProblem(HttpContext, ValidationHelper.CreateValidationProblemDetails(result));
             }
+
         }
 
-
+        /// <summary>
+        /// Gets the profile of the currently authenticated user.
+        /// </summary>
+        /// <returns>The user's email, roles, and company info if applicable.</returns>
+        /// <response code="200">Returns the user profile.</response>
+        /// <response code="401">If the user is not authenticated.</response>
         [HttpGet("profile")]
         [Authorize]
+        [ProducesResponseType<UserDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Profile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -129,7 +139,14 @@ namespace backend.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Authenticates a user and returns an access token with user details. Sets a refresh token to Cookie.
+        /// </summary>
+        /// <param name="dto">Login credentials containing email and password.</param>
+        /// <returns>User details and JWT token if login is successful.</returns>
+        /// <response code="200">Login successful.</response>
+        /// <response code="400">Invalid email or password.</response>
+        /// <response code="500">Internal server error.</response>
         [HttpPost("login")]
         [Consumes("application/json")]
         [ProducesResponseType<NewLoginDto>(StatusCodes.Status200OK)]
@@ -137,62 +154,60 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            try
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            if (user == null) return ApiResponseHelper.Unauthorized(HttpContext, "Invalid email or password");
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
+
+            if (result.Succeeded)
             {
-                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
-                if (user == null) return Unauthorized();
+                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
 
-                var roles = await _userManager.GetRolesAsync(user);
 
-                var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
+                await _tokenService.IssueRefreshTokenAsync(user, Response);
+                await _dbContext.SaveChangesAsync();
 
-                if (result.Succeeded)
+                return Ok(new NewLoginDto
                 {
-                    var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
-
-
-                    await _tokenService.IssueRefreshTokenAsync(user, Response);
-                    await _dbContext.SaveChangesAsync();
-
-                    return Ok(new NewLoginDto
+                    User = new UserDto
                     {
-                        User = new UserDto
-                        {
-                            Email = user.Email,
-                            Roles = roles.ToList(),
-                            Company = company?.ToCompanyDto()
-                        },
-                        Token = _tokenService.CreateToken(user, roles, company?.Id)
-                    });
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                        Email = user.Email,
+                        Roles = roles.ToList(),
+                        Company = company?.ToCompanyDto()
+                    },
+                    Token = _tokenService.CreateToken(user, roles, company?.Id)
+                });
             }
-            catch (Exception e)
+            else
             {
-                return Problem(
-                    detail: "An unexpected error occurred. Please try again later.",
-                    statusCode: StatusCodes.Status500InternalServerError,
-                    title: "Internal Server Error"
-                );
+                return ApiResponseHelper.Unauthorized(HttpContext, "Invalid email or password");
             }
-
         }
 
+
+        /// <summary>
+        /// Refreshes the JWT access token using a valid refresh token cookie.
+        /// </summary>
+        /// <returns>New access token if refresh token is valid.</returns>
+        /// <response code="200">Access token refreshed.</response>
+        /// <response code="401">Missing or invalid refresh token.</response>
         [HttpPost("refresh")]
+        [ProducesResponseType<RefreshTokenResponseDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
-            if (string.IsNullOrEmpty(refreshToken)) return Unauthorized("Missing refresh token.");
+            if (string.IsNullOrEmpty(refreshToken)) return ApiResponseHelper.Unauthorized(HttpContext, "Missing refresh token");
 
             // check refresh token
             var storedRefreshToken = await _dbContext.RefreshTokens.Include(e => e.User).FirstOrDefaultAsync(e => e.Token == refreshToken);
             if (storedRefreshToken == null || storedRefreshToken.ExpiresOn < DateTime.UtcNow)
             {
-                return Unauthorized("The refresh token has expired.");
+                return ApiResponseHelper.Unauthorized(HttpContext, "The refresh token has expired.");
             }
 
             // get user
@@ -241,7 +256,6 @@ namespace backend.Controllers
             var exists = await _userManager.Users.AnyAsync(u => u.Email == email);
             return Ok(new AvailabilityResponse { Available = !exists, Message = exists ? $"Имя пользователя '{email}' уже занято." : null });
         }
-
         public class AvailabilityResponse
         {
             public bool Available { get; set; }
