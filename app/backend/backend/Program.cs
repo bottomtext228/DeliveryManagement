@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using backend.Localisation;
 using backend.Interfaces;
 using backend.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using backend.Helpers;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -90,6 +92,26 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)),
         ClockSkew = TimeSpan.FromSeconds(15)
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = context =>
+        {
+            context.HandleResponse(); // Stop default behavior
+
+            var problem = new ProblemDetails
+            {
+                Status = StatusCodes.Status401Unauthorized,
+                Title = "Unauthorized",
+                Detail = "Authentication is required to access this resource.",
+                Type = "https://httpstatuses.com/401",
+                Instance = context.HttpContext.Request.Path
+            };
+
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Response.ContentType = "application/problem+json";
+            return context.Response.WriteAsJsonAsync(problem);
+        }
+    };
 });
 builder.Services.AddAuthorization();
 
@@ -154,6 +176,42 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseStaticFiles();
+
+// Configure fallback error handling for unmatched routes.
+app.UseStatusCodePages(async context =>
+{
+    var response = context.HttpContext.Response;
+
+    if (response.StatusCode == StatusCodes.Status401Unauthorized)
+    {
+        response.ContentType = "application/problem+json";
+
+        var problem = new ProblemDetails
+        {
+            Status = StatusCodes.Status401Unauthorized,
+            Title = "Unauthorized",
+            Type = "https://httpstatuses.com/401",
+            Detail = "Authentication is required to access this resource.",
+            Instance = context.HttpContext.Request.Path
+        };
+
+        await response.WriteAsJsonAsync(problem);
+    }
+    if (response.StatusCode == StatusCodes.Status404NotFound)
+    {
+        response.ContentType = "application/problem+json";
+
+        var problem = new ProblemDetails
+        {
+            Status = StatusCodes.Status404NotFound,
+            Title = "Not Found",
+            Type = "https://httpstatuses.com/404",
+            Detail = "Resource not found.",
+            Instance = context.HttpContext.Request.Path
+        };
+        await response.WriteAsJsonAsync(problem);
+    }
+});
 
 app.Run();
 
