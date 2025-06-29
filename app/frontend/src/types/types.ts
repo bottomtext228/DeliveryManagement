@@ -178,15 +178,15 @@ export interface Company {
     name: string
 }
 
-export interface PreviewOrderResponse {
+export interface ComputeRouteResponse {
     shippingPrice: number,
     shippingTime: number,
     towns: string[],
     isRoutesEqual: boolean
 }
 
-export interface PreviewOrderRequest {
-    productId: number,
+export interface ComputeRouteRequest {
+    companyId: number,
     pickUpPointTownId: number,
     choice: number
 }

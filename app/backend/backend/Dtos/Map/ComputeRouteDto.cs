@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.Dtos.Order
 {
-    public class PreviewOrderRequestDto
+    public class ComputeRouteRequestDto
     {
-        [Required(ErrorMessage = "Продукт обязателен!")]
-        public int ProductId { get; set; }
+        [Required(ErrorMessage = "Компания обязательна!")]
+        public int CompanyId { get; set; }
 
         [Required(ErrorMessage = "ПВЗ обязателен!")]
         public int PickUpPointTownId { get; set; }
@@ -14,7 +14,7 @@ namespace backend.Dtos.Order
         public RouteChoice Choice { get; set; }
     }
 
-    public class PreviewOrderResponseDto
+    public class ComputeRouteResponseDto
     {
         public float ShippingPrice { get; set; }
         public float ShippingTime { get; set; }

@@ -13,6 +13,9 @@ using backend.Mappers;
 
 namespace backend.Controllers
 {
+    /// <summary>
+    /// Controller for managing accounts
+    /// </summary>
     [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -113,6 +116,7 @@ namespace backend.Controllers
         /// <returns>The user's email, roles, and company info if applicable.</returns>
         /// <response code="200">Returns the user profile.</response>
         /// <response code="401">If the user is not authenticated.</response>
+        /// <response code="500">Internal server error.</response>
         [HttpGet("profile")]
         [Authorize]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]

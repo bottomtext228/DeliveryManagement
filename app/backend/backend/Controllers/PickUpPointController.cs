@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using backend.Dtos.PickUpPoint;
+using backend.Helpers;
 using backend.Mappers;
 using backend.Models.Map;
 using backend.Services;
@@ -9,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
+    /// <summary>
+    /// Controller for managing pick up points of the company
+    /// </summary>
     [ApiController]
     [Route("api/pickuppoint")]
     public class PickUpPointController : ControllerBase
@@ -22,12 +26,18 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Gets all pick up points of the company
+        /// Gets all pick up points for the currently authenticated company.
         /// </summary>
+        /// <returns>List of pick up point DTOs.</returns>
+        /// <response code="200">Successfully retrieved pick up points.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">Internal server error.</response>
         [HttpGet]
         [Authorize(Roles = "company")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(IEnumerable<PickUpPointDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
             var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
@@ -35,7 +45,8 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Sets all pick up points of the company
+        /// Sets pick up points for the currently authenticated company.
+        /// All previous pick up points will be removed.
         /// </summary>
         /// <remarks>
         /// Sample request:
@@ -47,33 +58,63 @@ namespace backend.Controllers
         ///         7
         ///     ]
         /// </remarks>
+        /// <param name="townIds">List of town IDs where pick up points will be created.</param>
+        /// <returns>No content if successful.</returns>
+        /// <response code="204">Pick up points updated successfully.</response>
+        /// <response code="400">Validation error or wrong town IDs.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">Internal server error.</response>
         [HttpPut]
         [Authorize(Roles = "company")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Set([FromBody] List<int> townIds)
         {
-            // TODO: check that town exists
+            var (duplicates, missing) = IdValidationHelper.ValidateIds(townIds, _countryMap.Towns.Select(p => p.Id));
+
+            if (duplicates.Count != 0) return ApiResponseHelper.BadRequest(HttpContext, $"Duplicate town IDs found: {string.Join(", ", duplicates)}");
+            if (missing.Count != 0)  return ApiResponseHelper.BadRequest(HttpContext, $"The following towns with IDs not found: {string.Join(", ", missing)}");
+
             var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
 
+            // delete previous pick up points
             await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).ExecuteDeleteAsync();
-            townIds.ForEach(async townId => await _dbContext.PickUpPoints.AddAsync(new PickUpPoint { CompanyId = companyId, TownId = townId }));
+
+            // set new ones
+            var newPickUpPoints = townIds.Select(townId => new PickUpPoint
+            {
+                CompanyId = companyId,
+                TownId = townId
+            }).ToList();
+            
+            await _dbContext.AddRangeAsync(newPickUpPoints);
             await _dbContext.SaveChangesAsync();
+
             return NoContent();
         }
 
-
         /// <summary>
-        /// Get pick up points of the company by company id
+        /// Gets pick up points for a specific company by ID. Used by clients.
         /// </summary>
+        /// <param name="companyId">The ID of the company.</param>
+        /// <returns>List of pick-up point DTOs.</returns>
+        /// <response code="200">Successfully retrieved pick up points.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">Internal server error.</response>
         [HttpGet("{companyId:int}")]
         [Authorize(Roles = "client")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(IEnumerable<PickUpPointDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByCompanyId(int companyId)
         {
+            var company = await _dbContext.Companies.FindAsync(companyId);
+            if (company == null) return ApiResponseHelper.NotFound(HttpContext, $"Company with ID {companyId} not found.");
+
             var pickUpPoints = await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).Select(e => e.ToPickUpPointDto(_countryMap.Towns)).ToListAsync();
             return Ok(pickUpPoints);
         }

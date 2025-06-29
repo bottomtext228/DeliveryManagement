@@ -11,7 +11,6 @@ using backend.Localisation;
 using backend.Interfaces;
 using backend.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using backend.Helpers;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -182,21 +181,6 @@ app.UseStatusCodePages(async context =>
 {
     var response = context.HttpContext.Response;
 
-    if (response.StatusCode == StatusCodes.Status401Unauthorized)
-    {
-        response.ContentType = "application/problem+json";
-
-        var problem = new ProblemDetails
-        {
-            Status = StatusCodes.Status401Unauthorized,
-            Title = "Unauthorized",
-            Type = "https://httpstatuses.com/401",
-            Detail = "Authentication is required to access this resource.",
-            Instance = context.HttpContext.Request.Path
-        };
-
-        await response.WriteAsJsonAsync(problem);
-    }
     if (response.StatusCode == StatusCodes.Status404NotFound)
     {
         response.ContentType = "application/problem+json";

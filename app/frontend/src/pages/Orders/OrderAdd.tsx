@@ -1,17 +1,15 @@
 import { isAxiosError } from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { data, Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { createProduct } from '../../api/catalog/createProduct';
-import { IHtppValidationProblemDetails, CreateProductDto, RouteChoice, CreateOrderDto, IProduct, IProductDetail, PreviewOrderRequest, ProductOrderDto, PreviewOrderResponse } from '../../types/types';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { IHtppValidationProblemDetails, RouteChoice, CreateOrderDto, IProductDetail, ComputeRouteRequest, ProductOrderDto, ComputeRouteResponse } from '../../types/types';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { getProductDetail } from '../../api/catalog/getProduct';
 import Loading from '../../components/Loading/Loading';
-import { getPickUpPoints } from '../../api/map/getPickUpPoints';
 import { getCompanyPickUpPoints } from '../../api/map/getCompanyPickUpPoints';
 import { createOrder } from '../../api/orders/createOrder';
 import useCartStore from '../../store/user/cartStore';
-import { previewOrder } from '../../api/orders/previewOrder';
+import { computeRoute } from '../../api/map/computeRoute';
 import { formatHours } from '../../helpers/format.helper';
 
 
@@ -30,7 +28,7 @@ export default function OrderAdd() {
 
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormValues>();
     const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
-    const [previewOrderData, setPreviewOrderData] = useState<PreviewOrderResponse | null>(null);
+    const [previewOrderData, setPreviewOrderData] = useState<ComputeRouteResponse | null>(null);
 
     const pickUpPointTownIdRef = useRef<HTMLSelectElement>(null);
     const routeChoiceRef = useRef<HTMLSelectElement>(null);
@@ -151,12 +149,12 @@ export default function OrderAdd() {
         setValue('pickUpPointTownId', pickUpPointTownId);
         setValue('choice', routeChoice);
 
-        const dto: PreviewOrderRequest = {
-            productId: products[0].id,
+        const dto: ComputeRouteRequest = {
+            companyId: companyId!,
             pickUpPointTownId: pickUpPointTownId, choice: routeChoice
         }
         try {
-            const response = await previewOrder(dto);
+            const response = await computeRoute(dto);
             setPreviewOrderData(response.data);
         } catch (error) {
             if (isAxiosError(error)) {

@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
+    /// <summary>
+    /// Controller for managing catalog products.
+    /// </summary>
     [Route("api/catalog")]
     [ApiController]
     [Authorize]
@@ -187,13 +190,14 @@ namespace backend.Controllers
         /// Deletes a product owned by the current company.
         /// </summary>
         /// <param name="id">Product ID.</param>
-        /// <returns>Ok if deleted.</returns>
-        /// <response code="200">Product successfully deleted.</response>
+        /// <returns>NoContent if deleted.</returns>
+        /// <response code="204">Product successfully deleted.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="404">Product with the specified ID was not found or it does not belong to the user company.</response>
+        /// <response code="500">Internal server error.</response>
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "company")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
@@ -215,7 +219,7 @@ namespace backend.Controllers
             _dbContext.Products.Remove(product);
             await _dbContext.SaveChangesAsync();
 
-            return Ok();
+            return NoContent();
         }
     }
 }
