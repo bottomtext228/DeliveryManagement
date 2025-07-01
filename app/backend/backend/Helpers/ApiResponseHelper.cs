@@ -83,16 +83,10 @@ namespace backend.Helpers
                 ContentTypes = { "application/problem+json" }
             };
         }
-
-        public static IActionResult ValidationProblem(HttpContext context, Dictionary<string, string> errors, string? title = null)
+        
+        public static IActionResult ValidationProblem(HttpContext context, Dictionary<string, string[]> errors, string? title = null)
         {
-            // Prepare errors in the format ValidationProblemDetails expects: Dictionary<string, string[]>
-            var formattedErrors = errors.ToDictionary(
-                kvp => kvp.Key,
-                kvp => new string[] { kvp.Value }
-            );
-
-            var validationProblem = new ValidationProblemDetails(formattedErrors)
+            var validationProblem = new ValidationProblemDetails(errors)
             {
                 Status = StatusCodes.Status400BadRequest,
                 Title = title ?? "Validation Failed",
@@ -108,6 +102,22 @@ namespace backend.Helpers
             };
         }
 
+        public static IActionResult ValidationProblem(HttpContext context, Dictionary<string, string> errors, string? title = null)
+        {
+            var formattedErrors = errors.ToDictionary(
+                kvp => kvp.Key,
+                kvp => new[] { kvp.Value }
+            );
+            return ValidationProblem(context, formattedErrors, title);
+        }
+
+        public static IActionResult ValidationProblem(HttpContext context, Tuple<string, string> error, string? title = null)
+        {
+            return ValidationProblem(context, new Dictionary<string, string[]>
+            {
+                [error.Item1] = [error.Item2]
+            }, title);
+        }
     }
 
 }
