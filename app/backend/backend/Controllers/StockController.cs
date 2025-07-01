@@ -51,8 +51,9 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Sets the stocks of the authenticated company. Accessible only to users registered as a company.
+        /// Sets the stocks of the authenticated company.
         /// All previous stocks will be removed.
+        /// Accessible only to users registered as a company.
         /// </summary>
         /// <remarks>
         /// Sample request:

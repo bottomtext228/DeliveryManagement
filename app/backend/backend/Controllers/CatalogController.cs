@@ -124,8 +124,6 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromForm] CreateProductDto model)
         {
-            // TODO: 
-            // * document 403 code
             var company = (await _dbContext.Companies
                 .Include(c => c.Stocks)
                 .Include(c => c.PickUpPoints)

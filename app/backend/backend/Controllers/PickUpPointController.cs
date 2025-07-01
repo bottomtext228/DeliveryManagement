@@ -47,8 +47,9 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Sets pick up points for the currently authenticated company. Accessible only to users registered as a company.
+        /// Sets pick up points for the currently authenticated company.
         /// All previous pick up points will be removed.
+        /// Accessible only to users registered as a company.
         /// </summary>
         /// <remarks>
         /// Sample request:
