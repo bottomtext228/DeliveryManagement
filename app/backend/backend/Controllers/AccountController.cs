@@ -66,11 +66,7 @@ namespace backend.Controllers
                 bool exists = await _dbContext.Companies.AnyAsync(c => c.Name.Equals(model.CompanyName));
                 if (exists)
                 {
-                    var errors = new Dictionary<string, string>
-                        {
-                            { "CompanyName",  $"Имя компании '{model.CompanyName}' уже занято."  }
-                        };
-                    return ApiResponseHelper.ValidationProblem(HttpContext, errors);
+                    return ApiResponseHelper.ValidationProblem(HttpContext, "CompanyName", $"Имя компании \"{model.CompanyName}\" уже занято.");
                 }
             }
 
@@ -115,7 +111,7 @@ namespace backend.Controllers
         /// </summary>
         /// <returns>The user's email, roles, and company info if applicable.</returns>
         /// <response code="200">Returns the user profile.</response>
-        /// <response code="401">If the user is not authenticated.</response>
+        /// <response code="401">Unauthorized.</response>
         /// <response code="500">Internal server error.</response>
         [HttpGet("profile")]
         [Authorize]
@@ -124,10 +120,10 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Profile()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var userEmail = User.FindFirstValue(ClaimTypes.Email)!;
 
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = (await _userManager.FindByIdAsync(userId))!;
 
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -161,7 +157,6 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
-
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
             if (user == null) return ApiResponseHelper.Unauthorized(HttpContext, "Invalid email or password");
 
@@ -181,7 +176,7 @@ namespace backend.Controllers
                 {
                     User = new UserDto
                     {
-                        Email = user.Email,
+                        Email = user.Email!,
                         Roles = roles.ToList(),
                         Company = company?.ToCompanyDto()
                     },

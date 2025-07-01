@@ -26,17 +26,19 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Gets all pick up points for the currently authenticated company.
+        /// Gets all pick up points for the currently authenticated company. Accessible only to users registered as a company.
         /// </summary>
         /// <returns>List of pick up point DTOs.</returns>
         /// <response code="200">Successfully retrieved pick up points.</response>
         /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by companies.</response>
         /// <response code="500">Internal server error.</response>
         [HttpGet]
         [Authorize(Roles = "company")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<PickUpPointDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
@@ -45,7 +47,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Sets pick up points for the currently authenticated company.
+        /// Sets pick up points for the currently authenticated company. Accessible only to users registered as a company.
         /// All previous pick up points will be removed.
         /// </summary>
         /// <remarks>
@@ -63,6 +65,7 @@ namespace backend.Controllers
         /// <response code="204">Pick up points updated successfully.</response>
         /// <response code="400">Validation error or wrong town IDs.</response>
         /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by companies.</response>
         /// <response code="500">Internal server error.</response>
         [HttpPut]
         [Authorize(Roles = "company")]
@@ -70,6 +73,7 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Set([FromBody] List<int> townIds)
         {
@@ -99,18 +103,20 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Gets pick up points for a specific company by ID. Used by clients.
+        /// Gets pick up points for a specific company by ID. Accessible only to users registered as a client.
         /// </summary>
         /// <param name="companyId">The ID of the company.</param>
         /// <returns>List of pick-up point DTOs.</returns>
         /// <response code="200">Successfully retrieved pick up points.</response>
         /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by clients.</response>
         /// <response code="500">Internal server error.</response>
         [HttpGet("{companyId:int}")]
         [Authorize(Roles = "client")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<PickUpPointDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByCompanyId(int companyId)
         {

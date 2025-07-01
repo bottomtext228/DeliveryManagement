@@ -104,28 +104,28 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Creates a new product. Only accessible by company users.
+        /// Creates a new product. Accessible only to users registered as a company.
         /// </summary>
         /// <param name="model">Product creation data.</param>
         /// <returns>Created product.</returns>
         /// <response code="201">Product successfully created.</response>
-        /// <response code="400">Validation error.</response>
+        /// <response code="400">Validation error or stocks/pick up points not set.</response>
         /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by companies.</response>
         /// <response code="500">Internal server error.</response>
         [HttpPost]
         [Authorize(Roles = "company")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ProductDetailDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromForm] CreateProductDto model)
         {
             // TODO: 
-            // * forbid product creation until company set stocks and pick up points. 
-            // * forbid setting empty stocks/pick up points
             // * document 403 code
-            // * document both ValidationProblemDetails and ProbleDetails types in Status400BadRequest
             var company = (await _dbContext.Companies
                 .Include(c => c.Stocks)
                 .Include(c => c.PickUpPoints)
@@ -157,7 +157,7 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Edits an existing product owned by the current company.
+        /// Edits an existing product owned by the current company. Accessible only to users registered as a company.
         /// </summary>
         /// <param name="id">Product ID.</param>
         /// <param name="model">Updated product data.</param>
@@ -165,6 +165,7 @@ namespace backend.Controllers
         /// <response code="204">Product successfully updated.</response>
         /// <response code="400">Validation error.</response>
         /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by companies.</response>
         /// <response code="404">Product with the specified ID was not found or it does not belong to the user company.</response>
         /// <response code="500">Internal server error.</response>
         [HttpPut("{id:int}")]
@@ -172,6 +173,7 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductDto model)
@@ -203,18 +205,20 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Deletes a product owned by the current company.
+        /// Deletes a product owned by the current company. Accessible only to users registered as a company.
         /// </summary>
         /// <param name="id">Product ID.</param>
         /// <returns>NoContent if deleted.</returns>
         /// <response code="204">Product successfully deleted.</response>
         /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by companies.</response>
         /// <response code="404">Product with the specified ID was not found or it does not belong to the user company.</response>
         /// <response code="500">Internal server error.</response>
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "company")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(int id)

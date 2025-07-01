@@ -21,12 +21,13 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Retrieves a company by its ID. Accessible only to clients.
+        /// Retrieves a company by its ID. Accessible only to users registered as a client.
         /// </summary>
         /// <param name="id">The ID of the company to retrieve.</param>
         /// <returns>The requested company data.</returns>
         /// <response code="200">Returns the requested company.</response>
         /// <response code="401">Unauthorized. Only clients can access this endpoint.</response>
+        /// <response code="403">Forbidden. Method used only by clients.</response>
         /// <response code="404">Company with the specified ID was not found.</response>
         /// <response code="500">Internal server error.</response>
         [HttpGet("{id:int}")]
@@ -34,6 +35,7 @@ namespace backend.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(CompanyDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id)

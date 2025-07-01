@@ -75,13 +75,14 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Previews the shipping route and cost for a given product and pick up point.
+        /// Previews the shipping route and cost for a given product and pick up point. Accessible only to users registered as a client.
         /// </summary>
         /// <param name="model">Preview order request containing product and pick up town ID.</param>
         /// <returns>Shipping route details.</returns>
         /// <response code="200">Route successfully calculated.</response>
         /// <response code="400">Validation error or company, pick up point not found or company did not set stocks/pick up points.</response>
         /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by clients.</response>
         /// <response code="500">Internal server error.</response>
         [HttpPost("preview")]
         [Authorize(Roles = "client")]
@@ -89,6 +90,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ComputeRoute([FromBody] ComputeRouteRequestDto model)
         {
