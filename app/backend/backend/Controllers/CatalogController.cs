@@ -235,6 +235,7 @@ namespace backend.Controllers
             }
 
             _dbContext.Products.Remove(product);
+            _fileService.DeleteFile(product.Image);
             await _dbContext.SaveChangesAsync();
 
             return NoContent();
