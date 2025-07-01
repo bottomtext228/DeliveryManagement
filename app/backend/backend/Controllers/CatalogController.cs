@@ -7,6 +7,7 @@ using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Controllers
 {
@@ -120,7 +121,22 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromForm] CreateProductDto model)
         {
-            var company = await _dbContext.Companies.Include(c => c.Products).FirstOrDefaultAsync(e => e.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+            // TODO: 
+            // * forbid product creation until company set stocks and pick up points. 
+            // * forbid setting empty stocks/pick up points
+            // * document 403 code
+            // * document both ValidationProblemDetails and ProbleDetails types in Status400BadRequest
+            var company = (await _dbContext.Companies
+                .Include(c => c.Stocks)
+                .Include(c => c.PickUpPoints)
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(e => e.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            )!;
+
+            if (company.Stocks.Count == 0 || company.PickUpPoints.Count == 0)
+            {
+                return ApiResponseHelper.BadRequest(HttpContext, "The company must set stocks and pick up points before creating a product.");
+            }
 
             var fileName = await _fileService.SaveFileAsync(model.Image);
 
@@ -135,7 +151,7 @@ namespace backend.Controllers
             };
 
             await _dbContext.Products.AddAsync(product);
-            company!.Products.Add(product);
+            company.Products.Add(product);
             await _dbContext.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product.ToProductDetailDto());
         }

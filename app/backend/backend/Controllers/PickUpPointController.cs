@@ -73,10 +73,12 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Set([FromBody] List<int> townIds)
         {
+            if (townIds.Count == 0) return ApiResponseHelper.BadRequest(HttpContext, "At least one town must be provided.");
+
             var (duplicates, missing) = IdValidationHelper.ValidateIds(townIds, _countryMap.Towns.Select(p => p.Id));
 
             if (duplicates.Count != 0) return ApiResponseHelper.BadRequest(HttpContext, $"Duplicate town IDs found: {string.Join(", ", duplicates)}");
-            if (missing.Count != 0)  return ApiResponseHelper.BadRequest(HttpContext, $"The following towns with IDs not found: {string.Join(", ", missing)}");
+            if (missing.Count != 0) return ApiResponseHelper.BadRequest(HttpContext, $"The following towns with IDs not found: {string.Join(", ", missing)}");
 
             var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
 
@@ -89,7 +91,7 @@ namespace backend.Controllers
                 CompanyId = companyId,
                 TownId = townId
             }).ToList();
-            
+
             await _dbContext.AddRangeAsync(newPickUpPoints);
             await _dbContext.SaveChangesAsync();
 
