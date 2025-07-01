@@ -80,29 +80,37 @@ namespace backend.Controllers
         /// <param name="model">Preview order request containing product and pick up town ID.</param>
         /// <returns>Shipping route details.</returns>
         /// <response code="200">Route successfully calculated.</response>
-        /// <response code="400">Validation error or company, pick up point not found.</response>
+        /// <response code="400">Validation error or company, pick up point not found or company did not set stocks/pick up points.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="500">Internal server error.</response>
         [HttpPost("preview")]
         [Authorize(Roles = "client")]
         [ProducesResponseType(typeof(ComputeRouteResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ComputeRoute([FromBody] ComputeRouteRequestDto model)
         {
+            // find company
+            var company = await _dbContext.Companies.Include(e => e.Stocks).Include(e => e.PickUpPoints).FirstOrDefaultAsync(e => e.Id == model.CompanyId);
+            if (company == null) return ApiResponseHelper.BadRequest(HttpContext, $"Company with ID {model.CompanyId} not found.");
+
+            if (company.Stocks.Count == 0 || company.PickUpPoints.Count == 0)
+            {
+                return ApiResponseHelper.BadRequest(HttpContext, $"Company with ID {model.CompanyId} did not set stocks/pick up points.");
+            }
+
             // find pick up point
-            var pickUpPoint = _countryMap.Towns.Find(e => e.Id == model.PickUpPointTownId);
+            var pickUpPoint = company.PickUpPoints.FirstOrDefault(e => e.TownId == model.PickUpPointTownId);
             if (pickUpPoint == null) return ApiResponseHelper.BadRequest(HttpContext, $"PickUpPoint with Town ID {model.PickUpPointTownId} not found.");
 
-            // find company
-            var company = await _dbContext.Companies.Include(e => e.Stocks).FirstOrDefaultAsync(e => e.Id == model.CompanyId);
-            if (company == null) return ApiResponseHelper.BadRequest(HttpContext, $"Company with ID {model.CompanyId} not found.");
+            var pickUpPointTown = _countryMap.Towns.Find(e => e.Id == pickUpPoint.TownId)!;
 
             var townIdsWithStocks = company.Stocks.Select(e => e.TownId).ToList();
             var towns = townIdsWithStocks.Select(e => _countryMap.Towns.Find(t => t.Id == e)!).ToList();
 
-            var route = _graphSearch.ComputeRoute(towns, pickUpPoint);
+            var route = _graphSearch.ComputeRoute(towns, pickUpPointTown);
             var chosenRoute = model.Choice == RouteChoice.Fastest ? route.Fastest : route.Cheapest;
 
             return Ok(new ComputeRouteResponseDto
