@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Infrastructure
 {
+    /// <summary>
+    /// Handles exceptions in controllers (500 status code).
+    /// </summary>
     public class GlobalExceptionHandler : IExceptionHandler
     {
         private readonly ILogger<GlobalExceptionHandler> _logger;
@@ -18,7 +21,7 @@ namespace backend.Infrastructure
             {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Internal Server Error",
-                Type = "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+                Type = "https://httpstatuses.com/500",
                 Detail = "An unexpected error occurred. Please try again later."
 
             }, cancellationToken);

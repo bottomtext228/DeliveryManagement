@@ -10,7 +10,6 @@ using Microsoft.OpenApi.Models;
 using backend.Localisation;
 using backend.Interfaces;
 using backend.Infrastructure;
-using Microsoft.AspNetCore.Mvc;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -54,6 +53,7 @@ builder.Services.AddSwaggerGen(option =>
 
 builder.Services.AddControllers();
 
+// handle 500 status code
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails(); // needed for exception handler
 
@@ -93,23 +93,10 @@ builder.Services.AddAuthentication(options =>
     };
     options.Events = new JwtBearerEvents
     {
-        OnChallenge = context =>
-        {
-            context.HandleResponse(); // Stop default behavior
-
-            var problem = new ProblemDetails
-            {
-                Status = StatusCodes.Status401Unauthorized,
-                Title = "Unauthorized",
-                Detail = "Authentication is required to access this resource.",
-                Type = "https://httpstatuses.com/401",
-                Instance = context.HttpContext.Request.Path
-            };
-
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            context.Response.ContentType = "application/problem+json";
-            return context.Response.WriteAsJsonAsync(problem);
-        }
+        // handle 401 status code
+        OnChallenge = JwtBearerEventHandlers.HandleOnChallenge,
+        // handle 403 status code
+        OnForbidden = JwtBearerEventHandlers.HandleOnForbidden
     };
 });
 builder.Services.AddAuthorization();
@@ -168,7 +155,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// needed for exception handler
 app.UseExceptionHandler();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -176,26 +165,9 @@ app.MapControllers();
 
 app.UseStaticFiles();
 
-// Configure fallback error handling for unmatched routes.
-app.UseStatusCodePages(async context =>
-{
-    var response = context.HttpContext.Response;
+// Handle 404 status code
+app.UseMiddleware<NotFoundMiddleware>();
 
-    if (response.StatusCode == StatusCodes.Status404NotFound)
-    {
-        response.ContentType = "application/problem+json";
-
-        var problem = new ProblemDetails
-        {
-            Status = StatusCodes.Status404NotFound,
-            Title = "Not Found",
-            Type = "https://httpstatuses.com/404",
-            Detail = "Resource not found.",
-            Instance = context.HttpContext.Request.Path
-        };
-        await response.WriteAsJsonAsync(problem);
-    }
-});
 
 app.Run();
 
