@@ -6,7 +6,7 @@ import { IHtppValidationProblemDetails, RouteChoice, CreateOrderDto, IProductDet
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { getProductDetail } from '../../api/catalog/getProduct';
 import Loading from '../../components/Loading/Loading';
-import { getCompanyPickUpPoints } from '../../api/map/getCompanyPickUpPoints';
+import { getCompanyPickUpPoints } from '../../api/pickUpPoint/getCompanyPickUpPoints';
 import { createOrder } from '../../api/orders/createOrder';
 import useCartStore from '../../store/user/cartStore';
 import { computeRoute } from '../../api/map/computeRoute';

@@ -1,19 +1,18 @@
 import { useQueries } from '@tanstack/react-query'
-import { getPickUpPoints } from '../../api/map/getPickUpPoints';
-import { getStocks } from '../../api/map/getStocks';
+import { getPickUpPoints } from '../../api/pickUpPoint/getPickUpPoints';
+import { getStocks } from '../../api/stock/getStocks';
 import TownsMap from '../../components/Towns/TownsMap';
 import TownsSidebar from '../../components/Towns/TownsSidebar';
 import { MapModes, Town } from '../../types/types';
 import { useEffect, useState } from 'react';
 import { getRoads } from '../../api/map/getRoads';
 import { getTowns } from '../../api/map/getTowns';
-import { setStocks } from '../../api/map/setStocks';
-import { setPickUpPoints } from '../../api/map/setPickUpPoints';
+import { setStocks } from '../../api/stock/setStocks';
+import { setPickUpPoints } from '../../api/pickUpPoint/setPickUpPoints';
 import Loading from '../../components/Loading/Loading';
 
 
 export default function Map() {
-    // * fix bugs due to useQuery() when token expires and api returns 401 code
     const [selectedPickUpPoints, setSelectedPickUpPoints] = useState<Town[]>([]);
     const [selectedStocks, setSelectedStocks] = useState<Town[]>([]);
     const [currentMode, setCurrentMode] = useState<MapModes>(MapModes.SetStocks);
