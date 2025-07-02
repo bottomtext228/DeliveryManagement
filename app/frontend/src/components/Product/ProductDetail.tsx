@@ -3,6 +3,9 @@ import { IProductDetail } from "../../types/types";
 interface Props {
     product: IProductDetail
 }
+
+const imageBaseUrl = import.meta.env.VITE_IMAGE_BASE_URL;
+
 export default function ProductDetail({ product }: Props) {
     return (
         <div>
@@ -11,7 +14,7 @@ export default function ProductDetail({ product }: Props) {
             </div>
             <div className="flex">
                 <div className="mb-2 w-36 h-36">
-                    <img loading="lazy" className="w-full h-full " src={product.image} ></img>
+                    <img loading="lazy" className="w-full h-full " src={`${imageBaseUrl}${product.image}`} ></img>
                 </div>
                 <div>
                     {product.description}

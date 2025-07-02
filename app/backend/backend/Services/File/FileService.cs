@@ -50,12 +50,5 @@ namespace backend.Services
 
             File.Delete(fullFileName);
         }
-
-        public static string GetPath(string fileName)
-        {
-            string path = $"http://localhost:5146/images/{fileName}";
-
-            return path;
-        }
     }
 }
