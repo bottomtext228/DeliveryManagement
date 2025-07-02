@@ -4,5 +4,5 @@ import { instance } from "../axios.api";
 
 
 export const computeRoute = (dto: ComputeRouteRequest) => {
-    return instance.post<ComputeRouteResponse>("/api/order/preview", dto);
+    return instance.post<ComputeRouteResponse>("/api/map/preview", dto);
 }
