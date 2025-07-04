@@ -3,6 +3,7 @@ import { getProductDetail } from "../../api/catalog/getProduct"
 import { CartItem, IProduct } from "../../types/types"
 import LoadingSpinner from "../Loading/LoadingSpinner";
 import { Link } from "react-router-dom";
+import { getImageUrl } from "../../helpers/image.helper";
 
 interface Props {
     cartItem: CartItem,
@@ -28,7 +29,7 @@ export default function CartItemCard({ cartItem, product, handleDeleteClick, han
         <div className="flex md:flex-row flex-col md:gap-4 gap-2 p-2 border rounded-xl border-neutral-200">
             <div className="flex flex-row gap-2">
                 <Link to={`/catalog/${product.id}`} className="object-contain w-22 h-22 block">
-                    <img loading="lazy" className="w-full h-full" src={product.image} alt={product.name}></img>
+                    <img loading="lazy" className="w-full h-full" src={getImageUrl(product.image)} alt={product.name}></img>
                 </Link>
                 <div className="font-bold ">{product.name}</div>
             </div>

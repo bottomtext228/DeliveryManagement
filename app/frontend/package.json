@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.5.1",
     "@tailwindcss/vite": "^4.0.1",
     "@tanstack/react-query": "^5.66.0",
+    "@tanstack/react-query-devtools": "^5.81.5",
     "@visx/network": "^3.12.0",
     "axios": "^1.7.9",
     "connect-it": "^1.1.0",

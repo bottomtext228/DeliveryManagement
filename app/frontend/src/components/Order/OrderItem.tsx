@@ -1,3 +1,4 @@
+import { getImageUrl } from '../../helpers/image.helper'
 import { OrderItemDto } from '../../types/types'
 
 
@@ -9,7 +10,7 @@ export default function OrderItem({ orderItem }: Props) {
         <div className=''>
             <div className="flex">
                 <div className="w-22 h-22">
-                    <img className="object-contain w-full h-full" src={orderItem.product.image}></img>
+                    <img className="object-contain w-full h-full" src={getImageUrl(orderItem.product.image)}></img>
                 </div>
                 <div className="font-bold">
                     {orderItem.product.name}

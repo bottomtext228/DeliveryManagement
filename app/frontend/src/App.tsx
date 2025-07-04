@@ -6,8 +6,20 @@ import { useEffect } from "react";
 import { IUser } from "./types/types";
 import useUserStore from "./store/user/userStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const queryClient = new QueryClient();
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+const queryClient = new QueryClient({
+    defaultOptions:
+    {
+        queries: {
+            staleTime: 1000 * 60,
+            /*   staleTime: 1000 * 60, // 1 minute
+              refetchOnWindowFocus: false,
+              refetchOnReconnect: true,
+              refetchOnMount: true, */
+            retry: false,
+        },
+    },
+});
 
 let hasCheckedAuth = false;
 function App() {
@@ -18,7 +30,7 @@ function App() {
 
         if (hasCheckedAuth) return; // only do it once when user loads the page first time
         hasCheckedAuth = true;
-        
+
         const token = getTokenFromLocalStorage();
 
         if (token) {
@@ -42,6 +54,7 @@ function App() {
         <>
             <QueryClientProvider client={queryClient}>
                 <RouterProvider router={router} />
+                <ReactQueryDevtools initialIsOpen={false} />
             </QueryClientProvider >
         </>
     );

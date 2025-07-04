@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getTokenFromLocalStorage, setTokenToLocalStorage, removeTokenFromLocalStorage } from '../helpers/localstorage.helper';
+import { getTokenFromLocalStorage, setTokenToLocalStorage } from '../helpers/localstorage.helper';
 import useUserStore from '../store/user/userStore';
 
 const instance = axios.create();
@@ -10,7 +10,6 @@ instance.interceptors.request.use((config) => {
     return config;
 });
 
-//TODO: store refresh token in HttpOnly cookie
 
 // Indicates whether a token refresh is currently in progress
 let isRefreshing = false;

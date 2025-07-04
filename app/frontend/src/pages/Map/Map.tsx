@@ -1,66 +1,76 @@
-import { useQueries } from '@tanstack/react-query'
-import { getPickUpPoints } from '../../api/pickUpPoint/getPickUpPoints';
-import { getStocks } from '../../api/stock/getStocks';
+import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import TownsMap from '../../components/Towns/TownsMap';
 import TownsSidebar from '../../components/Towns/TownsSidebar';
 import { MapModes, Town } from '../../types/types';
 import { useEffect, useState } from 'react';
-import { getRoads } from '../../api/map/getRoads';
-import { getTowns } from '../../api/map/getTowns';
 import { setStocks } from '../../api/stock/setStocks';
 import { setPickUpPoints } from '../../api/pickUpPoint/setPickUpPoints';
 import Loading from '../../components/Loading/Loading';
+import { townsQueryOptions } from '../../queries/towns.query';
+import { pickUpPointsQueryOptions } from '../../queries/pickUpPoints.query';
+import { stocksQueryOptions } from '../../queries/stocks.query';
+import { roadsQueryOptions } from '../../queries/roads.query';
+import ErrorPage from '../../components/Error/ErrorPage';
 
 
 export default function Map() {
-    const [selectedPickUpPoints, setSelectedPickUpPoints] = useState<Town[]>([]);
-    const [selectedStocks, setSelectedStocks] = useState<Town[]>([]);
+    const [selectedPickUpPoints, setSelectedPickUpPointTowns] = useState<Town[]>([]);
+    const [selectedStocks, setSelectedStockTowns] = useState<Town[]>([]);
     const [currentMode, setCurrentMode] = useState<MapModes>(MapModes.SetStocks);
 
     const [townsResult, roadsResult, pickUpPointsResult, stocksResult] = useQueries({
         queries: [
-            {
-                queryKey: ['towns'],
-                queryFn: getTowns,
-                refetchOnWindowFocus: false
-            },
-            {
-                queryKey: ['roads'],
-                queryFn: getRoads,
-                refetchOnWindowFocus: false
-            },
-            {
-                queryKey: ['pickuppoints'],
-                queryFn: getPickUpPoints,
-                refetchOnWindowFocus: false,
-            },
-            {
-                queryKey: ['stocks'],
-                queryFn: getStocks,
-                refetchOnWindowFocus: false
-            }
+            townsQueryOptions(),
+            roadsQueryOptions(),
+            pickUpPointsQueryOptions(),
+            stocksQueryOptions()
         ]
     });
 
     useEffect(() => {
         if (townsResult.status !== 'success') return; // wait until towns info arrives
         const towns = townsResult.data.data;
+
         if (pickUpPointsResult.status == 'success') {
-            setSelectedPickUpPoints(pickUpPointsResult.data.data.map((e: any) => towns.find((t: Town) => t.id == e.townId)));
+            // map pick up points to towns
+            setSelectedPickUpPointTowns(pickUpPointsResult.data.data.map((e) => towns.find((t: Town) => t.id == e.townId)!));
         }
 
         if (stocksResult.status == 'success') {
-            setSelectedStocks(stocksResult.data.data.map((e: any) => towns.find((t: Town) => t.id == e.townId)));
+            // map stocks to towns
+            setSelectedStockTowns(stocksResult.data.data.map((e) => towns.find((t: Town) => t.id == e.townId)!));
         }
 
     }, [townsResult.status, pickUpPointsResult.status, stocksResult.status]);
 
+    const queryClient = useQueryClient();
+
+    const stocksMutation = useMutation({
+        mutationFn: setStocks,
+        onSuccess: () => {
+            queryClient.invalidateQueries(stocksQueryOptions());
+        },
+        onError: (error) => {
+
+        }
+    })
+
+    const pickUpPointsMutation = useMutation({
+        mutationFn: setPickUpPoints,
+        onSuccess: () => {
+            queryClient.invalidateQueries(pickUpPointsQueryOptions());
+        },
+        onError: (error) => {
+
+        }
+    })
 
     if (townsResult.isPending || roadsResult.isPending || pickUpPointsResult.isPending || stocksResult.isPending)
-        return <Loading></Loading>
+        return <Loading />
 
     if (townsResult.isError || roadsResult.isError || pickUpPointsResult.isError || stocksResult.isError) {
-        return <span>Something went wrong...</span>
+        const error = townsResult.error || roadsResult.error || pickUpPointsResult.error || stocksResult.error;
+        return <ErrorPage message={error?.message} />
     }
 
     const towns = townsResult.data.data;
@@ -74,7 +84,7 @@ export default function Map() {
             const index = stocks.findIndex(e => e.id == town.id);
             if (index === -1) stocks.push(town); // add if not found
             else stocks.splice(index, 1); // otherwise delete it
-            setSelectedStocks(stocks);
+            setSelectedStockTowns(stocks);
         }
 
         if (currentMode == MapModes.SetPickUpPoints) {
@@ -82,7 +92,7 @@ export default function Map() {
             const index = pickUpPoints.findIndex(e => e.id == town.id);
             if (index === -1) pickUpPoints.push(town); // add if not found
             else pickUpPoints.splice(index, 1); // otherwise delete it
-            setSelectedPickUpPoints(pickUpPoints);
+            setSelectedPickUpPointTowns(pickUpPoints);
         }
     };
 
@@ -90,26 +100,26 @@ export default function Map() {
         if (currentMode == MapModes.SetStocks) {
             const stocks = [...selectedStocks];
             stocks.splice(stocks.indexOf(town), 1);
-            setSelectedStocks(stocks);
+            setSelectedStockTowns(stocks);
         }
 
         if (currentMode == MapModes.SetPickUpPoints) {
             const pickUpPoints = [...selectedPickUpPoints];
             pickUpPoints.splice(pickUpPoints.indexOf(town), 1);
-            setSelectedPickUpPoints(pickUpPoints);
+            setSelectedPickUpPointTowns(pickUpPoints);
         }
 
     }
 
     const handleSaveChangesClick = () => {
-        setStocks(selectedStocks);
-        setPickUpPoints(selectedPickUpPoints);
+        stocksMutation.mutate(selectedStocks);
+        pickUpPointsMutation.mutate(selectedPickUpPoints);
     }
 
     return (<>
 
         <div className='flex md:flex-row flex-col max-w-7xl w-[90%] h-[700px] min-h-fit ml-auto mr-auto gap-12 mb-5 mt-5'>
-            <TownsSidebar stocks={selectedStocks} pickUpPoints={selectedPickUpPoints} currentMode={currentMode} setCurrentMode={setCurrentMode} handleSaveChangesClick={handleSaveChangesClick} handleItemClick={handleSidebarItemClick}></TownsSidebar>
+            <TownsSidebar stockTowns={selectedStocks} pickUpPointTowns={selectedPickUpPoints} currentMode={currentMode} setCurrentMode={setCurrentMode} handleSaveChangesClick={handleSaveChangesClick} handleItemClick={handleSidebarItemClick}></TownsSidebar>
             <TownsMap selectedTowns={currentMode == MapModes.SetStocks ? selectedStocks : selectedPickUpPoints} towns={towns} roads={roads} handleTownClick={handleTownClick}></TownsMap>
         </div>
     </>)

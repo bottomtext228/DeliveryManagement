@@ -2,15 +2,19 @@ import { isAxiosError } from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { IHtppValidationProblemDetails, RouteChoice, CreateOrderDto, IProductDetail, ComputeRouteRequest, ProductOrderDto, ComputeRouteResponse } from '../../types/types';
-import { useQueries, useQuery } from '@tanstack/react-query';
-import { getProductDetail } from '../../api/catalog/getProduct';
+import { ValidationProblemDetails, RouteChoice, CreateOrderDto, IProductDetail, ComputeRouteRequest, ProductOrderDto, ComputeRouteResponse } from '../../types/types';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import Loading from '../../components/Loading/Loading';
-import { getCompanyPickUpPoints } from '../../api/pickUpPoint/getCompanyPickUpPoints';
 import { createOrder } from '../../api/orders/createOrder';
 import useCartStore from '../../store/user/cartStore';
 import { computeRoute } from '../../api/map/computeRoute';
 import { formatHours } from '../../helpers/format.helper';
+import { getImageUrl } from '../../helpers/image.helper';
+import { productDetailQueryOptions } from '../../queries/productDetail.query';
+import ErrorPage from '../../components/Error/ErrorPage';
+import { ordersQueryOptions } from '../../queries/orders.query';
+import { companyPickUpPointsQueryOptions } from '../../queries/companyPickUpPoints.query';
+import ServerError, { IServerError } from '../../components/Error/ServerError';
 
 
 
@@ -25,9 +29,9 @@ interface FormValues {
 
 export default function OrderAdd() {
     const [searchParams] = useSearchParams();
-
+    const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormValues>();
-    const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
+    const [serverError, setServerError] = useState<IServerError | null>(null);
     const [previewOrderData, setPreviewOrderData] = useState<ComputeRouteResponse | null>(null);
 
     const pickUpPointTownIdRef = useRef<HTMLSelectElement>(null);
@@ -38,23 +42,19 @@ export default function OrderAdd() {
 
     const [productsQuantities, setProductsQuantities] = useState<Record<number, number>>({});
 
-    const navigate = useNavigate();
+
+    // get ids from the search params
     const isValidId = (id: string) => /^\d+$/.test(id);
     const ids = (searchParams.get("ids")?.split(",") || []).filter(isValidId);
-
-
     const hasValidIds = ids.length > 0;
 
-
     const productQueries = useQueries({
-        queries: hasValidIds ? ids.map((id) => ({
-            queryKey: ["product", id],
-            queryFn: () => getProductDetail(parseInt(id)!),
-        })) : []
+        queries: hasValidIds ? ids.map((id) => (productDetailQueryOptions(Number(id)))) : []
     });
 
     const products = productQueries.map((q) => q.data?.data).filter((product): product is IProductDetail => !!product);
 
+    // set products quantities after getting products info
     useEffect(() => {
         if (products.length > 0 && Object.keys(productsQuantities).length === 0) {
             const initialQuantities: Record<number, number> = {};
@@ -65,6 +65,22 @@ export default function OrderAdd() {
         }
     }, [products, productsQuantities]);
 
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: createOrder,
+        onSuccess: () => {
+            queryClient.invalidateQueries(ordersQueryOptions());
+            products.forEach(e => removeFromCart(e.id)); // remove from cart products that we ordered
+            navigate('/orders');
+        },
+        onError: (error) => {
+            if (isAxiosError(error)) {
+                console.log(error);
+                setServerError(error);
+            }
+        }
+    })
     const updateQuantity = (id: number, amount: number) => {
         setProductsQuantities((prev) => ({
             ...prev,
@@ -94,26 +110,22 @@ export default function OrderAdd() {
     const companyId = validOrder ? products[0]?.companyId : null;
 
     const pickUpPointsQuery = useQuery({
-        queryKey: ["pickuppoints", companyId],
-        queryFn: () => getCompanyPickUpPoints(companyId!),
-        refetchOnWindowFocus: false,
+        ...companyPickUpPointsQueryOptions(companyId!),
         enabled: !!companyId,
     });
 
     const isPending = productQueries.some((q) => q.isPending) || pickUpPointsQuery.isPending;
     const isError = productQueries.some((q) => q.isError) || pickUpPointsQuery.isError;
 
-    if (!hasValidIds) {
-        return <div className="p-4 text-red-500">No valid product IDs provided in the URL.</div>;
+    if (!hasValidIds) return <ErrorPage message='Invalid IDs in URL.' />
+
+    if (!validOrder) return <ErrorPage message='Products must be from the same company and there must be no duplicates.' />;
+
+    if (isPending) return <Loading />;
+    if (isError) {
+        const error = productQueries.find(e => e.error)?.error || pickUpPointsQuery.error;
+        return <ErrorPage message={error?.message} />;
     }
-
-    if (!validOrder) return <div className="p-4 text-red-500">Products must be from the same company and there must be no duplicates.</div>;
-
-    if (isPending) return <Loading></Loading>;
-    if (isError) return <div>Error loading page.</div>;
-
-
-
     const pickUpPoints = pickUpPointsQuery?.data.data;
 
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
@@ -123,20 +135,11 @@ export default function OrderAdd() {
 
         const dto: CreateOrderDto = {
             products: items,
-            pickUpPointTownId: data.pickUpPointTownId,
+            pickUpPointTownId: 228, /* data.pickUpPointTownId, */
             choice: parseInt(data.choice.toString()), // enums must be numbers
         };
 
-        try {
-            await createOrder(dto);
-            items.forEach(item => removeFromCart(item.productId)); // remove from cart products that we ordered
-            navigate('/orders');
-        } catch (error) {
-            if (isAxiosError(error)) {
-                setServerError(error.response?.data);
-            }
-            console.error(error);
-        }
+        mutation.mutate(dto);
     }
 
     const handleChange: React.ChangeEventHandler<HTMLFormElement> = async (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -167,40 +170,21 @@ export default function OrderAdd() {
     const calculateFinalPrice = () => {
         let price = 0;
         for (const product of products) {
-            /*   const cartItem = cartList.find(cartItem => cartItem.productId == product.id)!; */
             const quantity = productsQuantities[product.id];
             price += product.price * quantity;
         }
         return price;
     }
 
-
-    /*     function handleIncreaseQuantityClick(productId: number) {
-            const cartItem = cartList.find(e => e.productId == productId);
-            if (cartItem && cartItem.quantity < 100) addToCart(productId);
-        }
-    
-        function handleDecreaseQuantityClick(productId: number) {
-            const cartItem = cartList.find(e => e.productId == productId);
-            if (cartItem && cartItem.quantity > 1) removeFromCart(productId, true);
-        }
-     */
-
-
     return (
         <>
             <div className="md:my-16 my-4 max-w-md w-[90%] mx-auto">
                 {serverError ?
-                    <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
-                        <div>
-                            {serverError.errors && Object.keys(serverError.errors).map(key => <li key={key}>{(serverError.errors as any)[key]}</li>)}
-                        </div>
-                    </div> : <></>}
+                    <ServerError error={serverError}></ServerError> : <></>}
                 <div className="p-6 border border-gray-300 rounded-2xl">
                     <form onSubmit={handleSubmit(onSubmit)} onChange={handleChange}>
                         <div className="flex items-center justify-between">
                             <h3 className="text-2xl font-bold text-neutral-800">Новый заказ</h3>
-                            {/* <Link className='w-4 h-4' to='/catalog'><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></Link> */}
                             <button type='button' className='w-4 h-4' onClick={() => navigate(-1)}><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></button>
                         </div>
 
@@ -208,7 +192,7 @@ export default function OrderAdd() {
                             {products.map(product => {
                                 return (
                                     <div key={product.id} className='flex gap-2' >
-                                        <div className='w-16 h-16'><img className='w-full h-full' src={product.image} alt={product.name} /></div>
+                                        <div className='w-16 h-16'><img className='w-full h-full' src={getImageUrl(product.image)} alt={product.name} /></div>
                                         <div className='flex flex-col w-full'>
                                             <div className='font-bold'>{product.name}</div>
                                             <div className='flex gap-1'>
@@ -272,7 +256,7 @@ export default function OrderAdd() {
                                 <select
                                     id="choice"
                                     {...register('choice', { required: 'Необходимо выбрать маршрут!' })}
-                                    className="w-full appearance-none rounded-xl border cursor-pointer border-gray-300 bg-white px-4 py-3 pr-10 text-gray-800 shadow-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                    className="w-full appearance-none rounded-lg border cursor-pointer border-gray-300 bg-white px-4 py-3 pr-10 text-gray-800 shadow-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
                                     defaultValue={RouteChoice.Fastest}
                                     ref={routeChoiceRef}
                                 >

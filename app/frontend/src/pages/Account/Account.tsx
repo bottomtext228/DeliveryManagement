@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
 import useUserStore from "../../store/user/userStore";
-import RoleBadge from "../../components/RoleBadge";
+import RoleBadge from "../../components/Role/RoleBadge";
 export default function Account() {
     const user = useUser();
     const logout = useUserStore(state => state.logout);

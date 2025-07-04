@@ -7,7 +7,7 @@ import { AuthState, useAuthState } from "../../hooks/useAuthState";
 import useUserStore from "../../store/user/userStore";
 import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
 import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
-import ServerError, { IServerError } from "../../components/ServerError";
+import ServerError, { IServerError } from "../../components/Error/ServerError";
 import AlreadyLoggedIn from "./AlreadyLoggedIn";
 
 interface FormValues {

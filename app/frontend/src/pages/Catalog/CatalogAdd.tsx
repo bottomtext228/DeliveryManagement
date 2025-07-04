@@ -1,9 +1,12 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CreateProductDto, IHtppValidationProblemDetails } from "../../types/types";
+import { CreateProductDto } from "../../types/types";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { createProduct } from "../../api/catalog/createProduct";
 import { isAxiosError } from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import ServerError, { IServerError } from "../../components/Error/ServerError";
+import { productsQueryOptions } from "../../queries/products.query";
 
 
 interface FormValues {
@@ -18,48 +21,43 @@ interface FormValues {
 }
 export default function CatalogAdd() {
 
-    const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormValues>();
-    const [serverError, setServerError] = useState<IHtppValidationProblemDetails | null>(null);
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+    const [serverError, setServerError] = useState<IServerError | null>(null);
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: createProduct,
+        onSuccess: () => { 
+            queryClient.invalidateQueries(productsQueryOptions());
+            navigate('/catalog') 
+        },
+        onError: (error) => {
+            if (isAxiosError(error)) {
+                setServerError(error);
+            }
+        }
+    })
+
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
-        console.log(data);
 
         const dto: CreateProductDto = {
             name: data.name, description: data.description, weight: data.weight,
             price: data.price, sizeX: data.sizeX, sizeY: data.sizeY, sizeZ: data.sizeZ, image: data.image[0]
         };
-        try {
-            const result = await createProduct(dto);
-            /*   if (result.status) {
-                  navigate('/catalog');
-              } else {
-                  setServerError(result as IHtppValidationProblemDetails);
-              } */
 
-            navigate('/catalog');
-        } catch (error) {
-            if (isAxiosError(error)) {
-                setServerError(error.response?.data);
-            }
-            console.error(error);
-        }
-
+        mutation.mutate(dto);
     }
 
 
     return (
         <div className="md:my-16 my-4 max-w-md w-[90%] mx-auto">
-            {serverError ?
-                <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
-                    {serverError.status === 401 ? /** Unauthorized - wrong password/username*/
-                        <div>
-                            <li>Неправильная почта и/или пароль</li>
-                        </div> : /** Bad Request - validation errors*/
-                        <div>
-                            {serverError.errors && Object.keys(serverError.errors).map(key => <li key={key}>{(serverError.errors as any)[key]}</li>)}
-                        </div>}
-                </div> : <></>}
+            {serverError &&
+                <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit max-w-xl w-[90%] mx-auto ">
+                    <ServerError error={serverError}></ServerError>
+                </div>
+            }
             <div className="p-6 border border-gray-300 rounded-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-center justify-between">
@@ -126,7 +124,7 @@ export default function CatalogAdd() {
                     </div>
                     {errors.sizeZ && <div className="text-red-500">{errors.sizeZ.message}</div>}
 
-                  
+
                     <div className="w-full mt-4">
                         <label htmlFor="image" className="flex w-full h-12 my-4 border border-gray-300 rounded-lg">
                             <div id='image-label' className="flex items-center justify-start p-3 overflow-hidden flex-4/5 text-ellipsis whitespace-nowrap">Выберите файл...</div>

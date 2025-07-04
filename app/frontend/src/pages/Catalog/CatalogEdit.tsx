@@ -1,14 +1,18 @@
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { EditProductDto } from "../../types/types";
 import { editProduct } from "../../api/catalog/editProduct";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { getProductDetail } from "../../api/catalog/getProduct";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
-import ServerError, { IServerError } from "../../components/ServerError";
+import ServerError, { IServerError } from "../../components/Error/ServerError";
 import { useEffect, useState } from "react";
-import NotFound from "../NotFound";
-import Error from "../../components/Error/Error";
+import NotFound from "../../components/NotFound/NotFound";
+import ErrorPage from "../../components/Error/ErrorPage";
+import { getImageUrl } from "../../helpers/image.helper";
+import { useNumericParam } from "../../hooks/useNumericParam";
+import { isAxiosError } from "axios";
+import { productDetailQueryOptions } from "../../queries/productDetail.query";
+import { productsQueryOptions } from "../../queries/products.query";
 
 
 interface FormValues {
@@ -23,18 +27,14 @@ interface FormValues {
 }
 
 export default function CatalogEdit() {
-    const { id } = useParams();
+    const id = useNumericParam();
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>();
     const navigate = useNavigate();
     const [serverError, setServerError] = useState<IServerError | null>(null);
-
-    // TODO: fix inputs
-
-
+    const queryClient = useQueryClient();
     const { isPending, isError, data, error } = useQuery({
-        queryKey: ['product', id],
-        queryFn: () => {let t = getProductDetail(Number(id)); console.log(t); return t;},
-        refetchOnWindowFocus: false
+        ...productDetailQueryOptions(id!),
+        enabled: id !== null
     });
 
 
@@ -53,45 +53,52 @@ export default function CatalogEdit() {
         }
     }, [data, reset]);
 
-    if (isNaN(Number(id!))) {
-        return <Error message="Неправильный формат"></Error>
+
+     const mutation = useMutation({
+        mutationFn: (dto: EditProductDto) => editProduct(id!, dto),
+        onSuccess: () => {
+            queryClient.invalidateQueries(productDetailQueryOptions(id!));
+            queryClient.invalidateQueries(productsQueryOptions());
+            navigate(`/catalog/${id}`);
+        },
+        onError: (error) => {
+            if (isAxiosError(error)) {
+                setServerError(error);
+            }
+        }
+
+    });
+
+
+    if (id === null) {
+        return <NotFound />
     }
 
     if (isPending) {
-        return <Loading></Loading>
+        return <Loading />
     }
 
     if (isError) {
-        console.log(data);
-        if (data?.status == 404) return <NotFound></NotFound> 
-        return <Error message={"dd"}></Error>
+        if (isAxiosError(error)) {
+            if (error.response?.status === 404) return <NotFound />
+        }
+        return <ErrorPage message={error.message} />
     }
 
-
     const product = data.data;
-    /*     const product = data.data;
-        setValue('name', product.name);
-        setValue('description', product.description);
-        setValue('price', product.price);
-        setValue('weight', product.weight);
-        setValue('sizeX', product.size.x);
-        setValue('sizeY', product.size.y);
-        setValue('sizeZ', product.size.z); */
-    /*  const product = data.data;
-  */
+
+
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
-
 
         const dto: EditProductDto = {
             name: data.name, description: data.description, weight: data.weight,
             price: data.price, sizeX: data.sizeX, sizeY: data.sizeY, sizeZ: data.sizeZ, image: data.image?.[0]
         };
-        editProduct(parseInt(id!), dto).then(() => navigate(`/catalog/${id}`)).catch(error => {
-            setServerError(error);
-        });
 
+        mutation.mutate(dto);
     }
+
 
     return (
 
@@ -107,7 +114,7 @@ export default function CatalogEdit() {
                 }
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">
-                        <img id="image-preview" className="border border-gray-200 rounded-xl" src={product.image}></img>
+                        <img id="image-preview" className="border border-gray-200 rounded-xl" src={getImageUrl(product.image)}></img>
                         <div className="w-full mt-4">
                             <label htmlFor="image" className="flex w-full h-12 my-4 border border-gray-300 rounded-lg">
                                 <div id='image-label' className="flex items-center justify-start p-3 overflow-hidden flex-4/5 text-ellipsis whitespace-nowrap">Выберите файл...</div>

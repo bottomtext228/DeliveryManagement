@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Dropdown from './Dropdown';
-import RoleBadge from '../../RoleBadge';
+import RoleBadge from '../../Role/RoleBadge';
 import useUserStore from '../../../store/user/userStore';
 import { useAuthState, AuthState } from '../../../hooks/useAuthState';
 import { useUser } from '../../../hooks/useUser';

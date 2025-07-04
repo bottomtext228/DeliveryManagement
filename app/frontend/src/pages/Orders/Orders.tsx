@@ -1,25 +1,18 @@
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query"
-import { getOrders } from "../../api/orders/getOrders";
 import Loading from "../../components/Loading/Loading";
-import { getTowns } from "../../api/map/getTowns";
 import Order from "../../components/Order/Order";
 import { deleteOrder } from "../../api/orders/deleterOrder";
+import { townsQueryOptions } from "../../queries/towns.query";
+import { ordersQueryOptions } from "../../queries/orders.query";
+import ErrorPage from "../../components/Error/ErrorPage";
 
 export default function Orders() {
     const queryClient = useQueryClient();
 
     const [ordersResult, townsResult] = useQueries({
         queries: [
-            {
-                queryKey: ['orders'],
-                queryFn: () => getOrders(),
-                refetchOnWindowFocus: false
-            },
-            {
-                queryKey: ['towns'],
-                queryFn: getTowns,
-                refetchOnWindowFocus: false
-            }
+            ordersQueryOptions(),
+            townsQueryOptions()
         ]
     });
 
@@ -27,15 +20,14 @@ export default function Orders() {
     const mutation = useMutation({
         mutationFn: deleteOrder,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['orders'] });
+            queryClient.invalidateQueries(ordersQueryOptions());
         },
     });
 
-    if (ordersResult.isPending || townsResult.isPending) return <Loading></Loading>
+    if (ordersResult.isPending || townsResult.isPending) return <Loading />
 
-    if (ordersResult.isError) return <span>Something went wrong: {ordersResult.error.name}</span>
-    if (townsResult.isError) return <span>Something went wrong: {townsResult.error.name}</span>
-
+    if (ordersResult.isError) return <ErrorPage message={ordersResult.error.name} />
+    if (townsResult.isError) return <ErrorPage message={townsResult.error.name} />
 
     const orders = ordersResult.data.data;
 

@@ -6,6 +6,7 @@ import Loading from "../components/Loading/Loading";
 import { groupBy } from "../helpers/polyfill.helper";
 import { IProduct } from "../types/types";
 import CartCompanyCard from "../components/Cart/CartCompanyCard";
+import { productDetailQueryOptions } from "../queries/productDetail.query";
 
 export default function Cart() {
     const addToCart = useCartStore(store => store.add);
@@ -14,10 +15,7 @@ export default function Cart() {
 
 
     const result = useQueries({
-        queries: cartList.map((item) => ({
-            queryKey: ['product', item.productId],
-            queryFn: () => getProductDetail(item.productId)
-        })),
+        queries: cartList.map((item) => (productDetailQueryOptions(item.productId))),
         combine: (results) => {
             return {
                 isPending: results.some((r) => r.isPending),

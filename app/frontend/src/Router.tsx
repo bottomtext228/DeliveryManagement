@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 import About from "./pages/About";
 import Home from "./pages/Home";
-import NotFound from "./pages/NotFound";
+import NotFound from "./components/NotFound/NotFound";
 import Layout from "./components/Layout/Layout";
 import Register from "./pages/Auth/Register";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ProtectedRoute } from "./components/Route/ProtectedRoute";
 import Account from "./pages/Account/Account";
 import Catalog from "./pages/Catalog/Catalog";
 import CatalogDetail from "./pages/Catalog/CatalogDetail";

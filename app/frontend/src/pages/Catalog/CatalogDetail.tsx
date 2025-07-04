@@ -1,34 +1,53 @@
-import { Link, useNavigate, useParams } from "react-router-dom"
-import { useQuery } from "@tanstack/react-query";
-import { getProductDetail } from "../../api/catalog/getProduct";
+import { Link, useNavigate } from "react-router-dom"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteProduct } from "../../api/catalog/deleteProduct";
 import Loading from "../../components/Loading/Loading";
 import { useUser } from "../../hooks/useUser";
 import useCartStore from "../../store/user/cartStore";
 import ProductDetail from "../../components/Product/ProductDetail";
+import { useNumericParam } from "../../hooks/useNumericParam";
+import { productDetailQueryOptions } from "../../queries/productDetail.query";
+import { isAxiosError } from "axios";
+import ErrorPage from "../../components/Error/ErrorPage";
+import NotFound from "../../components/NotFound/NotFound";
+import { productsQueryOptions } from "../../queries/products.query";
 
 
 export default function CatalogDetail() {
-    const { id } = useParams();
+    const id = useNumericParam();
     const navigate = useNavigate();
     const user = useUser();
     const addToCart = useCartStore(state => state.add);
     const removeFromCart = useCartStore(state => state.remove);
     const cartList = useCartStore(state => state.list);
 
+    const queryClient = useQueryClient();
 
-    const { isPending, isError, data, error, } = useQuery({
-        queryKey: ['product', id],
-        queryFn: () => getProductDetail(parseInt(id!)),
+    const mutation = useMutation({
+        mutationFn: deleteProduct,
+        onSuccess: () => {
+            queryClient.invalidateQueries(productsQueryOptions());
+            navigate('/catalog');
+        }
+    })
+    const { isPending, isError, data, error } = useQuery({
+        ...productDetailQueryOptions(id!),
+        enabled: id !== null
     });
 
+    if (id === null) {
+        return <NotFound />
+    }
 
     if (isPending) {
-        return <Loading></Loading>
+        return <Loading />
     }
 
     if (isError) {
-        return <span>Error: {error.message}</span>
+        if (isAxiosError(error)) {
+            if (error.response?.status === 404) return <NotFound />
+        }
+        return <ErrorPage message={error.message} />
     }
 
     const product = data.data;
@@ -36,12 +55,7 @@ export default function CatalogDetail() {
 
     const handleDelete = async () => {
         if (confirm('Удалить продукт?')) {
-            try {
-                await deleteProduct(product.id);
-                navigate('/catalog');
-            } catch (error) {
-                console.error('Error occured while deleting the product: ', error);
-            }
+            mutation.mutate(id);
         }
     }
 

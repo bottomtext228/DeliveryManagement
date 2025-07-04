@@ -29,14 +29,25 @@ export interface ILoginResponse {
     token: string
 }
 
-export interface IHtppValidationProblemDetails {
+export interface ValidationProblemDetails {
     type?: string,
     title?: string,
     status?: number,
     detail?: string,
     instance?: string,
-    errors?: object
+    errors?: object,
+    traceId?: string
 }
+
+export interface ProblemDetails {
+    type?: string,
+    title?: string,
+    status?: number,
+    detail?: string,
+    instance?: string,
+    traceId?: string
+}
+
 
 export interface IProduct {
     id: number,
@@ -109,9 +120,10 @@ export interface PickUpPoint {
 }
 
 export interface Stock {
-
+    id: number,
+    companyId: number,
+    townId: number
 }
-
 
 export interface CustomeNode {
     x: number,

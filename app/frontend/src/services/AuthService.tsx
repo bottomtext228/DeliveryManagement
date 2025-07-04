@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from "axios";
 import { instance } from "../api/axios.api";
-import { IHtppValidationProblemDetails, ILoginRequest, ILoginResponse, IRegisterRequest, IUser, } from "../types/types";
+import { ValidationProblemDetails, ILoginRequest, ILoginResponse, IRegisterRequest, IUser, } from "../types/types";
 
 export const AuthService = {
-    async registration(UserData: IRegisterRequest): Promise<AxiosResponse<ILoginResponse | IHtppValidationProblemDetails>> {
+    async registration(UserData: IRegisterRequest): Promise<AxiosResponse<ILoginResponse | ValidationProblemDetails>> {
         return axios.post('/api/account/register', UserData);
     },
-    async login(UserData: ILoginRequest): Promise<AxiosResponse<ILoginResponse | IHtppValidationProblemDetails>> {
+    async login(UserData: ILoginRequest): Promise<AxiosResponse<ILoginResponse | ValidationProblemDetails>> {
         return axios.post('/api/account/login', UserData);
     },
     async getProfile(): Promise<AxiosResponse<IUser | undefined>> {

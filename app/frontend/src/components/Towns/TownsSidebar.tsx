@@ -3,15 +3,15 @@ import { useState } from "react";
 
 interface Props {
     currentMode: MapModes,
-    stocks: Town[],
-    pickUpPoints: Town[],
+    stockTowns: Town[],
+    pickUpPointTowns: Town[],
     setCurrentMode: (mode: MapModes) => void,
     handleSaveChangesClick: () => void,
     handleItemClick: (town: Town) => void
 }
 
 
-export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCurrentMode, handleSaveChangesClick, handleItemClick }: Props) {
+export default function TownsSidebar({ stockTowns, pickUpPointTowns, currentMode, setCurrentMode, handleSaveChangesClick, handleItemClick }: Props) {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -45,7 +45,7 @@ export default function TownsSidebar({ stocks, pickUpPoints, currentMode, setCur
                 </div>
                 <div className="mt-2 overflow-scroll flex-9/12">
                     <ul>
-                        {currentMode == MapModes.SetStocks ? mapItems(stocks) : mapItems(pickUpPoints)}
+                        {currentMode == MapModes.SetStocks ? mapItems(stockTowns) : mapItems(pickUpPointTowns)}
                     </ul>
                 </div>
                 <div className="flex flex-col border-t flex-2/12">

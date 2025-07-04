@@ -6,7 +6,7 @@ import { AuthService } from "../../services/AuthService";
 import useUserStore from "../../store/user/userStore";
 import { ILoginResponse, IUser } from "../../types/types";
 import { useForm, SubmitHandler } from "react-hook-form";
-import ServerError, { IServerError } from "../../components/ServerError";
+import ServerError, { IServerError } from "../../components/Error/ServerError";
 import AlreadyLoggedIn from "./AlreadyLoggedIn";
 
 
@@ -60,13 +60,7 @@ export default function Login() {
         }
     }
 
-
-
-    if (authState == AuthState.AUTHORIZED) return <AlreadyLoggedIn></AlreadyLoggedIn>
-
-
-
-
+    if (authState == AuthState.AUTHORIZED) return <AlreadyLoggedIn />
 
     return (<>
         <div className="my-4 md:my-16 max-w-md w-[90%] mx-auto">
