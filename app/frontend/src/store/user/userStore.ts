@@ -1,4 +1,6 @@
+import { instance } from "../../api/axios.api";
 import { removeTokenFromLocalStorage } from "../../helpers/localstorage.helper";
+import { queryClient } from "../../queryClient";
 import { IUser } from "../../types/types";
 import { create } from "zustand";
 
@@ -13,9 +15,17 @@ const useUserStore = create<UserState>((set) => ({
     login: (data: IUser) => {
         set({ user: data });
     },
-    logout: () => {
-        set({ user: null });
-        removeTokenFromLocalStorage();
+    logout: async () => {
+        try {
+            await instance.post('/api/account/logout');
+        }
+        catch (error: any) {
+            console.error(error);
+        } finally {
+            set({ user: null });
+            removeTokenFromLocalStorage();
+            queryClient.clear();
+        }
     }
 }));
 

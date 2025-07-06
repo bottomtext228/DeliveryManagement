@@ -5,21 +5,10 @@ import { AuthService } from "./services/AuthService";
 import { useEffect } from "react";
 import { IUser } from "./types/types";
 import useUserStore from "./store/user/userStore";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import AxiosErrorAlert from "./components/Error/AxiosErrorAlert";
-const queryClient = new QueryClient({
-    defaultOptions:
-    {
-        queries: {
-            staleTime: 1000 * 60,
-            refetchOnWindowFocus: false,
-            refetchOnReconnect: true,
-            refetchOnMount: true,
-            retry: false,
-        },
-    },
-});
+import { queryClient } from "./queryClient";
+
 
 let hasCheckedAuth = false;
 function App() {
@@ -50,8 +39,6 @@ function App() {
         checkAuth();
     }, []);
 
-
-/*     return AxiosErrorAlert(); */
     return (
         <>
             <QueryClientProvider client={queryClient}>

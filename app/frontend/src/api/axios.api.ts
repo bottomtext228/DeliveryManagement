@@ -40,9 +40,9 @@ const processQueue = (error: any) => {
 instance.interceptors.response.use(
     response => response, // Pass through successful responses
     async error => {
-        
+
         // only attempt refresh if user has token
-        if (!getTokenFromLocalStorage()) return Promise.reject(error); 
+        if (!getTokenFromLocalStorage()) return Promise.reject(error);
 
         const originalRequest = error.config;
 

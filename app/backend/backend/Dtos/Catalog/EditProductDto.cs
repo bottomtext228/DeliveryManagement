@@ -16,7 +16,7 @@ namespace backend.Dtos.Catalog
         [Display(Name = "Описание")]
         public string Description { get; set; } = string.Empty;
 
-         [Range(0, 1000000.0, ErrorMessage = "Стоимость не может быть больше 1 миллиона рублей!")] // 1 million
+        [Range(0, 1000000.0, ErrorMessage = "Стоимость не может быть больше 1 миллиона рублей!")] // 1 million
         [Required(ErrorMessage = "Стоимость не может быть пустой!")]
         [Display(Name = "Стоимость")]
         public float Price { get; set; }

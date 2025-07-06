@@ -176,7 +176,6 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductDto model)
         {
-            throw new System.Exception("vasya");
             var product = await _dbContext.Products.FindAsync(id);
             if (product == null) return ApiResponseHelper.NotFound(HttpContext, $"Product with ID {id} not found.");
 

@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using backend.Mappers;
+using backend.Extensions;
+using Microsoft.AspNetCore.Authentication;
 
 namespace backend.Controllers
 {
@@ -223,14 +225,38 @@ namespace backend.Controllers
             string accessToken = _tokenService.CreateToken(user, roles, company?.Id);
 
             // update refresh token
-            _tokenService.RotateRefreshToken(storedRefreshToken, user, Response);
+            await _tokenService.RotateRefreshTokenAsync(storedRefreshToken, user, Response);
             await _dbContext.SaveChangesAsync();
 
             return Ok(new RefreshTokenResponseDto { Token = accessToken });
 
         }
 
-        // TODO: implement revoke tokens endpoint?
+        /// <summary>
+        /// Logs out the current user by revoking their refresh token and clearing the authentication cookie.
+        /// </summary>
+        /// <returns>200 OK.</returns>
+        /// <response code="200">User logged out successfully</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">Internal server error.</response>
+        [HttpPost("logout")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Logout()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return ApiResponseHelper.BadRequest(HttpContext, "Missing refresh token.");
+            }
+
+            // find and delete refresh token
+            await _tokenService.RevokeRefreshTokenAsync(refreshToken, Response);
+            return Ok();
+        }
 
         /// <summary>
         /// Checks if provided email is not used by another account.

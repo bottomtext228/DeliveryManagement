@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using backend.Localisation;
 using backend.Interfaces;
 using backend.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using backend.Helpers;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -118,6 +120,25 @@ builder.Services.AddCors(options =>
         }
     });
 });
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var title = "Произошла одна или несколько ошибок валидации.";
+    
+        // convert ModelState to Dictonary<string, string[]>
+        var errors = context.ModelState 
+            .Where(ms => ms.Value.Errors.Count > 0)
+            .ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+            );
+
+        return ApiResponseHelper.ValidationProblem(context.HttpContext, errors, title);
+    };
+});
+
 
 var app = builder.Build();
 

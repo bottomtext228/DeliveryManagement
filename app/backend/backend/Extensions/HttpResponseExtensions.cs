@@ -1,20 +1,23 @@
 using backend.Models;
 
-public static class HttpResponseExtensions
+namespace backend.Extensions
 {
-    public static void SetRefreshToken(this HttpResponse response, RefreshToken refreshToken)
+    public static class HttpResponseExtensions
     {
-        response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions
+        public static void SetRefreshToken(this HttpResponse response, RefreshToken refreshToken)
         {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires = refreshToken.ExpiresOn
-        });
-    }
+            response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = refreshToken.ExpiresOn
+            });
+        }
 
-    public static void ClearRefreshToken(this HttpResponse response)
-    {
-        response.Cookies.Delete("refreshToken");
+        public static void ClearRefreshToken(this HttpResponse response)
+        {
+            response.Cookies.Delete("refreshToken");
+        }
     }
 }

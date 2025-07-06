@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using backend.Extensions;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -52,9 +53,11 @@ namespace backend.Services
             var refreshToken = CreateRefreshToken(user);
             await _dbContext.RefreshTokens.AddAsync(refreshToken);
             response.SetRefreshToken(refreshToken);
+
+            await CleanupOldRefreshTokensAsync(user.Id);
         }
         // Rotating old refresh token from the db and saving new version in Cookie. Caller must save db changes!
-        public void RotateRefreshToken(RefreshToken existingToken, User user, HttpResponse response)
+        public async Task RotateRefreshTokenAsync(RefreshToken existingToken, User user, HttpResponse response)
         {
             var newToken = CreateRefreshToken(user);
 
@@ -63,6 +66,14 @@ namespace backend.Services
             existingToken.CreatedOn = newToken.CreatedOn;
 
             response.SetRefreshToken(existingToken);
+
+            await CleanupOldRefreshTokensAsync(user.Id);
+        }
+        public async Task RevokeRefreshTokenAsync(string refreshToken, HttpResponse response)
+        {
+            await _dbContext.RefreshTokens.Where(e => e.Token == refreshToken).ExecuteDeleteAsync();
+            // remove from user
+            response.ClearRefreshToken();
         }
         private RefreshToken CreateRefreshToken(User user)
         {
@@ -74,22 +85,17 @@ namespace backend.Services
                 CreatedOn = DateTime.UtcNow
             };
         }
-        private string GenerateRefreshToken()
+        private static string GenerateRefreshToken()
         {
             return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         }
         private async Task CleanupOldRefreshTokensAsync(string userId, int keepLatest = 5)
         {
-            var oldTokens = await _dbContext.RefreshTokens
-                .Where(t => t.UserId == userId)
-                .OrderByDescending(t => t.CreatedOn)
-                .Skip(keepLatest)
-                .ToListAsync();
-
-            if (oldTokens.Count > 0)
-            {
-                _dbContext.RefreshTokens.RemoveRange(oldTokens); // the caller should save db changes
-            }
+            await _dbContext.RefreshTokens
+            .Where(t => t.UserId == userId)
+            .OrderByDescending(t => t.CreatedOn)
+            .Skip(keepLatest)
+            .ExecuteDeleteAsync();
         }
 
     }
