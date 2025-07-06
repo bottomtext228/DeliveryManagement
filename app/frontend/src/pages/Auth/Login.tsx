@@ -4,11 +4,10 @@ import { setTokenToLocalStorage } from "../../helpers/localstorage.helper";
 import { AuthState, useAuthState } from "../../hooks/useAuthState";
 import { AuthService } from "../../services/AuthService";
 import useUserStore from "../../store/user/userStore";
-import { ILoginResponse, IUser } from "../../types/types";
+import { ILoginResponse } from "../../types/types";
 import { useForm, SubmitHandler } from "react-hook-form";
-import ServerError, { IServerError } from "../../components/Error/ServerError";
+import ServerError from "../../components/Error/ServerError";
 import AlreadyLoggedIn from "./AlreadyLoggedIn";
-
 
 interface FormValues {
     email: string
@@ -17,7 +16,7 @@ interface FormValues {
 
 
 export default function Login() {
-    const [serverError, setServerError] = useState<IServerError | null>(null);
+    const [serverError, setServerError] = useState<unknown>(null);
     const navigate = useNavigate();
     const authState = useAuthState();
     const location = useLocation();
@@ -45,7 +44,7 @@ export default function Login() {
             login(loginData.user);
             navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
         }
-        catch (error: any) {
+        catch (error) {
             setServerError(error);
         }
     }
@@ -64,11 +63,7 @@ export default function Login() {
 
     return (<>
         <div className="my-4 md:my-16 max-w-md w-[90%] mx-auto">
-            {serverError &&
-                <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
-                    <ServerError error={serverError}></ServerError>
-                </div>
-            }
+            {serverError !== null && <ServerError error={serverError} />}
             <div className="p-6 border border-gray-300 shadow-xl rounded-2xl h-fit">
                 <div className="flex items-center justify-between">
                     <h3 className="text-2xl font-bold text-neutral-800">Войти в Terrapin</h3>

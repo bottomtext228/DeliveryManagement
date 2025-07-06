@@ -1,8 +1,7 @@
-import { isAxiosError } from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ValidationProblemDetails, RouteChoice, CreateOrderDto, IProductDetail, ComputeRouteRequest, ProductOrderDto, ComputeRouteResponse } from '../../types/types';
+import { RouteChoice, CreateOrderDto, IProductDetail, ComputeRouteRequest, ProductOrderDto, ComputeRouteResponse } from '../../types/types';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import Loading from '../../components/Loading/Loading';
 import { createOrder } from '../../api/orders/createOrder';
@@ -14,7 +13,7 @@ import { productDetailQueryOptions } from '../../queries/productDetail.query';
 import ErrorPage from '../../components/Error/ErrorPage';
 import { ordersQueryOptions } from '../../queries/orders.query';
 import { companyPickUpPointsQueryOptions } from '../../queries/companyPickUpPoints.query';
-import ServerError, { IServerError } from '../../components/Error/ServerError';
+import ServerError from '../../components/Error/ServerError';
 
 
 
@@ -31,7 +30,7 @@ export default function OrderAdd() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormValues>();
-    const [serverError, setServerError] = useState<IServerError | null>(null);
+    const [serverError, setServerError] = useState<unknown>(null);
     const [previewOrderData, setPreviewOrderData] = useState<ComputeRouteResponse | null>(null);
 
     const pickUpPointTownIdRef = useRef<HTMLSelectElement>(null);
@@ -75,10 +74,7 @@ export default function OrderAdd() {
             navigate('/orders');
         },
         onError: (error) => {
-            if (isAxiosError(error)) {
-                console.log(error);
-                setServerError(error);
-            }
+            setServerError(error);
         }
     })
     const updateQuantity = (id: number, amount: number) => {
@@ -160,10 +156,7 @@ export default function OrderAdd() {
             const response = await computeRoute(dto);
             setPreviewOrderData(response.data);
         } catch (error) {
-            if (isAxiosError(error)) {
-                setServerError(error.response?.data);
-            }
-            console.error(error);
+            setServerError(error);
         }
     }
 
@@ -179,8 +172,7 @@ export default function OrderAdd() {
     return (
         <>
             <div className="md:my-16 my-4 max-w-md w-[90%] mx-auto">
-                {serverError ?
-                    <ServerError error={serverError}></ServerError> : <></>}
+                {serverError !== null && <ServerError error={serverError} />}
                 <div className="p-6 border border-gray-300 rounded-2xl">
                     <form onSubmit={handleSubmit(onSubmit)} onChange={handleChange}>
                         <div className="flex items-center justify-between">

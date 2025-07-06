@@ -4,7 +4,7 @@ import { editProduct } from "../../api/catalog/editProduct";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
-import ServerError, { IServerError } from "../../components/Error/ServerError";
+import ServerError from "../../components/Error/ServerError";
 import { useEffect, useState } from "react";
 import NotFound from "../../components/NotFound/NotFound";
 import ErrorPage from "../../components/Error/ErrorPage";
@@ -30,7 +30,7 @@ export default function CatalogEdit() {
     const id = useNumericParam();
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>();
     const navigate = useNavigate();
-    const [serverError, setServerError] = useState<IServerError | null>(null);
+    const [serverError, setServerError] = useState<unknown>(null);
     const queryClient = useQueryClient();
     const { isPending, isError, data, error } = useQuery({
         ...productDetailQueryOptions(id!),
@@ -54,7 +54,7 @@ export default function CatalogEdit() {
     }, [data, reset]);
 
 
-     const mutation = useMutation({
+    const mutation = useMutation({
         mutationFn: (dto: EditProductDto) => editProduct(id!, dto),
         onSuccess: () => {
             queryClient.invalidateQueries(productDetailQueryOptions(id!));
@@ -107,11 +107,7 @@ export default function CatalogEdit() {
                 <Link to='/catalog' className="flex items-center justify-center w-20 p-2 mb-4 text-white rounded-lg bg-amber-500 hover:bg-amber-600">
                     <img src="/arrow-left.svg" className="w-8"></img>
                 </Link>
-                {serverError &&
-                    <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit max-w-xl w-[90%] mx-auto ">
-                        <ServerError error={serverError}></ServerError>
-                    </div>
-                }
+                {serverError !== null && <ServerError error={serverError} />}
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">
                         <img id="image-preview" className="border border-gray-200 rounded-xl" src={getImageUrl(product.image)}></img>

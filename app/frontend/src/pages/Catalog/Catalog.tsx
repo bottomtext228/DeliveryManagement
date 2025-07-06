@@ -21,7 +21,7 @@ export default function CatalogAll() {
 
     const products: IProduct[] = data.data;
 
-    console.log(products);
+
     return (<section className="my-4 md:my-16">
 
         <div className="max-w-[1440px] w-[90%] mx-auto">

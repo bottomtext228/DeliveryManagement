@@ -7,7 +7,7 @@ import { AuthState, useAuthState } from "../../hooks/useAuthState";
 import useUserStore from "../../store/user/userStore";
 import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
 import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
-import ServerError, { IServerError } from "../../components/Error/ServerError";
+import ServerError from "../../components/Error/ServerError";
 import AlreadyLoggedIn from "./AlreadyLoggedIn";
 
 interface FormValues {
@@ -31,7 +31,7 @@ enum FormState {
 };
 
 export default function Register() {
-    const [serverError, setServerError] = useState<IServerError | null>(null);
+    const [serverError, setServerError] = useState<unknown>(null);
     const navigate = useNavigate();
     const authState = useAuthState();
     const location = useLocation();
@@ -99,10 +99,7 @@ export default function Register() {
 
     return (<>
         <div className="my-4 md:my-16 max-w-md w-[90%] mx-auto">
-            {serverError ?
-                <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit">
-                    <ServerError error={serverError}></ServerError>
-                </div> : <></>}
+            {serverError !== null && <ServerError error={serverError} />}
             {formState == FormState.GENERAL ?
                 <>
                     <RegisterFormGeneral handleGeneralSubmit={handleGeneralSubmit} isCompany={isCompany} handleChangeIsCompany={handleChangeIsCompany} formData={formData} setFormData={setFormData}></RegisterFormGeneral>

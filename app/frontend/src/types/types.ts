@@ -35,7 +35,9 @@ export interface ValidationProblemDetails {
     status?: number,
     detail?: string,
     instance?: string,
-    errors?: object,
+    errors?: {
+        [field: string]: string[];
+    },
     traceId?: string
 }
 

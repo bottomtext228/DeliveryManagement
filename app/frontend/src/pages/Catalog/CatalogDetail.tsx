@@ -11,6 +11,8 @@ import { isAxiosError } from "axios";
 import ErrorPage from "../../components/Error/ErrorPage";
 import NotFound from "../../components/NotFound/NotFound";
 import { productsQueryOptions } from "../../queries/products.query";
+import { useState } from "react";
+import ServerError from "../../components/Error/ServerError";
 
 
 export default function CatalogDetail() {
@@ -20,7 +22,7 @@ export default function CatalogDetail() {
     const addToCart = useCartStore(state => state.add);
     const removeFromCart = useCartStore(state => state.remove);
     const cartList = useCartStore(state => state.list);
-
+    const [serverError, setServerError] = useState<unknown>(null);
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
@@ -28,6 +30,9 @@ export default function CatalogDetail() {
         onSuccess: () => {
             queryClient.invalidateQueries(productsQueryOptions());
             navigate('/catalog');
+        },
+        onError: (error) => {
+            setServerError(error);
         }
     })
     const { isPending, isError, data, error } = useQuery({
@@ -68,7 +73,7 @@ export default function CatalogDetail() {
             <Link to='/catalog' className="flex items-center justify-center w-20 p-2 mb-4 text-white rounded-lg bg-amber-500 hover:bg-amber-600">
                 <img src="/arrow-left.svg" className="w-8"></img>
             </Link>
-
+            {serverError !== null && <ServerError error={serverError} />}
             <div className="flex flex-col md:flex-row gap-x-8">
                 <ProductDetail product={product}></ProductDetail>
                 <div className="mt-6 flex-1/3">

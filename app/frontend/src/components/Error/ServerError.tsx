@@ -1,27 +1,48 @@
 import { AxiosError, isAxiosError } from "axios"
-import { ValidationProblemDetails } from "../../types/types";
-
-export type IServerError = AxiosError<ValidationProblemDetails | null> | string;
+import { ProblemDetails, ValidationProblemDetails } from "../../types/types";
+import ErrorBorder from "./ErrorBorder";
 
 interface Props {
-    error: IServerError
+    error: unknown
 }
 
 export default function ServerError({ error }: Props) {
-    if (isAxiosError(error)) return ShowAxiosError(error);
+    console.error(error);
+    if (!isAxiosError(error)) return (<ErrorBorder><div>Что-то пошло не так...</div></ErrorBorder>); // just in case
 
-    return <li>{error}</li>
-}
+    const axiosError = error as AxiosError;
 
-// TODO: decide what to do with error handling
-function ShowAxiosError(error: AxiosError) {
-    switch (error.response?.status) {
-        case 400: {
-            const data = error.response.data as ValidationProblemDetails;
-            if (data.errors) return Object.keys(data.errors).map(key => <li key={key}>{(data.errors as any)[key]}</li>);
-            return <li>Bad request</li>
-        }
-        case 401: return <li>Неправильная почта и/или пароль</li>
-        case 500: return <li>Сервис временно недоступен</li>
-    }
-}
+    // Try to extract ProblemDetails
+    const problemDetails = axiosError.response?.data as ProblemDetails;
+
+    // extract errors if it's ValidationProblemDetails
+    const validationErrors = (problemDetails as ValidationProblemDetails)?.errors;
+
+    if (problemDetails) {
+        return (
+            <ErrorBorder>
+                {/* Show title or default message */}
+                <p className="mb-2">
+                    {problemDetails?.detail || problemDetails?.title || "Произошла неизвестная ошибка."}
+                </p>
+
+                {/* Show validation errors if present */}
+                {validationErrors && (
+                    <ul className="list-disc list-inside space-y-1">
+                        {Object.entries(validationErrors).map(([field, messages]) =>
+                            messages.map((msg, idx) => (
+                                <li key={`${field}-${idx}`}>
+                                    {msg}
+                                </li>
+                            ))
+                        )}
+                    </ul>
+                )}
+            </ErrorBorder>
+        );
+    } else return (<ErrorBorder><div>Сервис временно недоступен.</div></ErrorBorder>);
+
+};
+
+
+

@@ -7,15 +7,15 @@ import { IUser } from "./types/types";
 import useUserStore from "./store/user/userStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import AxiosErrorAlert from "./components/Error/AxiosErrorAlert";
 const queryClient = new QueryClient({
     defaultOptions:
     {
         queries: {
             staleTime: 1000 * 60,
-            /*   staleTime: 1000 * 60, // 1 minute
-              refetchOnWindowFocus: false,
-              refetchOnReconnect: true,
-              refetchOnMount: true, */
+            refetchOnWindowFocus: false,
+            refetchOnReconnect: true,
+            refetchOnMount: true,
             retry: false,
         },
     },
@@ -50,6 +50,8 @@ function App() {
         checkAuth();
     }, []);
 
+
+/*     return AxiosErrorAlert(); */
     return (
         <>
             <QueryClientProvider client={queryClient}>

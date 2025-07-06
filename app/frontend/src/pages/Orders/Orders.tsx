@@ -5,10 +5,12 @@ import { deleteOrder } from "../../api/orders/deleterOrder";
 import { townsQueryOptions } from "../../queries/towns.query";
 import { ordersQueryOptions } from "../../queries/orders.query";
 import ErrorPage from "../../components/Error/ErrorPage";
+import { useState } from "react";
+import ServerError from "../../components/Error/ServerError";
 
 export default function Orders() {
+    const [serverError, setServerError] = useState<unknown>(null);
     const queryClient = useQueryClient();
-
     const [ordersResult, townsResult] = useQueries({
         queries: [
             ordersQueryOptions(),
@@ -22,6 +24,9 @@ export default function Orders() {
         onSuccess: () => {
             queryClient.invalidateQueries(ordersQueryOptions());
         },
+        onError: (error) => {
+            setServerError(error);
+        }
     });
 
     if (ordersResult.isPending || townsResult.isPending) return <Loading />
@@ -41,6 +46,7 @@ export default function Orders() {
         <>
             <section className="my-4 md:my-16">
                 <div className="max-w-[1440px] w-[90%] mx-auto">
+                    {serverError !== null && <ServerError error={serverError} />}
                     <div className="flex h-8 gap-8 items-end mb-8">
                         <div className="font-bold text-2xl">Ваши заказы</div>
                         <div className="">Всего: {orders.length}</div>

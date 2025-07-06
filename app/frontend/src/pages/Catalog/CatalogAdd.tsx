@@ -3,9 +3,8 @@ import { CreateProductDto } from "../../types/types";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { createProduct } from "../../api/catalog/createProduct";
-import { isAxiosError } from "axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import ServerError, { IServerError } from "../../components/Error/ServerError";
+import ServerError from "../../components/Error/ServerError";
 import { productsQueryOptions } from "../../queries/products.query";
 
 
@@ -22,20 +21,18 @@ interface FormValues {
 export default function CatalogAdd() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-    const [serverError, setServerError] = useState<IServerError | null>(null);
+    const [serverError, setServerError] = useState<unknown>(null);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
         mutationFn: createProduct,
-        onSuccess: () => { 
+        onSuccess: () => {
             queryClient.invalidateQueries(productsQueryOptions());
-            navigate('/catalog') 
+            navigate('/catalog')
         },
         onError: (error) => {
-            if (isAxiosError(error)) {
-                setServerError(error);
-            }
+            setServerError(error);
         }
     })
 
@@ -53,11 +50,7 @@ export default function CatalogAdd() {
 
     return (
         <div className="md:my-16 my-4 max-w-md w-[90%] mx-auto">
-            {serverError &&
-                <div className="p-4 my-4 text-black border border-gray-300 shadow-md rounded-2xl h-fit max-w-xl w-[90%] mx-auto ">
-                    <ServerError error={serverError}></ServerError>
-                </div>
-            }
+            {serverError !== null && <ServerError error={serverError} />}
             <div className="p-6 border border-gray-300 rounded-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-center justify-between">
