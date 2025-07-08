@@ -5,7 +5,7 @@ import { useState } from "react";
 import { createProduct } from "../../api/catalog/createProduct";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ServerError from "../../components/Error/ServerError";
-import { productsQueryOptions } from "../../queries/products.query";
+import { productsInfiniteQueryOptions } from "../../queries/products.query";
 
 
 interface FormValues {
@@ -28,7 +28,7 @@ export default function CatalogAdd() {
     const mutation = useMutation({
         mutationFn: createProduct,
         onSuccess: () => {
-            queryClient.invalidateQueries(productsQueryOptions());
+            queryClient.invalidateQueries({ queryKey: ['products'] });
             navigate('/catalog')
         },
         onError: (error) => {
@@ -74,7 +74,7 @@ export default function CatalogAdd() {
                     {errors.description && <div className="text-red-500">{errors.description.message}</div>}
 
                     <div className="relative mt-4">
-                        <input id="weight" type="number" min="0" step="0.0001" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('weight', { required: 'Вес не может быть пустым!' })} placeholder=" " />
+                        <input id="weight" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('weight', { required: 'Вес не может быть пустым!' })} placeholder=" " />
                         <label htmlFor="weigt" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                             Вес
                         </label>
@@ -84,7 +84,7 @@ export default function CatalogAdd() {
 
 
                     <div className="relative mt-4">
-                        <input id="price" type="number" min="0" step="0.0001" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('price', { required: 'Стоимость не может быть пустой!' })} placeholder=" " />
+                        <input id="price" type="number" min={0} max={1000000} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('price', { required: 'Стоимость не может быть пустой!' })} placeholder=" " />
                         <label htmlFor="price" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                             Стоимость
                         </label>
@@ -93,7 +93,7 @@ export default function CatalogAdd() {
 
 
                     <div className="relative mt-4">
-                        <input id="sizeX" type="number" min="0" step="0.0001" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeX', { required: 'Длина не может быть пустой!' })} placeholder=" " />
+                        <input id="sizeX" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeX', { required: 'Длина не может быть пустой!' })} placeholder=" " />
                         <label htmlFor="sizeX" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                             Длина
                         </label>
@@ -101,7 +101,7 @@ export default function CatalogAdd() {
                     {errors.sizeX && <div className="text-red-500">{errors.sizeX.message}</div>}
 
                     <div className="relative mt-4">
-                        <input id="sizeY" type="number" min="0" step="0.0001" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeY', { required: 'Ширина не может быть пустой!' })} placeholder=" " />
+                        <input id="sizeY" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeY', { required: 'Ширина не может быть пустой!' })} placeholder=" " />
                         <label htmlFor="sizeY" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                             Ширина
                         </label>
@@ -110,7 +110,7 @@ export default function CatalogAdd() {
 
 
                     <div className="relative mt-4">
-                        <input id="sizeZ" type="number" min="0" step="0.0001" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeZ', { required: 'Высота не может быть пустой!' })} placeholder=" " />
+                        <input id="sizeZ" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeZ', { required: 'Высота не может быть пустой!' })} placeholder=" " />
                         <label htmlFor="sizeZ" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                             Высота
                         </label>

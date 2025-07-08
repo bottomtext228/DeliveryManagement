@@ -10,9 +10,10 @@ import { productDetailQueryOptions } from "../../queries/productDetail.query";
 import { isAxiosError } from "axios";
 import ErrorPage from "../../components/Error/ErrorPage";
 import NotFound from "../../components/NotFound/NotFound";
-import { productsQueryOptions } from "../../queries/products.query";
+import { productsInfiniteQueryOptions } from "../../queries/products.query";
 import { useState } from "react";
 import ServerError from "../../components/Error/ServerError";
+import GoBackArrow from "../../components/Common/GoBackArrow";
 
 
 export default function CatalogDetail() {
@@ -28,7 +29,7 @@ export default function CatalogDetail() {
     const mutation = useMutation({
         mutationFn: deleteProduct,
         onSuccess: () => {
-            queryClient.invalidateQueries(productsQueryOptions());
+            queryClient.invalidateQueries({ queryKey: ['products'] });
             navigate('/catalog');
         },
         onError: (error) => {
@@ -70,9 +71,7 @@ export default function CatalogDetail() {
 
     return (
         <div className="max-w-[1440px] w-[90%] mx-auto my-4">
-            <Link to='/catalog' className="flex items-center justify-center w-20 p-2 mb-4 text-white rounded-lg bg-amber-500 hover:bg-amber-600">
-                <img src="/arrow-left.svg" className="w-8"></img>
-            </Link>
+            <GoBackArrow />
             {serverError !== null && <ServerError error={serverError} />}
             <div className="flex flex-col md:flex-row gap-x-8">
                 <ProductDetail product={product}></ProductDetail>

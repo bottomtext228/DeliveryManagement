@@ -1,5 +1,6 @@
+import { IProduct, PaginatedResponseDto } from "../../types/types";
 import { instance } from "../axios.api";
 
-export const getAllProducts = () => {
-    return instance.get('/api/catalog');
+export const getAllProducts = (pageNumber = 1, pageSize = 20) => {
+    return instance.get<PaginatedResponseDto<IProduct>>('/api/catalog', { params: { pageNumber, pageSize } });
 }

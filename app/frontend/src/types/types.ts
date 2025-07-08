@@ -208,3 +208,11 @@ export interface ComputeRouteRequest {
 export interface RefreshTokenResponseDto {
     token: string
 }
+
+export interface PaginatedResponseDto<T> {
+  data: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}

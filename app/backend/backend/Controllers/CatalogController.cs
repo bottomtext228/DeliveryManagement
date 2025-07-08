@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using backend.Dtos.Catalog;
+using backend.Dtos.Common;
 using backend.Helpers;
 using backend.Interfaces;
 using backend.Mappers;
@@ -28,9 +29,12 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Retrieves all products if user is a client or only products that belong to the company if user is a company.
+        /// Retrieves paginated list of products.
+        /// If the user is the company, returns only products that belong to the user's company.
+        /// Otherwise, returns all products.
         /// </summary>
-        /// <returns>List of product DTOs.</returns>
+        /// <param name="query">Pagination parameters: PageNumber and PageSize.</param>
+        /// <returns>Paginated list of product DTOs.</returns>
         /// <response code="200">Returns list of products.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="500">Internal server error.</response>
@@ -40,27 +44,42 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAll()
+        // TODO: maybe filters/sorting.
+        public async Task<IActionResult> GetAll([FromQuery] QueryDto query)
         {
-            if (User.IsInRole("client"))
-            {
-                var products = await _dbContext.Products.Select(p => p.ToProductDto()).ToListAsync();
-                return Ok(products);
-            }
+            IQueryable<Product> queryableProducts = _dbContext.Products;
 
             if (User.IsInRole("company"))
             {
-                // company of the current user;
-                var company = await _dbContext.Companies.Include(e => e.Products).FirstOrDefaultAsync(c => c.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+                // company of the current user
+                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 if (company != null)
                 {
-                    var products = company.Products.Select(p => p.ToProductDto());
-                    return Ok(products);
+                    queryableProducts = _dbContext.Products.Where(e => e.CompanyId == company.Id);
                 }
 
             }
-            return ApiResponseHelper.Unauthorized(HttpContext, "Only clients and companies are allowed to see catalog.");
+
+            var totalCount = await queryableProducts.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)query.PageSize);
+
+            var products = await queryableProducts
+                .OrderBy(p => p.Id)
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(p => p.ToProductDto())
+                .ToListAsync();
+
+            var response = new PaginatedResponseDto<ProductDto>
+            {
+                Data = products,
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize,
+                TotalCount = totalCount,
+                TotalPages = totalPages
+            };
+            return Ok(response);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { EditProductDto } from "../../types/types";
 import { editProduct } from "../../api/catalog/editProduct";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -12,7 +12,8 @@ import { getImageUrl } from "../../helpers/image.helper";
 import { useNumericParam } from "../../hooks/useNumericParam";
 import { isAxiosError } from "axios";
 import { productDetailQueryOptions } from "../../queries/productDetail.query";
-import { productsQueryOptions } from "../../queries/products.query";
+import { productsInfiniteQueryOptions } from "../../queries/products.query";
+import GoBackArrow from "../../components/Common/GoBackArrow";
 
 
 interface FormValues {
@@ -58,7 +59,7 @@ export default function CatalogEdit() {
         mutationFn: (dto: EditProductDto) => editProduct(id!, dto),
         onSuccess: () => {
             queryClient.invalidateQueries(productDetailQueryOptions(id!));
-            queryClient.invalidateQueries(productsQueryOptions());
+            queryClient.invalidateQueries({ queryKey: ['products'] });
             navigate(`/catalog/${id}`);
         },
         onError: (error) => {
@@ -104,9 +105,7 @@ export default function CatalogEdit() {
 
         <>
             <div className="max-w-[1440px] w-[90%] mx-auto my-4">
-                <Link to='/catalog' className="flex items-center justify-center w-20 p-2 mb-4 text-white rounded-lg bg-amber-500 hover:bg-amber-600">
-                    <img src="/arrow-left.svg" className="w-8"></img>
-                </Link>
+                <GoBackArrow></GoBackArrow>
                 {serverError !== null && <ServerError error={serverError} />}
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">
