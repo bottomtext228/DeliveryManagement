@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using backend.Dtos.Catalog;
 using backend.Dtos.Common;
+using backend.Extensions;
 using backend.Helpers;
 using backend.Interfaces;
 using backend.Mappers;
@@ -28,6 +29,7 @@ namespace backend.Controllers
             _fileService = fileService;
         }
 
+        // TODO: update docs
         /// <summary>
         /// Retrieves paginated list of products.
         /// If the user is the company, returns only products that belong to the user's company.
@@ -44,8 +46,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        // TODO: maybe filters/sorting.
-        public async Task<IActionResult> GetAll([FromQuery] QueryDto query)
+        public async Task<IActionResult> GetAll([FromQuery] ProductQueryDto query)
         {
             IQueryable<Product> queryableProducts = _dbContext.Products;
 
@@ -61,24 +62,10 @@ namespace backend.Controllers
 
             }
 
-            var totalCount = await queryableProducts.CountAsync();
-            var totalPages = (int)Math.Ceiling(totalCount / (double)query.PageSize);
+            queryableProducts = queryableProducts.ApplyFiltering(query).ApplySorting(query);
 
-            var products = await queryableProducts
-                .OrderBy(p => p.Id)
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
-                .Select(p => p.ToProductDto())
-                .ToListAsync();
+            var response = await queryableProducts.ToPaginationResponseAsync(query);
 
-            var response = new PaginatedResponseDto<ProductDto>
-            {
-                Data = products,
-                PageNumber = query.PageNumber,
-                PageSize = query.PageSize,
-                TotalCount = totalCount,
-                TotalPages = totalPages
-            };
             return Ok(response);
         }
 

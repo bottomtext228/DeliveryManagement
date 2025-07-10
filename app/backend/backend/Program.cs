@@ -12,6 +12,7 @@ using backend.Interfaces;
 using backend.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using backend.Helpers;
+using System.Text.Json.Serialization;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -53,7 +54,12 @@ builder.Services.AddSwaggerGen(option =>
     option.IncludeXmlComments(xmlPath);
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 
 // handle 500 status code
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -126,9 +132,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.InvalidModelStateResponseFactory = context =>
     {
         var title = "Произошла одна или несколько ошибок валидации.";
-    
+
         // convert ModelState to Dictonary<string, string[]>
-        var errors = context.ModelState 
+        var errors = context.ModelState
             .Where(ms => ms.Value.Errors.Count > 0)
             .ToDictionary(
                 kvp => kvp.Key,
