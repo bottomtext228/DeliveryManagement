@@ -222,3 +222,8 @@ export enum ProductSortBy {
     Name = "name",
     Price = "price"
 }
+
+export interface CanCreateProductResponse {
+    canCreate: boolean;
+    message?: string;
+}

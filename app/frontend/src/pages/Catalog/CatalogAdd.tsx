@@ -1,10 +1,12 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CreateProductDto } from "../../types/types";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createProduct } from "../../api/catalog/createProduct";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ServerError from "../../components/Error/ServerError";
+import { canCompanyCreateProduct } from "../../api/company/canCompanyCreateProduct";
+import Loading from "../../components/Loading/Loading";
 
 interface FormValues {
     name: string,
@@ -33,7 +35,22 @@ export default function CatalogAdd() {
             setServerError(error);
         }
     })
+    const [canCreateProduct, setCanCreateProduct] = useState<boolean | null>(null);
+    const [blockReason, setBlockReason] = useState<string | null>(null);
 
+    useEffect(() => {
+        const checkPermission = async () => {
+            try {
+                const result = await canCompanyCreateProduct();
+                setCanCreateProduct(result.data.canCreate);
+                setBlockReason(result.data.message ?? null);
+            } catch (error) {
+                setServerError(error);
+            }
+
+        }
+        checkPermission();
+    }, [])
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
 
@@ -43,6 +60,25 @@ export default function CatalogAdd() {
         };
 
         mutation.mutate(dto);
+    }
+
+    if (canCreateProduct === null) return <Loading />;
+
+    if (canCreateProduct === false) {
+        return (<>
+            <div className="flex flex-col gap-8 items-center justify-center my-4 md:my-16 border border-gray-300 p-4 max-w-190 w-[90%] mx-auto rounded-xl shadow-xl">
+                <div className="font-semibold text-lg">
+                    Не так быстро, проказник!
+                </div>
+                <div className="">
+                    {blockReason}
+                </div>
+                <div className="flex gap-8">
+                    <Link to='/map' className="bg-amber-500  p-2 rounded-lg text-white font-semibold text-lg  hover:bg-amber-600 w-24 text-center">Карта</Link>
+                    <button onClick={() => navigate(-1)} className="bg-neutral-500 p-2 rounded-lg text-white font-semibold text-lg hover:bg-neutral-600 w-24 text-center">Назад</button>
+                </div>
+            </div>
+        </>)
     }
 
 
@@ -79,8 +115,6 @@ export default function CatalogAdd() {
                     </div>
                     {errors.weight && <div className="text-red-500">{errors.weight.message}</div>}
 
-
-
                     <div className="relative mt-4">
                         <input id="price" type="number" min={0} max={1000000} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('price', { required: 'Стоимость не может быть пустой!' })} placeholder=" " />
                         <label htmlFor="price" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
@@ -88,7 +122,6 @@ export default function CatalogAdd() {
                         </label>
                     </div>
                     {errors.price && <div className="text-red-500">{errors.price.message}</div>}
-
 
                     <div className="relative mt-4">
                         <input id="sizeX" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeX', { required: 'Длина не может быть пустой!' })} placeholder=" " />

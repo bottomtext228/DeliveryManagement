@@ -12,7 +12,6 @@ namespace backend.Dtos.Catalog
         public int? MaxPrice { get; set; }
 
         // sorting
-       /*  [EnumDataType(typeof(ProductSortBy), ErrorMessage = "Сортировка может быть только по \"ID\", названию (\"name\"), цене (\"price\")!")] */
         public ProductSortBy SortBy { get; set; } = ProductSortBy.Id;
         public bool IsDescending { get; set; } = false;
     }

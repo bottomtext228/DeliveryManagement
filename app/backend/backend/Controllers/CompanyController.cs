@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using backend.Dtos.Company;
 using backend.Helpers;
 using backend.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -45,5 +47,41 @@ namespace backend.Controllers
 
             return Ok(company.ToCompanyDto());
         }
+
+        /// <summary>
+        /// Checks if the current company can create a product. Accessible only to users registered as a company.
+        /// </summary>
+        /// <returns>A response indicating whether the company can create a product, and a message if not allowed.</returns>
+        /// <response code="200">Returns whether the company can create a product.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by companies.</response>
+        /// <response code="500">Internal server error.</response>
+        [HttpGet("can-create-product")]
+        [Authorize(Roles = "company")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(CanCreateProductResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CanCreateProduct()
+        {
+            var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
+            var company = (await _dbContext.Companies.Include(e => e.Stocks).Include(e => e.PickUpPoints).FirstOrDefaultAsync(e => e.Id == companyId))!;
+
+            bool canCreate = company.Stocks.Count != 0 && company.PickUpPoints.Count != 0;
+
+            return Ok(new CanCreateProductResponse
+            {
+                CanCreate = canCreate,
+                Message = canCreate ? null : "Перед созданием товара необходимо указать склады и пункты выдачи заказов!"
+            });
+        }
+
+        public class CanCreateProductResponse
+        {
+            public bool CanCreate { get; set; }
+            public string? Message { get; set; }
+        }
+
     }
 }
