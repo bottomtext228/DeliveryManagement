@@ -1,12 +1,13 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CreateProductDto } from "../../types/types";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createProduct } from "../../api/catalog/createProduct";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ServerError from "../../components/Error/ServerError";
 import { canCompanyCreateProduct } from "../../api/company/canCompanyCreateProduct";
 import Loading from "../../components/Loading/Loading";
+import ErrorPage from "../../components/Error/ErrorPage";
 
 interface FormValues {
     name: string,
@@ -35,22 +36,13 @@ export default function CatalogAdd() {
             setServerError(error);
         }
     })
-    const [canCreateProduct, setCanCreateProduct] = useState<boolean | null>(null);
-    const [blockReason, setBlockReason] = useState<string | null>(null);
+  
+    const { isLoading, isError, error, data: canCreateProductResponse } = useQuery({
+        queryFn: canCompanyCreateProduct,
+        queryKey: ['can-create-product'],
+        select: e => e.data
+    });
 
-    useEffect(() => {
-        const checkPermission = async () => {
-            try {
-                const result = await canCompanyCreateProduct();
-                setCanCreateProduct(result.data.canCreate);
-                setBlockReason(result.data.message ?? null);
-            } catch (error) {
-                setServerError(error);
-            }
-
-        }
-        checkPermission();
-    }, [])
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
 
@@ -62,16 +54,18 @@ export default function CatalogAdd() {
         mutation.mutate(dto);
     }
 
-    if (canCreateProduct === null) return <Loading />;
+    if (isLoading) return <Loading />;
 
-    if (canCreateProduct === false) {
+    if (isError) return <ErrorPage message={error.message} />;
+
+    if (canCreateProductResponse?.canCreate === false) {
         return (<>
             <div className="flex flex-col gap-8 items-center justify-center my-4 md:my-16 border border-gray-300 p-4 max-w-190 w-[90%] mx-auto rounded-xl shadow-xl">
                 <div className="font-semibold text-lg">
                     Не так быстро, проказник!
                 </div>
-                <div className="">
-                    {blockReason}
+                <div>
+                    {canCreateProductResponse.message}
                 </div>
                 <div className="flex gap-8">
                     <Link to='/map' className="bg-amber-500  p-2 rounded-lg text-white font-semibold text-lg  hover:bg-amber-600 w-24 text-center">Карта</Link>
@@ -80,7 +74,6 @@ export default function CatalogAdd() {
             </div>
         </>)
     }
-
 
     return (
         <div className="md:my-16 my-4 max-w-md w-[90%] mx-auto">
