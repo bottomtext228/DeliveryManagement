@@ -15,7 +15,9 @@ import ServerError from '../../components/Error/ServerError';
 
 
 export default function Map() {
-    const [serverError, setServerError] = useState<unknown>(null);
+    const [stocksServerError, setStocksServerError] = useState<unknown>(null);
+    const [pickUpPointsServerError, setPickUpPointsServerError] = useState<unknown>(null);
+
     const [selectedPickUpPoints, setSelectedPickUpPointTowns] = useState<Town[]>([]);
     const [selectedStocks, setSelectedStockTowns] = useState<Town[]>([]);
     const [currentMode, setCurrentMode] = useState<MapModes>(MapModes.SetStocks);
@@ -51,9 +53,10 @@ export default function Map() {
         mutationFn: setStocks,
         onSuccess: () => {
             queryClient.invalidateQueries(stocksQueryOptions());
+            setStocksServerError(null);
         },
         onError: (error) => {
-            setServerError(error);
+            setStocksServerError(error);
         }
     })
 
@@ -61,9 +64,10 @@ export default function Map() {
         mutationFn: setPickUpPoints,
         onSuccess: () => {
             queryClient.invalidateQueries(pickUpPointsQueryOptions());
+            setPickUpPointsServerError(null);
         },
         onError: (error) => {
-            setServerError(error);
+            setPickUpPointsServerError(error);
         }
     })
 
@@ -120,9 +124,10 @@ export default function Map() {
 
     return (<>
 
-        <div className='max-w-7xl w-[90%] mx-auto'>
-            {serverError !== null && <ServerError error={serverError} />}
-            <div className='flex md:flex-row flex-col h-[700px] min-h-fit gap-12 mb-5 mt-5'>
+        <div className='max-w-7xl w-[90%] mx-auto mb-5 mt-5'>
+            {stocksServerError !== null && <ServerError error={stocksServerError} />}
+            {pickUpPointsServerError !== null && <ServerError error={pickUpPointsServerError} />}
+            <div className='flex md:flex-row flex-col h-[700px] min-h-fit gap-12'>
                 <TownsSidebar stockTowns={selectedStocks} pickUpPointTowns={selectedPickUpPoints} currentMode={currentMode} setCurrentMode={setCurrentMode} handleSaveChangesClick={handleSaveChangesClick} handleItemClick={handleSidebarItemClick}></TownsSidebar>
                 <TownsMap selectedTowns={currentMode == MapModes.SetStocks ? selectedStocks : selectedPickUpPoints} towns={towns} roads={roads} handleTownClick={handleTownClick}></TownsMap>
             </div>
