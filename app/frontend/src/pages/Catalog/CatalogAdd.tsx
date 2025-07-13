@@ -5,8 +5,6 @@ import { useState } from "react";
 import { createProduct } from "../../api/catalog/createProduct";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ServerError from "../../components/Error/ServerError";
-import { productsInfiniteQueryOptions } from "../../queries/products.query";
-
 
 interface FormValues {
     name: string,
@@ -52,7 +50,7 @@ export default function CatalogAdd() {
         <div className="md:my-16 my-4 max-w-md w-[90%] mx-auto">
             {serverError !== null && <ServerError error={serverError} />}
             <div className="p-6 border border-gray-300 rounded-2xl">
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
                     <div className="flex items-center justify-between">
                         <h3 className="text-2xl font-bold text-neutral-800">Новый товар</h3>
                         <Link className='w-4 h-4' to='/catalog'><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></Link>

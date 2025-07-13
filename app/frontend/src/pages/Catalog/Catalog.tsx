@@ -5,13 +5,37 @@ import Loading from "../../components/Loading/Loading";
 import { useUser } from "../../hooks/useUser";
 import ErrorPage from "../../components/Error/ErrorPage";
 import { productsInfiniteQueryOptions } from "../../queries/products.query";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ProductSortBy } from "../../types/types";
+
 
 export default function CatalogAll() {
     const user = useUser();
-    
-    const pageSize = 10;
-    const { isError, isPending, error, data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery(productsInfiniteQueryOptions(pageSize));
+
+    // filtering and sorting
+    const [formName, setFormName] = useState('');
+    const [formMinPrice, setFormMinPrice] = useState('');
+    const [formMaxPrice, setFormMaxPrice] = useState('');
+    const [formSortBy, setFormSortBy] = useState<ProductSortBy>(ProductSortBy.Id);
+    const [formSortIsDescending, setFormSortIsDescending] = useState(false);
+
+    const [name, setName] = useState('');
+    const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
+    const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
+    const [sortBy, setSortBy] = useState<ProductSortBy>(ProductSortBy.Id);
+    const [sortIsDescending, setSortIsDescending] = useState(false);
+
+
+    const pageSize = 20;
+
+    const { isError, isPending, error, data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery(productsInfiniteQueryOptions(
+        pageSize,
+        name,
+        minPrice,
+        maxPrice,
+        sortBy,
+        sortIsDescending
+    ));
 
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -29,17 +53,77 @@ export default function CatalogAll() {
         return () => observer.disconnect();
     }, [hasNextPage, isFetchingNextPage]);
 
-    if (isPending) {
-        return <Loading />
-    }
 
     if (isError) {
         return <ErrorPage message={error.message} />
     }
 
+    const handleOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormName(e.target.value);
+    }
+
+    const handleOnMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormMinPrice(e.target.value);
+    }
+
+    const handleOnMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormMaxPrice(e.target.value);
+    }
+
+    const handleOnSortTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const [sortKey, sortOrder] = e.target.value.split('_');
+        setFormSortBy(sortKey as ProductSortBy);
+        setFormSortIsDescending(sortOrder === 'desc');
+    }
+
+    const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleOnApplyFilters();
+        }
+    }
+    const handleOnApplyFilters = () => {
+        setName(formName);
+        setMinPrice(formMinPrice ? +formMinPrice : undefined);
+        setMaxPrice(formMaxPrice ? +formMaxPrice : undefined);
+        setSortBy(formSortBy);
+        setSortIsDescending(formSortIsDescending)
+    }
+
     return (<section className="my-4 md:my-16">
 
         <div className="max-w-[1440px] w-[90%] mx-auto">
+            <div className="flex flex-col gap-2 rounded-xl p-2 border-amber-500 border-2 md:w-[60%] mx-auto my-4 md:my-16">
+
+                <label htmlFor="id"></label>
+                <input id="name" type="text" value={formName} placeholder="Поиск" onChange={handleOnNameChange} onKeyDown={handleOnKeyDown}
+                    className="border border-[#d9d9d9] p-2 rounded-xl outline-none w-full" />
+
+                <div className="flex md:flex-row flex-col md:items-center gap-1.5">
+                    <div className="">Цена:</div>
+                    <label htmlFor="minprice">От</label>
+                    <input id="minprice" type="number" value={formMinPrice} placeholder="0" onChange={handleOnMinPriceChange} onKeyDown={handleOnKeyDown}
+                        className="md:w-32 w-full border p-2 rounded-xl outline-none focus:bg-transparent hover:bg-transparent bg-neutral-50 border-[#d9d9d9]" />
+                    <label htmlFor="maxprice">До</label>
+                    <input id="maxprice" type="number" value={formMaxPrice} placeholder="1 000 000" onChange={handleOnMaxPriceChange} onKeyDown={handleOnKeyDown}
+                        className="md:w-32 w-full border p-2 rounded-xl outline-none focus:bg-transparent hover:bg-transparent bg-neutral-50 border-[#d9d9d9]" />
+                </div>
+
+                <div className="flex gap-2 items-center">
+                    <label htmlFor="sortby">Сортировка:</label>
+                    <select id="sortby"
+                        className=" w-fit appearance-none rounded-lg  cursor-pointer outline-none text-blue-600 hover:text-blue-700 focus:text-blue-700"
+                        value={`${formSortBy}_${formSortIsDescending ? 'desc' : 'asc'}`} onChange={handleOnSortTypeChange}>
+                        <option className="font-medium text-black" value={ProductSortBy.Id + "_asc"}>по умолчанию</option>
+                        <option className="font-medium text-black" value={ProductSortBy.Price + "_asc"}>по наименьшей цене</option>
+                        <option className="font-medium text-black" value={ProductSortBy.Price + "_desc"}>по наибольшей цене</option>
+                        <option className="font-medium text-black" value={ProductSortBy.Name + "_asc"}>по алфавиту</option>
+                        <option className="font-medium text-black" value={ProductSortBy.Name + "_desc"}>по обратному алфавиту</option>
+                    </select>
+                </div>
+
+                <button onClick={handleOnApplyFilters} className="rounded-xl text-xl p-2 mt-2 bg-amber-500 hover:bg-amber-600 font-semibold w-full">Искать</button>
+            </div>
+
 
             {user?.roles.includes('company') &&
                 <Link to='/catalog/add' className="mb-8 w-fit bg-amber-500 hover:bg-amber-600 flex justify-between gap-1.5 items-center rounded-xl text-white font-semibold p-2">
@@ -49,11 +133,16 @@ export default function CatalogAll() {
             }
 
             <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
-                {data?.pages.map((page) =>
+
+                {!isPending && (data?.pages[0]?.data.totalCount !== 0 ? data?.pages.map((page) =>
                     page.data.data.map((product) => (
                         <Product key={product.id} product={product} renderCart={user?.roles.includes('client') === true} />
                     ))
-                )}
+                ) : <>
+                    {/* TODO: style not found */}
+                    <div>Ничего не найдено...</div>
+                </>)
+                }
             </div>
 
             <div ref={loadMoreRef} className="my-8">{isFetchingNextPage && <Loading />}</div>

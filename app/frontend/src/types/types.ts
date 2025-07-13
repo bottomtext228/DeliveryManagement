@@ -216,3 +216,9 @@ export interface PaginatedResponseDto<T> {
   pageSize: number;
   totalPages: number;
 }
+
+export enum ProductSortBy {
+    Id = "id",
+    Name = "name",
+    Price = "price"
+}
