@@ -8,6 +8,7 @@ import ServerError from "../../components/Error/ServerError";
 import { canCompanyCreateProduct } from "../../api/company/canCompanyCreateProduct";
 import Loading from "../../components/Loading/Loading";
 import ErrorPage from "../../components/Error/ErrorPage";
+import WarningCard from "../../components/Common/WarningCard";
 
 interface FormValues {
     name: string,
@@ -36,7 +37,7 @@ export default function CatalogAdd() {
             setServerError(error);
         }
     })
-  
+
     const { isLoading, isError, error, data: canCreateProductResponse } = useQuery({
         queryFn: canCompanyCreateProduct,
         queryKey: ['can-create-product'],
@@ -59,20 +60,14 @@ export default function CatalogAdd() {
     if (isError) return <ErrorPage message={error.message} />;
 
     if (canCreateProductResponse?.canCreate === false) {
-        return (<>
-            <div className="flex flex-col gap-8 items-center justify-center my-4 md:my-16 border border-gray-300 p-4 max-w-190 w-[90%] mx-auto rounded-xl shadow-xl">
-                <div className="font-semibold text-lg">
-                    Не так быстро, проказник!
-                </div>
-                <div>
-                    {canCreateProductResponse.message}
-                </div>
-                <div className="flex gap-8">
-                    <Link to='/map' className="bg-amber-500  p-2 rounded-lg text-white font-semibold text-lg  hover:bg-amber-600 w-24 text-center">Карта</Link>
-                    <button onClick={() => navigate(-1)} className="bg-neutral-500 p-2 rounded-lg text-white font-semibold text-lg hover:bg-neutral-600 w-24 text-center">Назад</button>
-                </div>
-            </div>
-        </>)
+        return (
+            <WarningCard
+                title="Не так быстро, проказник!"
+                message={canCreateProductResponse.message}
+                link="/map"
+                linkMessage="Карта"
+            />
+        )
     }
 
     return (
