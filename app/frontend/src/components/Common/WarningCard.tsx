@@ -4,7 +4,7 @@ interface Props {
     title: string,
     message?: string,
     link?: string;
-    linkMessage: string;
+    linkMessage?: string;
 }
 
 export default function WarningCard({ title, message, link, linkMessage }: Props) {

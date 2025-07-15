@@ -8,7 +8,6 @@ import { productsInfiniteQueryOptions } from "../../queries/products.query";
 import { useEffect, useRef, useState } from "react";
 import { ProductSortBy } from "../../types/types";
 
-
 export default function CatalogAll() {
     const user = useUser();
 
@@ -81,6 +80,7 @@ export default function CatalogAll() {
             handleOnApplyFilters();
         }
     }
+    
     const handleOnApplyFilters = () => {
         setName(formName);
         setMinPrice(formMinPrice ? +formMinPrice : undefined);
@@ -132,18 +132,25 @@ export default function CatalogAll() {
                 </Link>
             }
 
-            <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
+            {!isPending && (data?.pages[0]?.data.totalCount !== 0 ? data?.pages.map((page) => {
+                const isUser = user?.roles.includes('client') === true;
+                return (
+                    <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
+                        {page.data.data.map((product) => (
+                            <Product key={product.id} product={product} renderCart={isUser} />
+                        ))}
+                    </div>
+                )
+            }
+            ) : <>
+                <div className="flex flex-col items-start w-full gap-y-2">
+                    <h2 className="text-4xl font-semibold">Ничего не найдено...</h2>
+                    <div>Попробуйте изменить фильтры.</div>
+                    <small>&#40;А может быть товаров и вовсе нет&#41;</small>
+                </div>
+            </>)
+            }
 
-                {!isPending && (data?.pages[0]?.data.totalCount !== 0 ? data?.pages.map((page) =>
-                    page.data.data.map((product) => (
-                        <Product key={product.id} product={product} renderCart={user?.roles.includes('client') === true} />
-                    ))
-                ) : <>
-                    {/* TODO: style not found */}
-                    <div>Ничего не найдено...</div>
-                </>)
-                }
-            </div>
 
             <div ref={loadMoreRef} className="my-8">{isFetchingNextPage && <Loading />}</div>
         </div>
