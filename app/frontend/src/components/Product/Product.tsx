@@ -11,12 +11,10 @@ interface Props {
 export default function Product({ product, renderCart }: Props) {
     return (
         <article className="flex flex-col w-full h-full">
-            <div className="mx-auto flex-8/10">
-                <Link to={`/catalog/${product.id}`} className="">
-                    <img className="rounded-xl" src={getImageUrl(product.image)}>
-                    </img>
-                </Link>
-            </div>
+            <Link to={`/catalog/${product.id}`} className="mx-auto flex-8/10">
+                <img className="object-contain rounded-xl" src={getImageUrl(product.image)}>
+                </img>
+            </Link>
             <div className="pb-1 mt-2 ml-2 flex-1/12">
                 <p className="font-bold">{product.price} ₽</p>
                 <p className="overflow-hidden font-semibold whitespace-nowrap">{product.name}</p>

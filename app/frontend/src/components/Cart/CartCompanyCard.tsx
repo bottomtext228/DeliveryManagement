@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
-import { CartItem, CreateOrderDto, IProduct } from "../../types/types"
+import { CartItem, IProduct } from "../../types/types"
 import CartItemCard from "./CartItemCard"
 import { getCompany } from "../../api/company/getCompany"
 import LoadingSpinner from "../Loading/LoadingSpinner"
-import { createOrder } from "../../api/orders/createOrder"
 import { Link } from "react-router-dom"
 
 interface Props {
@@ -27,21 +26,6 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
 
     const company = data.data;
 
-    function handleOrderClick() {
-        /*   try {
-              products.forEach(product => {
-                  const dto: CreateOrderDto = {
-                      productId: product.id,
-                      quantity: cartList.find(e => e.productId == product.id)!.quantity,
-                      pickUpPointTownId
-                  };
-                  createOrder(dto)
-              }
-          } catch (error) {
-  
-          } */
-    }
-
     const calculateFinalPrice = () => {
         let price = 0;
         for (const product of products) {
@@ -52,21 +36,22 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
     }
 
     return (
-        <div className="border border-gray-200 p-3 rounded-lg">
+        <div className="border border-gray-200 p-3 rounded-xl">
             <div className="flex items-end gap-x-2 mb-1">
                 <div className="text-sm text-neutral-600">Компания:</div>
                 <h2 className="font-bold">{company.name}</h2>
             </div>
-            <div className="flex flex-col gap-y-6">
+            <div className="flex flex-col">
                 {products.map(product => (
-                    <CartItemCard
-                        key={product.id}
-                        cartItem={cartList.find(e => e.productId == product.id)!}
-                        product={product}
-                        handleDeleteClick={handleDeleteClick}
-                        handleIncreaseQuantityClick={handleIncreaseQuantityClick}
-                        handleDecreaseQuantityClick={handleDecreaseQuantityClick}
-                    ></CartItemCard>
+                    <div key={product.id} className="py-3 first:pt-0 border-b border-neutral-200">
+                        <CartItemCard
+                            cartItem={cartList.find(e => e.productId == product.id)!}
+                            product={product}
+                            handleDeleteClick={handleDeleteClick}
+                            handleIncreaseQuantityClick={handleIncreaseQuantityClick}
+                            handleDecreaseQuantityClick={handleDecreaseQuantityClick}
+                        ></CartItemCard>
+                    </div>
                 ))}
             </div>
             <div className='mt-2 flex text-lg gap-2'>
@@ -74,7 +59,7 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
                 <div className='font-medium'>{calculateFinalPrice()}₽</div>
             </div>
             <div className="mt-4 mb-2">
-                <Link to={`/orders/add?ids=${products.map(e => e.id).join(',')}`} onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</Link>
+                <Link to={`/orders/add?ids=${products.map(e => e.id).join(',')}`} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</Link>
             </div>
         </div>
     )

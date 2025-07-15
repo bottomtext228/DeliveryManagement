@@ -132,10 +132,10 @@ export default function CatalogAll() {
                 </Link>
             }
 
-            {!isPending && (data?.pages[0]?.data.totalCount !== 0 ? data?.pages.map((page) => {
+            {!isPending && (data?.pages[0]?.data.totalCount !== 0 ? data?.pages.map((page, index) => {
                 const isUser = user?.roles.includes('client') === true;
                 return (
-                    <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
+                    <div key={index} className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
                         {page.data.data.map((product) => (
                             <Product key={product.id} product={product} renderCart={isUser} />
                         ))}

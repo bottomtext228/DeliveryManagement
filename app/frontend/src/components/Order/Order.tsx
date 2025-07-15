@@ -11,7 +11,7 @@ export default function Order({ order, handleDeleteClick }: Props) {
     return (
         <>
             <div className="border border-gray-200 w-full min-h-32 gap-8 p-4 rounded-xl">
-                <div className="flex flex-col ">
+                <div className="flex flex-col">
                     {order.items.map(e => (
                         <div key={e.product.id} className="py-3 first:pt-0 border-b border-gray-200">
                             <OrderItem orderItem={e}></OrderItem>

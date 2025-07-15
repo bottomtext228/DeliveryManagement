@@ -92,6 +92,10 @@ export default function OrderAdd() {
         updateQuantity(id, (productsQuantities[id] || 1) - 1);
     };
 
+    const getProductQuantity = (id: number) => {
+        return productsQuantities[id];
+    };
+
     const checkSameCompany = (products: IProductDetail[]) => {
         const companies = new Set(products.map((p) => p.companyId));
         return companies.size <= 1;
@@ -185,23 +189,30 @@ export default function OrderAdd() {
                                 return (
                                     <div key={product.id} className='flex gap-2' >
                                         <div className='w-16 h-16'><img className='w-full h-full' src={getImageUrl(product.image)} alt={product.name} /></div>
-                                        <div className='flex flex-col w-full'>
-                                            <div className='font-bold'>{product.name}</div>
-                                            <div className='flex gap-1'>
-                                                <div>{product.price}&times;</div>
-                                                <div className="flex justify-center items-center gap-x-3 h-fit w-fit">
-                                                    <button type='button' onClick={() => decrementQuantity(product.id)}
-                                                        className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow duration-3000 transition-all">
-                                                    </button>
-                                                    <div>
-                                                        {productsQuantities[product.id]}
-                                                    </div>
-                                                    <button type='button' onClick={() => incrementQuantity(product.id)}
-                                                        className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 after:w-4 after:h-1 after:bg-neutral-600 hover:after:bg-neutral-900 after:rotate-90 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow">
-                                                    </button>
+                                        <div className="flex flex-col">
+                                            <div className="font-bold ">{product.name}</div>
+                                            <div className="flex justify-center items-center gap-x-2 h-fit w-fit">
+                                                <div>
+                                                    {product.price}₽
                                                 </div>
-                                                <span>=</span>
-                                                <div className='font-semibold'>{productsQuantities[product.id] * product.price}₽</div>
+                                                <div className="text-gray-500">
+                                                    &times;
+                                                </div>
+                                                <button onClick={() => decrementQuantity(product.id)}
+                                                    className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow duration-3000 transition-all">
+                                                </button>
+                                                <div className="text-gray-500">
+                                                    {getProductQuantity(product.id)}
+                                                </div>
+                                                <button onClick={() => incrementQuantity(product.id)}
+                                                    className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 after:w-4 after:h-1 after:bg-neutral-600 hover:after:bg-neutral-900 after:rotate-90 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow">
+                                                </button>
+                                                <div>
+                                                    =
+                                                </div>
+                                                <div>
+                                                    {product.price * getProductQuantity(product.id)}₽
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -209,7 +220,7 @@ export default function OrderAdd() {
                             })}
                         </div>
 
-
+                        
                         <div className="my-4 flex flex-col gap-2">
                             <label htmlFor="pickUpPointTownId" className="font-semibold">
                                 Пункт выдачи заказов:

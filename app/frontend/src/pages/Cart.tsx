@@ -90,7 +90,6 @@ export default function Cart() {
                                     handleDeleteClick={handleDeleteClick}
                                     handleIncreaseQuantityClick={handleIncreaseQuantityClick}
                                     handleDecreaseQuantityClick={handleDecreaseQuantityClick}
-
                                 ></CartCompanyCard>
                             )}
                         </div>
