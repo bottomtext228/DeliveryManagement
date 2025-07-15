@@ -131,7 +131,7 @@ export default function OrderAdd() {
 
         const dto: CreateOrderDto = {
             products: items,
-            pickUpPointTownId: 228, /* data.pickUpPointTownId, */
+            pickUpPointTownId: data.pickUpPointTownId,
             choice: parseInt(data.choice.toString()), // enums must be numbers
         };
 

@@ -174,12 +174,12 @@ export interface OrderItemDto {
 }
 
 export enum OrderStatus {
-    Pending = 0,         // Order received but not yet processed
-    Processing = 1,      // Order is being prepared/processed
-    Shipped = 2,         // Order has been shipped
-    Delivered = 3,       // Order delivered to the customer
-    Cancelled = 4,       // Order was cancelled
-    Returned = 5         // Order was returned by the customer
+    Pending = "Pending",         // Order received but not yet processed
+    Processing = "Processing",      // Order is being prepared/processed
+    Shipped = "Shipped",         // Order has been shipped
+    Delivered = "Delivered",       // Order delivered to the customer
+    Cancelled = "Cancelled",       // Order was cancelled
+    Returned = "Returned"         // Order was returned by the customer
 }
 
 export interface CartItem {

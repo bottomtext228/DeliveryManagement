@@ -1,3 +1,5 @@
+import { OrderStatus } from "../types/types";
+
 export function formatHours(hours: number): string {
     const absHours = Math.abs(hours);
     const lastDigit = absHours % 10;
@@ -14,4 +16,21 @@ export function formatHours(hours: number): string {
     }
 
     return `${hours} ${suffix}`;
+}
+
+export function formatOrderStatus(status: OrderStatus) {
+    switch (status) {
+        case OrderStatus.Pending:
+            return 'Ожидание'
+        case OrderStatus.Processing:
+            return 'В обработке'
+        case OrderStatus.Shipped:
+            return 'В пути'
+        case OrderStatus.Delivered:
+            return 'Доставлен'
+        case OrderStatus.Cancelled:
+            return 'Отменён'
+        case OrderStatus.Returned:
+            return 'Возврат'
+    }
 }
