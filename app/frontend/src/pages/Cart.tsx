@@ -1,12 +1,11 @@
 import { useQueries } from "@tanstack/react-query";
-import CartItemCard from "../components/Cart/CartItemCard";
 import useCartStore from "../store/user/cartStore";
-import { getProductDetail } from "../api/catalog/getProduct";
 import Loading from "../components/Loading/Loading";
 import { groupBy } from "../helpers/polyfill.helper";
 import { IProduct } from "../types/types";
 import CartCompanyCard from "../components/Cart/CartCompanyCard";
 import { productDetailQueryOptions } from "../queries/productDetail.query";
+import EmptyStateCard from "../components/Common/EmptyStateCard";
 
 export default function Cart() {
     const addToCart = useCartStore(store => store.add);
@@ -37,8 +36,6 @@ export default function Cart() {
 
     const products = data.map(e => e?.data).filter(Boolean);
 
-    const getProductById = (id: number) => products.find(e => e?.id == id);
-
     function handleDeleteClick(productId: number) {
         removeFromCart(productId);
     }
@@ -53,11 +50,6 @@ export default function Cart() {
         if (cartItem && cartItem.quantity > 1) removeFromCart(productId, true);
     }
 
-    function handleOrderClick() {
-        /*     cartList.map(item => {
-                createOrder({ productId: item.productId, quantity: item.quantity, pickUpPointTownId: 1} as CreateOrderDto)
-            }) */
-    }
 
     const calculateProductsCount = () => {
         let count = 0;
@@ -78,10 +70,10 @@ export default function Cart() {
                     <h1 className="font-bold text-2xl">Корзина</h1>
                     <div className="">Всего: {calculateProductsCount()}</div>
                 </div>
-                {cartList.length ?
-                    <>
+                {
+                    cartList.length ? (
                         <div className="flex flex-col gap-8">
-                            {Object.entries(groupedByCompanies).map(([companyId, products]) =>
+                            {Object.entries(groupedByCompanies).map(([companyId, products]) => (
                                 <CartCompanyCard
                                     key={companyId}
                                     companyId={Number(companyId)}
@@ -91,14 +83,12 @@ export default function Cart() {
                                     handleIncreaseQuantityClick={handleIncreaseQuantityClick}
                                     handleDecreaseQuantityClick={handleDecreaseQuantityClick}
                                 ></CartCompanyCard>
-                            )}
+                            ))}
                         </div>
-                        <div className="my-8">
-                            <button onClick={handleOrderClick} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700 transition-colors duration-150">Заказать всё</button>
-                        </div>
-                    </>
-                    : <>
-                    </>}
+                    ) : (
+                        <EmptyStateCard message="Вы можете добавить желаемые товары в корзину и они будут отображаться здесь." />
+                    )
+                }
             </div>
         </section>
     )

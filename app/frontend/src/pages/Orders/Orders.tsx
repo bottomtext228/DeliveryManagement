@@ -7,6 +7,7 @@ import { ordersQueryOptions } from "../../queries/orders.query";
 import ErrorPage from "../../components/Error/ErrorPage";
 import { useState } from "react";
 import ServerError from "../../components/Error/ServerError";
+import EmptyStateCard from "../../components/Common/EmptyStateCard";
 
 export default function Orders() {
     const [serverError, setServerError] = useState<unknown>(null);
@@ -42,7 +43,6 @@ export default function Orders() {
     }
 
     return (
-
         <>
             <section className="my-4 md:my-16">
                 <div className="max-w-[1440px] w-[90%] mx-auto">
@@ -52,9 +52,19 @@ export default function Orders() {
                         <div className="">Всего: {orders.length}</div>
                     </div>
                     <div className="flex flex-col gap-y-8">
-                        {orders.length ? orders.map((order) =>
-                            <Order key={order.id} order={order} handleDeleteClick={handleDeleteClick}></Order>
-                        ) : <div>Здесь пока пусто...</div>}
+                        {
+                            orders.length ? (
+                                orders.map((order) => (
+                                    <Order
+                                        key={order.id}
+                                        order={order}
+                                        handleDeleteClick={handleDeleteClick}
+                                    />
+                                ))
+                            ) : (
+                                <EmptyStateCard message="Совершённые заказы будут отображаться здесь." />
+                            )
+                        }
                     </div>
                 </div>
             </section>
