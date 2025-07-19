@@ -109,18 +109,18 @@ namespace backend.Controllers
         }
 
         /// <summary>
-        /// Gets the profile of the currently authenticated user.
+        /// Gets the authenticated user's basic information (email, roles, and company info if applicable).
         /// </summary>
-        /// <returns>The user's email, roles, and company info if applicable.</returns>
-        /// <response code="200">Returns the user profile.</response>
+        /// <returns>The user's identity information.</returns>
+        /// <response code="200">Returns the user's identity information.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="500">Internal server error.</response>
-        [HttpGet("profile")]
+        [HttpGet("me")]
         [Authorize]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Profile()
+        public async Task<IActionResult> GetMe()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             var userEmail = User.FindFirstValue(ClaimTypes.Email)!;
@@ -256,6 +256,31 @@ namespace backend.Controllers
             // find and delete refresh token
             await _tokenService.RevokeRefreshTokenAsync(refreshToken, Response);
             return Ok();
+        }
+
+        /// <summary>
+        /// Gets profile of the currently authenticated user.
+        /// </summary>
+        /// <returns>Returns user's complete profile.</returns>
+        /// <response code="200">Profile info.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">Internal server error.</response>
+        [HttpGet("profile")]
+        [Authorize]
+        [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var ordersCount = await _dbContext.Orders.CountAsync(e => e.UserId == userId);
+
+            var profileInfo = new UserProfileDto
+            {
+                OrdersCount = ordersCount
+            };
+
+            return Ok(profileInfo);
         }
 
         /// <summary>

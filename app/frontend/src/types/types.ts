@@ -210,11 +210,11 @@ export interface RefreshTokenResponseDto {
 }
 
 export interface PaginatedResponseDto<T> {
-  data: T[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
+    data: T[];
+    totalCount: number;
+    pageNumber: number;
+    pageSize: number;
+    totalPages: number;
 }
 
 export enum ProductSortBy {
@@ -226,4 +226,8 @@ export enum ProductSortBy {
 export interface CanCreateProductResponse {
     canCreate: boolean;
     message?: string;
+}
+
+export interface UserProfileDto {
+    ordersCount: number;
 }

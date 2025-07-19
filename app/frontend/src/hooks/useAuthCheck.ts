@@ -19,7 +19,7 @@ export const useAuthCheck = () => {
 
             if (token) {
                 try {
-                    const response = await AuthService.getProfile();
+                    const response = await AuthService.getMe();
                     login(response.data as IUser);
                     return;
                 } catch (error: any) {

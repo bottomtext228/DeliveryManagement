@@ -9,8 +9,8 @@ export const AuthService = {
     async login(UserData: ILoginRequest): Promise<AxiosResponse<ILoginResponse | ValidationProblemDetails>> {
         return axios.post('/api/account/login', UserData);
     },
-    async getProfile(): Promise<AxiosResponse<IUser | undefined>> {
-        return instance.get('/api/account/profile');
+    async getMe(): Promise<AxiosResponse<IUser | undefined>> {
+        return instance.get('/api/account/me');
     },
     async checkEmail(email: string): Promise<AxiosResponse<CheckEmailResponse, any>> {
         return instance.get<CheckEmailResponse>('/api/account/check_credentials', {

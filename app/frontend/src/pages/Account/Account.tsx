@@ -2,13 +2,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
 import useUserStore from "../../store/user/userStore";
 import RoleBadge from "../../components/Role/RoleBadge";
+import { useQuery } from "@tanstack/react-query";
+import { profileQueryOptions } from "../../queries/profile.query";
+import Loading from "../../components/Loading/Loading";
+import ErrorPage from "../../components/Error/ErrorPage";
+import useCartStore from "../../store/user/cartStore";
 export default function Account() {
     const user = useUser();
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
+    const cartList = useCartStore(state => state.list);
+    const { data, isLoading, isError, error } = useQuery({ ...profileQueryOptions(), select: (e) => e.data });
 
-    if (!user) return;
+    if (isLoading) return <Loading />;
 
+    if (isError) return <ErrorPage message={error.message} />;
+
+    if (!user) return <ErrorPage message="User object is empty" />;
+
+    // TODO: add more info to account page, maybe add a new endpoint for that info.
     return <>
         <div className="flex md:flex-row flex-col py-16 lg:gap-16 gap-8 max-w-[1440px] w-[90%]  mx-auto justify-center">
             <div className="flex sm:flex-row flex-col gap-x-8 p-4 justify-between border border-gray-200 max-w-full md:w-xl md:max-w-124 h-fit rounded-2xl">
@@ -49,6 +61,17 @@ export default function Account() {
                         <img className="w-20 h-20 m-4 mx-auto" src="/location.svg"></img>
                         <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400">Карта</div>
                     </Link>
+                    <div className="border border-gray-200 rounded-xl p-2">
+                        <h2 className="font-semibold">
+                            Информация о компании
+                        </h2>
+                        <div>
+                            Название: {user.company?.name}
+                        </div>
+                        <div>
+                            {user.company?.description}
+                        </div>
+                    </div>
                 </>
             }
 
@@ -60,6 +83,12 @@ export default function Account() {
                     </Link>
                 </>
             }
+            <div>
+                <div>
+                    Количество заказов: {data?.ordersCount}
+                </div>
+                <div>В корзине: {cartList.length}</div>
+            </div>
         </div>
     </>
 }
