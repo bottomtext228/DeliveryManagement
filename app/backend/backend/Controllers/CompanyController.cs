@@ -1,10 +1,9 @@
-using System.Security.Claims;
 using backend.Dtos.Company;
+using backend.Extensions;
 using backend.Helpers;
-using backend.Mappers;
+using backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -15,11 +14,11 @@ namespace backend.Controllers
     [Route("api/company")]
     public class CompanyController : ControllerBase
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ICompanyService _companyService;
 
-        public CompanyController(ApplicationDbContext dbContext)
+        public CompanyController(ICompanyService companyService)
         {
-            _dbContext = dbContext;
+            _companyService = companyService;
         }
 
         /// <summary>
@@ -42,10 +41,12 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id)
         {
-            var company = await _dbContext.Companies.FindAsync(id);
-            if (company == null) return ApiResponseHelper.NotFound(HttpContext, $"Company with ID {id} not found.");
+            var result = await _companyService.GetByIdAsync(id);
 
-            return Ok(company.ToCompanyDto());
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: error => ApiResponseHelper.NotFound(HttpContext, error)
+            );
         }
 
         /// <summary>
@@ -65,15 +66,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CanCreateProduct()
         {
-            var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
-            var company = (await _dbContext.Companies.Include(e => e.Stocks).Include(e => e.PickUpPoints).FirstOrDefaultAsync(e => e.Id == companyId))!;
+            var companyId = User.GetCompanyId();
 
-            bool canCreate = company.Stocks.Count != 0 && company.PickUpPoints.Count != 0;
+            var result = await _companyService.CanCreateProductAsync(companyId!.Value);
 
             return Ok(new CanCreateProductResponse
             {
-                CanCreate = canCreate,
-                Message = canCreate ? null : "Перед созданием товара необходимо указать склады и пункты выдачи заказов!"
+                CanCreate = result.IsSuccess,
+                Message = result.IsFailure ? result.Error!.Message : null
             });
         }
 

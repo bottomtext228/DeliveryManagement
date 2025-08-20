@@ -1,6 +1,8 @@
 
 
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using backend.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Helpers
@@ -69,6 +71,15 @@ namespace backend.Helpers
             };
         }
 
+        public static IActionResult BadRequest(HttpContext context, Error error)
+        {
+            var problem = CreateProblemDetails(context, StatusCodes.Status400BadRequest, error.Code, error.Message, extensions: error.Metadata);
+            return new BadRequestObjectResult(problem)
+            {
+                ContentTypes = { "application/problem+json" }
+            };
+        }
+
         /// <summary>
         /// Returns a 404 Not Found response with a standardized <see cref="ProblemDetails"/> payload.
         /// </summary>
@@ -80,6 +91,15 @@ namespace backend.Helpers
         public static IActionResult NotFound(HttpContext context, string detail, string? title = null, IDictionary<string, object>? extensions = null)
         {
             var problem = CreateProblemDetails(context, StatusCodes.Status404NotFound, title ?? "Not Found", detail, extensions: extensions);
+            return new NotFoundObjectResult(problem)
+            {
+                ContentTypes = { "application/problem+json" }
+            };
+        }
+
+        public static IActionResult NotFound(HttpContext context, Error error)
+        {
+            var problem = CreateProblemDetails(context, StatusCodes.Status404NotFound, error.Code, error.Message, extensions: error.Metadata);
             return new NotFoundObjectResult(problem)
             {
                 ContentTypes = { "application/problem+json" }
@@ -178,6 +198,13 @@ namespace backend.Helpers
                 [fieldName] = [errorMessage]
             }, title);
         }
+
+
+        public static IActionResult ValidationProblem(HttpContext context, ValidationError error)
+        {
+            return ValidationProblem(context, error.Errors.ToDictionary());
+        }
+
 
     }
 

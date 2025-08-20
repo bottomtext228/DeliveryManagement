@@ -13,6 +13,9 @@ using backend.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using backend.Helpers;
 using System.Text.Json.Serialization;
+using backend.Interfaces.Services;
+using backend.Interfaces.Repositories;
+using backend.Repositories;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -145,6 +148,18 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
+
+// Repositories
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+// Services
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<IMapService, MapService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPickUpPointService, PickUpPointService>();
+builder.Services.AddScoped<IStockService, StockService>();
 
 var app = builder.Build();
 

@@ -1,10 +1,9 @@
-using backend.Services;
 using backend.Models.Map;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using backend.Helpers;
 using backend.Dtos.Order;
-using Microsoft.EntityFrameworkCore;
+using backend.Interfaces.Services;
 
 namespace backend.Controllers
 {
@@ -16,15 +15,11 @@ namespace backend.Controllers
     [Authorize]
     public class MapController : ControllerBase
     {
-        private readonly CountryMap _countryMap;
-        private readonly ApplicationDbContext _dbContext;
-        private readonly TownsGraphSearch _graphSearch;
+        private readonly IMapService _mapService;
 
-        public MapController(CountryMap countryMap, ApplicationDbContext dbContext, TownsGraphSearch graphSearch)
+        public MapController(IMapService mapService)
         {
-            _countryMap = countryMap;
-            _dbContext = dbContext;
-            _graphSearch = graphSearch;
+            _mapService = mapService;
         }
 
         /// <summary>
@@ -41,7 +36,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public IActionResult GetTowns()
         {
-            return Ok(_countryMap.Towns);
+            return Ok(_mapService.GetTowns());
         }
 
         /// <summary>
@@ -58,20 +53,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public IActionResult GetRoads()
         {
-            int[,] array = _countryMap.Graph.CreateAdjacencyMatrix();
-
-            // Convert to jagged array for JSON serialization
-            var jaggedArray = new int[array.GetLength(0)][];
-            for (int i = 0; i < array.GetLength(0); i++)
-            {
-                jaggedArray[i] = new int[array.GetLength(1)];
-                for (int j = 0; j < array.GetLength(1); j++)
-                {
-                    jaggedArray[i][j] = array[i, j];
-                }
-            }
-
-            return Ok(jaggedArray);
+            return Ok(_mapService.GetRoads());
         }
 
         /// <summary>
@@ -94,34 +76,12 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ComputeRoute([FromBody] ComputeRouteRequestDto model)
         {
-            // find company
-            var company = await _dbContext.Companies.Include(e => e.Stocks).Include(e => e.PickUpPoints).FirstOrDefaultAsync(e => e.Id == model.CompanyId);
-            if (company == null) return ApiResponseHelper.BadRequest(HttpContext, $"Company with ID {model.CompanyId} not found.");
+            var result = await _mapService.ComputeRouteAsync(model);
 
-            if (company.Stocks.Count == 0 || company.PickUpPoints.Count == 0)
-            {
-                return ApiResponseHelper.BadRequest(HttpContext, $"Company with ID {model.CompanyId} did not set stocks/pick up points.");
-            }
-
-            // find pick up point
-            var pickUpPoint = company.PickUpPoints.FirstOrDefault(e => e.TownId == model.PickUpPointTownId);
-            if (pickUpPoint == null) return ApiResponseHelper.BadRequest(HttpContext, $"PickUpPoint with Town ID {model.PickUpPointTownId} not found.");
-
-            var pickUpPointTown = _countryMap.Towns.Find(e => e.Id == pickUpPoint.TownId)!;
-
-            var townIdsWithStocks = company.Stocks.Select(e => e.TownId).ToList();
-            var towns = townIdsWithStocks.Select(e => _countryMap.Towns.Find(t => t.Id == e)!).ToList();
-
-            var route = _graphSearch.ComputeRoute(towns, pickUpPointTown);
-            var chosenRoute = model.Choice == RouteChoice.Fastest ? route.Fastest : route.Cheapest;
-
-            return Ok(new ComputeRouteResponseDto
-            {
-                ShippingPrice = chosenRoute.Price,
-                ShippingTime = chosenRoute.Time,
-                Towns = chosenRoute.Towns.Select(e => e.Name).ToList(),
-                IsRoutesEqual = route.IsEqual
-            });
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+            );
         }
     }
 }

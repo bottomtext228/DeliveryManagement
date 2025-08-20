@@ -48,16 +48,17 @@ namespace backend.Services
             return tokenHandler.WriteToken(token);
         }
         // Issuing new refresh token and storing it in the database and Cookie. Caller must save db changes! 
-        public async Task IssueRefreshTokenAsync(User user, HttpResponse response)
+        public async Task<RefreshToken> IssueRefreshTokenAsync(User user/* , HttpResponse response */)
         {
             var refreshToken = CreateRefreshToken(user);
             await _dbContext.RefreshTokens.AddAsync(refreshToken);
-            response.SetRefreshToken(refreshToken);
+            /* response.SetRefreshToken(refreshToken); */
 
             await CleanupOldRefreshTokensAsync(user.Id);
+            return refreshToken;
         }
         // Rotating old refresh token from the db and saving new version in Cookie. Caller must save db changes!
-        public async Task RotateRefreshTokenAsync(RefreshToken existingToken, User user, HttpResponse response)
+        public async Task RotateRefreshTokenAsync(RefreshToken existingToken, User user)
         {
             var newToken = CreateRefreshToken(user);
 
@@ -65,15 +66,11 @@ namespace backend.Services
             existingToken.ExpiresOn = newToken.ExpiresOn;
             existingToken.CreatedOn = newToken.CreatedOn;
 
-            response.SetRefreshToken(existingToken);
-
             await CleanupOldRefreshTokensAsync(user.Id);
         }
-        public async Task RevokeRefreshTokenAsync(string refreshToken, HttpResponse response)
+        public async Task RevokeRefreshTokenAsync(string refreshToken)
         {
             await _dbContext.RefreshTokens.Where(e => e.Token == refreshToken).ExecuteDeleteAsync();
-            // remove from user
-            response.ClearRefreshToken();
         }
         private RefreshToken CreateRefreshToken(User user)
         {

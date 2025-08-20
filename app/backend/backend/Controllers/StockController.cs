@@ -1,11 +1,9 @@
-using System.Security.Claims;
 using backend.Dtos.Stock;
+using backend.Extensions;
 using backend.Helpers;
-using backend.Models.Map;
-using backend.Services;
+using backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -18,13 +16,11 @@ namespace backend.Controllers
 
     public class StockController : ControllerBase
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly CountryMap _countryMap;
+        private readonly IStockService _stockService;
 
-        public StockController(ApplicationDbContext dbContext, CountryMap countryMap)
+        public StockController(IStockService stockService)
         {
-            _dbContext = dbContext;
-            _countryMap = countryMap;
+            _stockService = stockService;
         }
 
         /// <summary>
@@ -44,10 +40,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
-            var stocks = _dbContext.Stocks.Where(s => s.CompanyId == companyId).Select(s => new GetStocksDto { Id = s.Id, CompanyId = s.CompanyId, TownId = s.TownId });
-            var list = await stocks.ToListAsync();
-            return Ok(list);
+            var companyId = User.GetCompanyId();
+
+            var result = await _stockService.GetAll(companyId!.Value);
+
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+            );
         }
 
         /// <summary>
@@ -82,23 +82,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Set([FromBody] List<int> townIds)
         {
-            if (townIds.Count == 0) return ApiResponseHelper.BadRequest(HttpContext, "At least one town must be provided.");
+            var companyId = User.GetCompanyId();
 
-            var (duplicates, missing) = IdValidationHelper.ValidateIds(townIds, _countryMap.Towns.Select(p => p.Id));
+            var result = await _stockService.Set(townIds, companyId!.Value);
 
-            if (duplicates.Count != 0) return ApiResponseHelper.BadRequest(HttpContext, $"Duplicate town IDs found: {string.Join(", ", duplicates)}");
-            if (missing.Count != 0)  return ApiResponseHelper.BadRequest(HttpContext, $"The following towns with IDs not found: {string.Join(", ", missing)}");
-
-            var companyId = int.Parse(User.FindFirstValue("CompanyId")!);
-
-            // delete previous stocks
-            await _dbContext.Stocks.Where(p => p.CompanyId == companyId).ExecuteDeleteAsync();
-
-            // save new ones
-            var newStocks = townIds.Select(townId => new Stock { CompanyId = companyId, TownId = townId });
-            await _dbContext.AddRangeAsync(newStocks);
-            await _dbContext.SaveChangesAsync();
-            return NoContent();
+            return result.Map(
+                onSuccess: NoContent,
+                onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+            );
         }
     }
 }

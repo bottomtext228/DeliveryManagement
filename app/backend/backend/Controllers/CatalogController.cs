@@ -1,15 +1,9 @@
-﻿using System.Security.Claims;
-using backend.Dtos.Catalog;
-using backend.Dtos.Common;
+﻿using backend.Dtos.Catalog;
 using backend.Extensions;
 using backend.Helpers;
-using backend.Interfaces;
-using backend.Mappers;
-using backend.Models;
+using backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Controllers
 {
@@ -21,15 +15,11 @@ namespace backend.Controllers
     [Authorize]
     public class CatalogController : ControllerBase
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IFileService _fileService;
-        public CatalogController(ApplicationDbContext dbContext, IFileService fileService)
+        private readonly IProductService _productService;
+        public CatalogController(IProductService productService)
         {
-            _dbContext = dbContext;
-            _fileService = fileService;
+            _productService = productService;
         }
-
-        // TODO: update docs
         /// <summary>
         /// Retrieves paginated list of products.
         /// If the user is the company, returns only products that belong to the user's company.
@@ -48,25 +38,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll([FromQuery] ProductQueryDto query)
         {
-            IQueryable<Product> queryableProducts = _dbContext.Products;
+            var companyId = User.GetCompanyId();
 
-            if (User.IsInRole("company"))
-            {
-                // company of the current user
-                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _productService.GetAllAsync(companyId, query);
 
-                if (company != null)
-                {
-                    queryableProducts = _dbContext.Products.Where(e => e.CompanyId == company.Id);
-                }
-
-            }
-
-            queryableProducts = queryableProducts.ApplyFiltering(query).ApplySorting(query);
-
-            var response = await queryableProducts.ToPaginationResponseAsync(query);
-
-            return Ok(response);
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+            );
         }
 
         /// <summary>
@@ -87,26 +66,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(int id)
         {
-            var product = await _dbContext.Products.Include(e => e.Company).FirstOrDefaultAsync(e => e.Id == id);
-            if (product == null)
-            {
-                return ApiResponseHelper.NotFound(HttpContext, $"Product with ID {id} not found.");
-            }
+            var companyId = User.GetCompanyId();
 
-            if (User.IsInRole("company"))
-            {
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var company = await _dbContext.Companies
-                    .Include(c => c.Products)
-                    .FirstOrDefaultAsync(c => c.UserId == currentUserId);
+            var result = await _productService.GetByIdAsync(id, companyId);
 
-                if (company != null && !company.Products.Any(p => p == product)) // check if user company has that product
-                {
-                    return ApiResponseHelper.NotFound(HttpContext, $"Product with ID {id} not found.");
-                }
-            }
-
-            return Ok(product.ToProductDetailDto());
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: error => ApiResponseHelper.NotFound(HttpContext, error)
+            );
         }
 
         /// <summary>
@@ -130,34 +97,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromForm] CreateProductDto model)
         {
-            var company = (await _dbContext.Companies
-                .Include(c => c.Stocks)
-                .Include(c => c.PickUpPoints)
-                .Include(c => c.Products)
-                .FirstOrDefaultAsync(e => e.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
-            )!;
+            var companyId = User.GetCompanyId();
 
-            if (company.Stocks.Count == 0 || company.PickUpPoints.Count == 0)
-            {
-                return ApiResponseHelper.BadRequest(HttpContext, "The company must set stocks and pick up points before creating a product.");
-            }
+            var result = await _productService.CreateAsync(model, companyId!.Value);
 
-            var fileName = await _fileService.SaveFileAsync(model.Image);
-
-            var product = new Product
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Size = new Vector(model.SizeX, model.SizeY, model.SizeZ),
-                Weight = model.Weight,
-                Price = model.Price,
-                Image = fileName
-            };
-
-            await _dbContext.Products.AddAsync(product);
-            company.Products.Add(product);
-            await _dbContext.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product.ToProductDetailDto());
+            return result.Map(
+                onSuccess: product => CreatedAtAction(nameof(GetById), new { id = product.Id }, product),
+                onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+            );
         }
 
         /// <summary>
@@ -182,30 +129,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductDto model)
         {
-            var product = await _dbContext.Products.FindAsync(id);
-            if (product == null) return ApiResponseHelper.NotFound(HttpContext, $"Product with ID {id} not found.");
+            var companyId = User.GetCompanyId();
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _productService.EditAsync(id, model, companyId!.Value);
 
-            var company = await _dbContext.Companies.Include(c => c.Products).FirstOrDefaultAsync(c => c.UserId == userId);
-            // check that company edits its own product
-            if (company == null || company.Products.FirstOrDefault(p => p.Id == id) == null) return ApiResponseHelper.NotFound(HttpContext, $"Product with ID {id} not found.");
-
-            product.Name = model.Name;
-            product.Description = model.Description;
-            product.Price = model.Price;
-            product.Weight = model.Weight;
-            product.Size = new Vector(model.SizeX, model.SizeY, model.SizeZ);
-
-            if (model.Image != null)
-            {
-                var fileName = await _fileService.SaveFileAsync(model.Image);
-                product.Image = fileName;
-            }
-
-            await _dbContext.SaveChangesAsync();
-
-            return NoContent();
+            return result.Map(
+                onSuccess: NoContent,
+                onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+            );
         }
 
         /// <summary>
@@ -227,24 +158,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await _dbContext.Products.FindAsync(id);
-            if (product == null) return ApiResponseHelper.NotFound(HttpContext, $"Product with ID {id} not found.");
+            var companyId = User.GetCompanyId();
 
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var currentCompany = await _dbContext.Companies
-                .Include(c => c.Products)
-                .FirstOrDefaultAsync(c => c.UserId == currentUserId);
+            var result = await _productService.DeleteAsync(id, companyId!.Value);
 
-            if (currentCompany == null || !currentCompany.Products.Any(p => p.Id == id))
-            {
-                return ApiResponseHelper.NotFound(HttpContext, $"Product with ID {id} not found.");
-            }
-
-            _dbContext.Products.Remove(product);
-            _fileService.DeleteFile(product.Image);
-            await _dbContext.SaveChangesAsync();
-
-            return NoContent();
+            return result.Map(
+                onSuccess: NoContent,
+                onFailure: error => ApiResponseHelper.NotFound(HttpContext, error)
+            );
         }
     }
 }

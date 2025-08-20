@@ -10,6 +10,7 @@ namespace backend.Mappers
             return new ProductDto { Id = product.Id, Name = product.Name, Price = product.Price, Image = product.Image };
         }
 
+        // need to .Include() Company entity!
         public static ProductDetailDto ToProductDetailDto(this Product product)
         {
             return new ProductDetailDto

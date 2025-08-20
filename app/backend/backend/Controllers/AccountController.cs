@@ -1,17 +1,12 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using backend.Models;
 using backend.Dtos;
 using backend.Dtos.Account;
-using backend.Services;
 using backend.Helpers;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using backend.Mappers;
+using backend.Interfaces.Services;
 using backend.Extensions;
-using Microsoft.AspNetCore.Authentication;
+using backend.Results;
 
 namespace backend.Controllers
 {
@@ -22,17 +17,11 @@ namespace backend.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly ApplicationDbContext _dbContext;
-        private readonly TokenService _tokenService;
+        private readonly IAccountService _accountService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext dbContext, TokenService tokenService)
+        public AccountController(IAccountService accountService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _dbContext = dbContext;
-            _tokenService = tokenService;
+            _accountService = accountService;
         }
 
         /// <summary>
@@ -45,67 +34,29 @@ namespace backend.Controllers
         /// <response code="500">Internal server error.</response>
         [HttpPost("register")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(NewLoginDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        public async Task<IActionResult> Register([FromBody] RegisterDto model, CancellationToken cancellationToken = default)
         {
-            if (model.AsCompany)
-            {
+            var result = await _accountService.RegisterAsync(model, cancellationToken);
+
+            return result.Map(
+                onSuccess: loginData =>
                 {
-                    var errors = new Dictionary<string, string>();
+                    Response.SetRefreshToken(loginData.RefreshToken);
+                    return Ok(new LoginResponseDto { User = loginData.User, Token = loginData.Token });
+                },
+                onFailure: error =>
+                {
+                    if (result.Error is ValidationError validationError)
+                    {
+                        return ApiResponseHelper.ValidationProblem(HttpContext, validationError);
+                    }
 
-                    if (string.IsNullOrEmpty(model.CompanyName))
-                        errors.Add(nameof(model.CompanyName), "CompanyName can't be null with AsCompany = true");
-
-                    if (string.IsNullOrEmpty(model.CompanyDescription))
-                        errors.Add(nameof(model.CompanyDescription), "CompanyDescription can't be null with AsCompany = true");
-
-                    if (errors.Count != 0)
-                        return ApiResponseHelper.ValidationProblem(HttpContext, errors);
+                    return ApiResponseHelper.BadRequest(HttpContext, result.Error!);
                 }
-
-                bool exists = await _dbContext.Companies.AnyAsync(c => c.Name.Equals(model.CompanyName));
-                if (exists)
-                {
-                    return ApiResponseHelper.ValidationProblem(HttpContext, "CompanyName", $"Имя компании \"{model.CompanyName}\" уже занято.");
-                }
-            }
-
-            User user = new User { Email = model.Email, UserName = model.Email };
-
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-
-                await _userManager.AddToRoleAsync(user, model.AsCompany ? "company" : "client");
-
-
-                Company? company = null;
-                if (model.AsCompany)
-                {
-                    company = new Company { Name = model.CompanyName!, Description = model.CompanyDescription!, UserId = user.Id };
-                    await _dbContext.Companies.AddAsync(company);
-                }
-
-                var roles = await _userManager.GetRolesAsync(user);
-
-                // issue new token and save changes
-                await _tokenService.IssueRefreshTokenAsync(user, Response);
-                await _dbContext.SaveChangesAsync();
-
-                return Ok(new NewLoginDto
-                {
-                    User = new UserDto { Email = user.Email, Roles = roles.ToList(), Company = company?.ToCompanyDto() },
-                    Token = _tokenService.CreateToken(user, roles, company?.Id)
-                });
-            }
-            else
-            {
-                return ApiResponseHelper.ValidationProblem(HttpContext, ValidationHelper.CreateValidationProblemDetails(result));
-            }
-
+            );
         }
 
         /// <summary>
@@ -120,26 +71,17 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetMe()
+        public async Task<IActionResult> GetMe(CancellationToken cancellationToken = default)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var userEmail = User.FindFirstValue(ClaimTypes.Email)!;
+            var userId = User.GetUserId()!;
+            var companyId = User.GetCompanyId();
 
-            var user = (await _userManager.FindByIdAsync(userId))!;
+            var result = await _accountService.GetMeAsync(userId, companyId/* , cancellationToken */);
 
-            var roles = await _userManager.GetRolesAsync(user);
-
-
-            if (User.IsInRole("company"))
-            {
-                var company = await _dbContext.Companies.FirstOrDefaultAsync(e => e.UserId == userId);
-                return Ok(new UserDto
-                { Email = userEmail, Roles = roles.ToList(), Company = company?.ToCompanyDto() });
-            }
-            else
-            {
-                return Ok(new UserDto { Email = userEmail, Roles = roles.ToList() });
-            }
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: error => ApiResponseHelper.NotFound(HttpContext, error)
+            );
         }
 
         /// <summary>
@@ -153,42 +95,22 @@ namespace backend.Controllers
         /// <response code="500">Internal server error.</response>
         [HttpPost("login")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(NewLoginDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Login([FromBody] LoginDto model)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto model, CancellationToken cancellationToken = default)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
-            if (user == null) return ApiResponseHelper.Unauthorized(HttpContext, "Invalid email or password");
+            var result = await _accountService.LoginAsync(model/* , cancellationToken */);
 
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-
-            if (result.Succeeded)
+            if (result.IsSuccess)
             {
-                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
-
-
-                await _tokenService.IssueRefreshTokenAsync(user, Response);
-                await _dbContext.SaveChangesAsync();
-
-                return Ok(new NewLoginDto
-                {
-                    User = new UserDto
-                    {
-                        Email = user.Email!,
-                        Roles = roles.ToList(),
-                        Company = company?.ToCompanyDto()
-                    },
-                    Token = _tokenService.CreateToken(user, roles, company?.Id)
-                });
+                var loginData = result.Value!;
+                Response.SetRefreshToken(loginData.RefreshToken);
+                return Ok(new LoginResponseDto { User = loginData.User, Token = loginData.Token });
             }
-            else
-            {
-                return ApiResponseHelper.Unauthorized(HttpContext, "Invalid email or password");
-            }
+
+            return ApiResponseHelper.BadRequest(HttpContext, result.Error!);
         }
 
 
@@ -207,29 +129,18 @@ namespace backend.Controllers
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
-            if (string.IsNullOrEmpty(refreshToken)) return ApiResponseHelper.Unauthorized(HttpContext, "Missing refresh token");
+            var result = await _accountService.RefreshTokenAsync(refreshToken);
 
-            // check refresh token
-            var storedRefreshToken = await _dbContext.RefreshTokens.Include(e => e.User).FirstOrDefaultAsync(e => e.Token == refreshToken);
-            if (storedRefreshToken == null || storedRefreshToken.ExpiresOn < DateTime.UtcNow)
+            if (result.IsSuccess)
             {
-                return ApiResponseHelper.Unauthorized(HttpContext, "The refresh token has expired.");
+                var tokenInfo = result.Value!;
+
+                Response.SetRefreshToken(tokenInfo.RefreshToken);
+
+                return Ok(new RefreshTokenResponseDto { Token = tokenInfo.Token });
             }
 
-            // get user
-            var user = storedRefreshToken.User;
-
-            // create access token
-            var roles = await _userManager.GetRolesAsync(user);
-            var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
-            string accessToken = _tokenService.CreateToken(user, roles, company?.Id);
-
-            // update refresh token
-            await _tokenService.RotateRefreshTokenAsync(storedRefreshToken, user, Response);
-            await _dbContext.SaveChangesAsync();
-
-            return Ok(new RefreshTokenResponseDto { Token = accessToken });
-
+            return ApiResponseHelper.BadRequest(HttpContext, result.Error!);
         }
 
         /// <summary>
@@ -248,14 +159,15 @@ namespace backend.Controllers
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
-            if (string.IsNullOrEmpty(refreshToken))
+            var result = await _accountService.LogoutAsync(refreshToken);
+
+            if (result.IsSuccess)
             {
-                return ApiResponseHelper.BadRequest(HttpContext, "Missing refresh token.");
+                Response.ClearRefreshToken();
+                return Ok();
             }
 
-            // find and delete refresh token
-            await _tokenService.RevokeRefreshTokenAsync(refreshToken, Response);
-            return Ok();
+            return ApiResponseHelper.BadRequest(HttpContext, result.Error!);
         }
 
         /// <summary>
@@ -272,15 +184,14 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Profile()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var ordersCount = await _dbContext.Orders.CountAsync(e => e.UserId == userId);
+           var userId = User.GetUserId()!;
 
-            var profileInfo = new UserProfileDto
-            {
-                OrdersCount = ordersCount
-            };
+            var result = await _accountService.GetProfileAsync(userId);
 
-            return Ok(profileInfo);
+            return result.Map(
+                onSuccess: Ok,
+                onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+            );
         }
 
         /// <summary>
@@ -304,18 +215,14 @@ namespace backend.Controllers
         /// <response code="400">If email is not provided</response> 
         /// <response code="500">Internal server error.</response>
         [HttpGet("check_credentials")]
-        [ProducesResponseType(typeof(AvailabilityResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EmailAvailabilityDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CheckIfEmailIsNotUsed([FromQuery] string email)
         {
-            var exists = await _userManager.Users.AnyAsync(u => u.Email == email);
-            return Ok(new AvailabilityResponse { Available = !exists, Message = exists ? $"Имя пользователя '{email}' уже занято." : null });
-        }
-        public class AvailabilityResponse
-        {
-            public bool Available { get; set; }
-            public string? Message { get; set; }
+            var availability = await _accountService.IsEmailAvailableAsync(email);
+
+            return Ok(availability);
         }
     }
 }

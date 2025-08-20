@@ -8,7 +8,7 @@ namespace backend.Models
         public string UserId { get; set; }
         public User User { get; set; }
 
-        public List<OrderItem> Items { get; set; } = [];
+        public ICollection<OrderItem> Items { get; set; } = [];
 
         public float ShippingPrice { get; set; }
 
