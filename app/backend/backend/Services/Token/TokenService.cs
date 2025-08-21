@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Services
 {
-    public class TokenService
+    public class TokenService // TODO: implement interface and and cancellation tokens
     {
         private readonly JwtOptions _options;
         private readonly SymmetricSecurityKey _key;
@@ -52,8 +52,8 @@ namespace backend.Services
         public async Task<RefreshToken> IssueRefreshTokenAsync(User user)
         {
             var refreshToken = CreateRefreshToken(user);
-            
-            await _dbContext.RefreshTokens.AddAsync(refreshToken);
+
+            _dbContext.RefreshTokens.Add(refreshToken);
 
             await CleanupOldRefreshTokensAsync(user.Id);
             return refreshToken;

@@ -1,15 +1,12 @@
-using System.ComponentModel.DataAnnotations;
 using backend.Dtos;
 using backend.Dtos.Account;
 using backend.Errors;
-using backend.Helpers;
 using backend.Interfaces.Services;
 using backend.Mappers;
 using backend.Models;
 using backend.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace backend.Services
 {
@@ -32,7 +29,7 @@ namespace backend.Services
             _tokenService = tokenService;
         }
 
-        public async Task<Result<LoginResult>> RegisterAsync(RegisterDto model, CancellationToken cancellationToken = default)
+        public async Task<Result<LoginResult>> RegisterAsync(RegisterDto model, CancellationToken cancellationToken)
         {
             if (model.AsCompany)
             {
@@ -77,13 +74,13 @@ namespace backend.Services
                     Description = model.CompanyDescription!,
                     UserId = user.Id
                 };
-                await _dbContext.Companies.AddAsync(company, cancellationToken);
+                _dbContext.Companies.Add(company);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
 
             var refreshToken = await _tokenService.IssueRefreshTokenAsync(user);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync();
 
             return new LoginResult
             {
@@ -98,7 +95,7 @@ namespace backend.Services
             };
         }
 
-        public async Task<Result<UserDto>> GetMeAsync(string userId, int? companyId)
+        public async Task<Result<UserDto>> GetMeAsync(string userId, int? companyId, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return AccountErrors.NotFound(userId);
@@ -107,7 +104,7 @@ namespace backend.Services
 
             if (companyId != null)
             {
-                var company = await _dbContext.Companies.FirstOrDefaultAsync(e => e.UserId == userId);
+                var company = await _dbContext.Companies.FirstOrDefaultAsync(e => e.UserId == userId, cancellationToken);
                 return new UserDto
                 { Email = user.Email!, Roles = roles.ToList(), Company = company?.ToCompanyDto() };
             }
@@ -117,9 +114,9 @@ namespace backend.Services
             }
         }
 
-        public async Task<Result<LoginResult>> LoginAsync(LoginRequestDto model)
+        public async Task<Result<LoginResult>> LoginAsync(LoginRequestDto model, CancellationToken cancellationToken)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == model.Email, cancellationToken);
             if (user == null) return AccountErrors.InvalidCredentials();
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -128,7 +125,7 @@ namespace backend.Services
 
             if (result.Succeeded)
             {
-                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
+                var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id, cancellationToken);
 
 
                 var refreshToken = await _tokenService.IssueRefreshTokenAsync(user);
@@ -152,12 +149,14 @@ namespace backend.Services
             }
         }
 
-        public async Task<Result<RefreshTokenResult>> RefreshTokenAsync(string? refreshToken)
+        public async Task<Result<RefreshTokenResult>> RefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(refreshToken)) return AccountErrors.MissingRefreshToken();
 
             // check refresh token
-            var storedRefreshToken = await _dbContext.RefreshTokens.Include(e => e.User).FirstOrDefaultAsync(e => e.Token == refreshToken);
+            var storedRefreshToken = await _dbContext.RefreshTokens
+                .Include(e => e.User)
+                .FirstOrDefaultAsync(e => e.Token == refreshToken, cancellationToken);
             if (storedRefreshToken == null || storedRefreshToken.ExpiresOn < DateTime.UtcNow)
             {
                 return AccountErrors.ExpiredRefreshToken();
@@ -178,7 +177,7 @@ namespace backend.Services
             return new RefreshTokenResult { Token = accessToken, RefreshToken = storedRefreshToken };
         }
 
-        public async Task<Result> LogoutAsync(string? refreshToken)
+        public async Task<Result> LogoutAsync(string? refreshToken, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
             {
@@ -191,12 +190,12 @@ namespace backend.Services
             return Result.Success();
         }
 
-        public async Task<Result<UserProfileDto>> GetProfileAsync(string userId)
+        public async Task<Result<UserProfileDto>> GetProfileAsync(string userId, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return AccountErrors.NotFound(userId);
 
-            var ordersCount = await _dbContext.Orders.CountAsync(e => e.UserId == userId);
+            var ordersCount = await _dbContext.Orders.CountAsync(e => e.UserId == userId, cancellationToken);
 
             var profileInfo = new UserProfileDto
             {
@@ -206,9 +205,9 @@ namespace backend.Services
             return profileInfo;
         }
 
-        public async Task<EmailAvailabilityDto> IsEmailAvailableAsync(string email)
+        public async Task<EmailAvailabilityDto> IsEmailAvailableAsync(string email, CancellationToken cancellationToken)
         {
-            var exists = await _userManager.Users.AnyAsync(u => u.Email == email);
+            var exists = await _userManager.Users.AnyAsync(u => u.Email == email, cancellationToken);
 
             return new EmailAvailabilityDto { Available = !exists, Message = exists ? AccountErrors.TakenEmail(email).Message : null };
         }

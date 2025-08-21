@@ -91,7 +91,7 @@ namespace backend.Services
 
             order.FinalPrice = totalProductPrice + order.ShippingPrice;
 
-            await _dbContext.Orders.AddAsync(order);
+            _dbContext.Orders.Add(order);
             await _dbContext.SaveChangesAsync();
 
             return order.ToOrderDto(_countryMap.Towns);
