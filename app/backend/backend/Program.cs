@@ -14,9 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Helpers;
 using System.Text.Json.Serialization;
 using backend.Interfaces.Services;
-using backend.Interfaces.Repositories;
-using backend.Repositories;
-
+using backend.Options;
+using Microsoft.Extensions.Options;
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
@@ -81,6 +80,12 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 }).AddEntityFrameworkStores<ApplicationDbContext>()
 .AddErrorDescriber<CustomIdentityErrorDescriber>();
 
+builder.Services
+    .AddOptions<JwtOptions>()
+    .Bind(builder.Configuration.GetSection("JWT"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 // AddAuthentication must be below AddIdentity!
 builder.Services.AddAuthentication(options =>
 {
@@ -92,14 +97,17 @@ builder.Services.AddAuthentication(options =>
     options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
+    // parsing options again because we can't take it using DI now
+    var jwtOptions = builder.Configuration.GetSection("JWT").Get<JwtOptions>()!;
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["JWT:Issuer"],
+        ValidIssuer = jwtOptions.Issuer,
         ValidateAudience = true,
-        ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidAudience = jwtOptions.Audience,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)),
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
         ClockSkew = TimeSpan.FromSeconds(15)
     };
     options.Events = new JwtBearerEvents
@@ -110,6 +118,8 @@ builder.Services.AddAuthentication(options =>
         OnForbidden = JwtBearerEventHandlers.HandleOnForbidden
     };
 });
+
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -138,19 +148,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
         // convert ModelState to Dictonary<string, string[]>
         var errors = context.ModelState
-            .Where(ms => ms.Value.Errors.Count > 0)
+            .Where(ms => ms.Value!.Errors.Count > 0)
             .ToDictionary(
                 kvp => kvp.Key,
-                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
             );
 
         return ApiResponseHelper.ValidationProblem(context.HttpContext, errors, title);
     };
 });
-
-
-// Repositories
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Services
 builder.Services.AddScoped<IAccountService, AccountService>();
