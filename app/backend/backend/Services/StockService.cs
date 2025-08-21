@@ -48,7 +48,8 @@ namespace backend.Services
 
             // save new ones
             var newStocks = townIds.Select(townId => new Stock { CompanyId = companyId, TownId = townId });
-            await _dbContext.AddRangeAsync(newStocks);
+            _dbContext.AddRange(newStocks);
+            
             await _dbContext.SaveChangesAsync();
 
             return Result.Success();

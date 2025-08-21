@@ -52,7 +52,8 @@ namespace backend.Services
                 TownId = townId
             }).ToList();
 
-            await _dbContext.AddRangeAsync(newPickUpPoints);
+            _dbContext.AddRange(newPickUpPoints);
+            
             await _dbContext.SaveChangesAsync();
 
             return Result.Success();
