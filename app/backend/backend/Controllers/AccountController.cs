@@ -28,6 +28,7 @@ namespace backend.Controllers
         /// Registers a new user as either a client or a company. Sets a refresh token to Cookie.
         /// </summary>
         /// <param name="model">Registration details including email, password, and optional company info.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Returns the newly created user details along with an access token.</returns>
         /// <response code="200">User successfully registered.</response>
         /// <response code="400">Validation error.</response>
@@ -37,7 +38,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Register([FromBody] RegisterDto model, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Register([FromBody] RegisterDto model, CancellationToken cancellationToken)
         {
             var result = await _accountService.RegisterAsync(model, cancellationToken);
 
@@ -71,12 +72,12 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetMe(CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetMe(CancellationToken cancellationToken)
         {
             var userId = User.GetUserId()!;
             var companyId = User.GetCompanyId();
 
-            var result = await _accountService.GetMeAsync(userId, companyId/* , cancellationToken */);
+            var result = await _accountService.GetMeAsync(userId, companyId, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,
@@ -88,6 +89,7 @@ namespace backend.Controllers
         /// Authenticates a user and returns an access token with user details. Sets a refresh token to Cookie.
         /// </summary>
         /// <param name="model">Login credentials containing email and password.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>User details and JWT token if login is successful.</returns>
         /// <response code="200">Login successful.</response>
         /// <response code="400">Validation error.</response>
@@ -99,9 +101,9 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto model, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto model, CancellationToken cancellationToken)
         {
-            var result = await _accountService.LoginAsync(model/* , cancellationToken */);
+            var result = await _accountService.LoginAsync(model, cancellationToken);
 
             if (result.IsSuccess)
             {
@@ -125,11 +127,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(RefreshTokenResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> RefreshToken()
+        public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
-            var result = await _accountService.RefreshTokenAsync(refreshToken);
+            var result = await _accountService.RefreshTokenAsync(refreshToken, cancellationToken);
 
             if (result.IsSuccess)
             {
@@ -155,11 +157,11 @@ namespace backend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {
             var refreshToken = Request.Cookies["refreshToken"];
 
-            var result = await _accountService.LogoutAsync(refreshToken);
+            var result = await _accountService.LogoutAsync(refreshToken, cancellationToken);
 
             if (result.IsSuccess)
             {
@@ -182,11 +184,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Profile()
+        public async Task<IActionResult> Profile(CancellationToken cancellationToken)
         {
            var userId = User.GetUserId()!;
 
-            var result = await _accountService.GetProfileAsync(userId);
+            var result = await _accountService.GetProfileAsync(userId, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,
@@ -210,7 +212,8 @@ namespace backend.Controllers
         /// }
         /// ``` 
         /// </remarks>
-        /// <param name="email"></param>
+        /// <param name="email">Email to check</param>
+        /// <param name="cancellationToken"></param>
         /// <response code="200">Returns the result of the check.</response>
         /// <response code="400">If email is not provided</response> 
         /// <response code="500">Internal server error.</response>
@@ -218,9 +221,9 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(EmailAvailabilityDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CheckIfEmailIsNotUsed([FromQuery] string email)
+        public async Task<IActionResult> CheckIfEmailIsNotUsed([FromQuery] string email, CancellationToken cancellationToken)
         {
-            var availability = await _accountService.IsEmailAvailableAsync(email);
+            var availability = await _accountService.IsEmailAvailableAsync(email, cancellationToken);
 
             return Ok(availability);
         }

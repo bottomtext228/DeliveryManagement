@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using backend.Interfaces.Services;
 using backend.Models;
 using backend.Options;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Services
 {
-    public class TokenService // TODO: implement interface and and cancellation tokens
+    public class TokenService : ITokenService
     {
         private readonly JwtOptions _options;
         private readonly SymmetricSecurityKey _key;
@@ -49,17 +50,17 @@ namespace backend.Services
             return tokenHandler.WriteToken(token);
         }
         // Issuing new refresh token and storing it in the database. Caller must save db changes and set Cookie in Response! 
-        public async Task<RefreshToken> IssueRefreshTokenAsync(User user)
+        public async Task<RefreshToken> IssueRefreshTokenAsync(User user, CancellationToken cancellationToken = default)
         {
             var refreshToken = CreateRefreshToken(user);
 
             _dbContext.RefreshTokens.Add(refreshToken);
 
-            await CleanupOldRefreshTokensAsync(user.Id);
+            await CleanupOldRefreshTokensAsync(user.Id, cancellationToken: cancellationToken);
             return refreshToken;
         }
         // Rotating old refresh token from the db. Caller must save db changes and set Cookie in Response!
-        public async Task RotateRefreshTokenAsync(RefreshToken existingToken, User user)
+        public async Task RotateRefreshTokenAsync(RefreshToken existingToken, User user, CancellationToken cancellationToken = default)
         {
             var newToken = CreateRefreshToken(user);
 
@@ -67,12 +68,12 @@ namespace backend.Services
             existingToken.ExpiresOn = newToken.ExpiresOn;
             existingToken.CreatedOn = newToken.CreatedOn;
 
-            await CleanupOldRefreshTokensAsync(user.Id);
+            await CleanupOldRefreshTokensAsync(user.Id, cancellationToken: cancellationToken);
         }
 
-        public async Task RevokeRefreshTokenAsync(string refreshToken)
+        public async Task RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
         {
-            await _dbContext.RefreshTokens.Where(e => e.Token == refreshToken).ExecuteDeleteAsync();
+            await _dbContext.RefreshTokens.Where(e => e.Token == refreshToken).ExecuteDeleteAsync(cancellationToken);
         }
 
         private RefreshToken CreateRefreshToken(User user)
@@ -91,13 +92,13 @@ namespace backend.Services
             return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         }
 
-        private async Task CleanupOldRefreshTokensAsync(string userId, int keepLatest = 5)
+        private async Task CleanupOldRefreshTokensAsync(string userId, int keepLatest = 5, CancellationToken cancellationToken = default)
         {
             await _dbContext.RefreshTokens
             .Where(t => t.UserId == userId)
             .OrderByDescending(t => t.CreatedOn)
             .Skip(keepLatest)
-            .ExecuteDeleteAsync();
+            .ExecuteDeleteAsync(cancellationToken);
         }
 
     }

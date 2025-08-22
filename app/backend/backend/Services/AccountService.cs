@@ -15,13 +15,13 @@ namespace backend.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ApplicationDbContext _dbContext;
-        private readonly TokenService _tokenService;
+        private readonly ITokenService _tokenService;
 
         public AccountService(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             ApplicationDbContext dbContext,
-            TokenService tokenService)
+            ITokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -29,7 +29,7 @@ namespace backend.Services
             _tokenService = tokenService;
         }
 
-        public async Task<Result<LoginResult>> RegisterAsync(RegisterDto model, CancellationToken cancellationToken)
+        public async Task<Result<LoginResult>> RegisterAsync(RegisterDto model, CancellationToken cancellationToken = default)
         {
             if (model.AsCompany)
             {
@@ -77,7 +77,7 @@ namespace backend.Services
                 _dbContext.Companies.Add(company);
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
+            List<string> roles = [role];
 
             var refreshToken = await _tokenService.IssueRefreshTokenAsync(user);
             await _dbContext.SaveChangesAsync();
@@ -87,7 +87,7 @@ namespace backend.Services
                 User = new UserDto
                 {
                     Email = user.Email,
-                    Roles = roles.ToList(),
+                    Roles = roles,
                     Company = company?.ToCompanyDto()
                 },
                 Token = _tokenService.CreateToken(user, roles, company?.Id),
@@ -95,7 +95,7 @@ namespace backend.Services
             };
         }
 
-        public async Task<Result<UserDto>> GetMeAsync(string userId, int? companyId, CancellationToken cancellationToken)
+        public async Task<Result<UserDto>> GetMeAsync(string userId, int? companyId, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return AccountErrors.NotFound(userId);
@@ -114,7 +114,7 @@ namespace backend.Services
             }
         }
 
-        public async Task<Result<LoginResult>> LoginAsync(LoginRequestDto model, CancellationToken cancellationToken)
+        public async Task<Result<LoginResult>> LoginAsync(LoginRequestDto model, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == model.Email, cancellationToken);
             if (user == null) return AccountErrors.InvalidCredentials();
@@ -128,8 +128,8 @@ namespace backend.Services
                 var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id, cancellationToken);
 
 
-                var refreshToken = await _tokenService.IssueRefreshTokenAsync(user);
-                await _dbContext.SaveChangesAsync();
+                var refreshToken = await _tokenService.IssueRefreshTokenAsync(user, cancellationToken);
+                await _dbContext.SaveChangesAsync(); // do not pass cancellationToken here
 
                 return new LoginResult
                 {
@@ -149,7 +149,7 @@ namespace backend.Services
             }
         }
 
-        public async Task<Result<RefreshTokenResult>> RefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken)
+        public async Task<Result<RefreshTokenResult>> RefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(refreshToken)) return AccountErrors.MissingRefreshToken();
 
@@ -167,17 +167,17 @@ namespace backend.Services
 
             // create access token
             var roles = await _userManager.GetRolesAsync(user);
-            var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id);
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(c => c.UserId == user.Id, cancellationToken);
             string accessToken = _tokenService.CreateToken(user, roles, company?.Id);
 
             // update refresh token
-            await _tokenService.RotateRefreshTokenAsync(storedRefreshToken, user);
-            await _dbContext.SaveChangesAsync();
+            await _tokenService.RotateRefreshTokenAsync(storedRefreshToken, user, cancellationToken);
+            await _dbContext.SaveChangesAsync(); // do not pass cancellationToken here
 
             return new RefreshTokenResult { Token = accessToken, RefreshToken = storedRefreshToken };
         }
 
-        public async Task<Result> LogoutAsync(string? refreshToken, CancellationToken cancellationToken)
+        public async Task<Result> LogoutAsync(string? refreshToken, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(refreshToken))
             {
@@ -185,12 +185,12 @@ namespace backend.Services
             }
 
             // find and delete refresh token
-            await _tokenService.RevokeRefreshTokenAsync(refreshToken);
+            await _tokenService.RevokeRefreshTokenAsync(refreshToken, cancellationToken);
 
             return Result.Success();
         }
 
-        public async Task<Result<UserProfileDto>> GetProfileAsync(string userId, CancellationToken cancellationToken)
+        public async Task<Result<UserProfileDto>> GetProfileAsync(string userId, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return AccountErrors.NotFound(userId);
@@ -205,7 +205,7 @@ namespace backend.Services
             return profileInfo;
         }
 
-        public async Task<EmailAvailabilityDto> IsEmailAvailableAsync(string email, CancellationToken cancellationToken)
+        public async Task<EmailAvailabilityDto> IsEmailAvailableAsync(string email, CancellationToken cancellationToken = default)
         {
             var exists = await _userManager.Users.AnyAsync(u => u.Email == email, cancellationToken);
 
