@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-
+using backend.Dtos.Common;
 
 namespace backend.Dtos.Order
 {
-    public class CreateOrderDto
+    public class CreateOrderRequest
     {
         [Required(ErrorMessage = "Продукты обязательны!")]
         public List<ProductOrderDto> Products { get; set; } = [];
@@ -15,16 +15,4 @@ namespace backend.Dtos.Order
         [EnumDataType(typeof(RouteChoice), ErrorMessage = "Тип пути может быть только \"0\" (быстрейший)  или \"1\" (дешевейший)")]
         public RouteChoice Choice { get; set; }
     }
-
-    public class ProductOrderDto
-    {
-        public int ProductId { get; set; }
-        public int Quantity { get; set; }
-    }
-    public enum RouteChoice
-    {
-        Fastest = 0,
-        Cheapest = 1
-    }
-
 }

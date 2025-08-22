@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Helpers;
 using backend.Dtos.Order;
 using backend.Interfaces.Services;
+using backend.Dtos.Map;
 
 namespace backend.Controllers
 {
@@ -69,13 +70,13 @@ namespace backend.Controllers
         /// <response code="500">Internal server error.</response>
         [HttpPost("preview")]
         [Authorize(Roles = "client")]
-        [ProducesResponseType(typeof(ComputeRouteResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ComputeRouteResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ComputeRoute([FromBody] ComputeRouteRequestDto model, CancellationToken cancellationToken)
+        public async Task<IActionResult> ComputeRoute([FromBody] ComputeRouteRequest model, CancellationToken cancellationToken)
         {
             var result = await _mapService.ComputeRouteAsync(model, cancellationToken);
 

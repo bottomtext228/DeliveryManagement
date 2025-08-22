@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.Dtos.Catalog
 {
-    public class EditProductDto
+    public class EditProductRequest
     {
         [Required(ErrorMessage = "Название не может быть пустым!")]
         [Display(Name = "Название")]

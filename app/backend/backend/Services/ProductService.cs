@@ -20,7 +20,7 @@ namespace backend.Services
             _fileService = fileService;
         }
         
-        public async Task<Result<PaginatedResponseDto<ProductDto>>> GetAllAsync(int? companyId, ProductQueryDto query, CancellationToken cancellationToken = default)
+        public async Task<Result<PaginatedResponse<ProductDto>>> GetAllAsync(int? companyId, ProductQueryDto query, CancellationToken cancellationToken = default)
         {
             IQueryable<Product> queryableProducts = _dbContext.Products;
 
@@ -54,7 +54,7 @@ namespace backend.Services
             return productDetail;
         }
 
-        public async Task<Result<ProductDetailDto>> CreateAsync(CreateProductDto model, int companyId, CancellationToken cancellationToken = default)
+        public async Task<Result<ProductDetailDto>> CreateAsync(CreateProductRequest model, int companyId, CancellationToken cancellationToken = default)
         {
             var company = await _dbContext.Companies
                        .Include(c => c.Stocks)
@@ -84,7 +84,7 @@ namespace backend.Services
             return product.ToProductDetailDto();
         }
 
-        public async Task<Result> EditAsync(int productId, EditProductDto model, int companyId, CancellationToken cancellationToken = default)
+        public async Task<Result> EditAsync(int productId, EditProductRequest model, int companyId, CancellationToken cancellationToken = default)
         {
             var product = await _dbContext.Products.FirstOrDefaultAsync(e => e.Id == productId && e.CompanyId == companyId, cancellationToken);
             if (product == null) return ProductErrors.NotFound(productId);

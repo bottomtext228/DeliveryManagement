@@ -1,4 +1,3 @@
-using backend.Dtos.Catalog;
 using backend.Models;
 using backend.Models.Map;
 
@@ -18,12 +17,5 @@ namespace backend.Dtos.Order
 
         public OrderStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
-    }
-    public class OrderItemDto
-    {
-        public ProductDto Product { get; set; }
-        public float ProductPrice { get; set; }
-        public int Quantity { get; set; }
-        public float FinalPrice => ProductPrice * Quantity;
     }
 }

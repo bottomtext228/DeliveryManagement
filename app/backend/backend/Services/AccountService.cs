@@ -114,7 +114,7 @@ namespace backend.Services
             }
         }
 
-        public async Task<Result<LoginResult>> LoginAsync(LoginRequestDto model, CancellationToken cancellationToken = default)
+        public async Task<Result<LoginResult>> LoginAsync(LoginRequest model, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == model.Email, cancellationToken);
             if (user == null) return AccountErrors.InvalidCredentials();
@@ -205,11 +205,11 @@ namespace backend.Services
             return profileInfo;
         }
 
-        public async Task<EmailAvailabilityDto> IsEmailAvailableAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<EmailAvailabilityRequest> IsEmailAvailableAsync(string email, CancellationToken cancellationToken = default)
         {
             var exists = await _userManager.Users.AnyAsync(u => u.Email == email, cancellationToken);
 
-            return new EmailAvailabilityDto { Available = !exists, Message = exists ? AccountErrors.TakenEmail(email).Message : null };
+            return new EmailAvailabilityRequest { Available = !exists, Message = exists ? AccountErrors.TakenEmail(email).Message : null };
         }
     }
 }

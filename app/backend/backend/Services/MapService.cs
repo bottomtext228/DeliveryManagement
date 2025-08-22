@@ -1,3 +1,5 @@
+using backend.Dtos.Common;
+using backend.Dtos.Map;
 using backend.Dtos.Order;
 using backend.Errors;
 using backend.Interfaces.Services;
@@ -46,7 +48,7 @@ namespace backend.Services
             return _roadsCache;
         }
 
-        public async Task<Result<ComputeRouteResponseDto>> ComputeRouteAsync(ComputeRouteRequestDto model, CancellationToken cancellationToken = default)
+        public async Task<Result<ComputeRouteResponse>> ComputeRouteAsync(ComputeRouteRequest model, CancellationToken cancellationToken = default)
         {
             // find company
             var company = await _dbContext.Companies
@@ -69,7 +71,7 @@ namespace backend.Services
             var route = _graphSearch.ComputeRoute(towns, pickUpPointTown);
             var chosenRoute = model.Choice == RouteChoice.Fastest ? route.Fastest : route.Cheapest;
 
-            return new ComputeRouteResponseDto
+            return new ComputeRouteResponse
             {
                 ShippingPrice = chosenRoute.Price,
                 ShippingTime = chosenRoute.Time,

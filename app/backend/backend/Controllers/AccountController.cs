@@ -35,7 +35,7 @@ namespace backend.Controllers
         /// <response code="500">Internal server error.</response>
         [HttpPost("register")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Register([FromBody] RegisterDto model, CancellationToken cancellationToken)
@@ -46,7 +46,7 @@ namespace backend.Controllers
                 onSuccess: loginData =>
                 {
                     Response.SetRefreshToken(loginData.RefreshToken);
-                    return Ok(new LoginResponseDto { User = loginData.User, Token = loginData.Token });
+                    return Ok(new LoginResponse { User = loginData.User, Token = loginData.Token });
                 },
                 onFailure: error =>
                 {
@@ -97,11 +97,11 @@ namespace backend.Controllers
         /// <response code="500">Internal server error.</response>
         [HttpPost("login")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login([FromBody] LoginRequest model, CancellationToken cancellationToken)
         {
             var result = await _accountService.LoginAsync(model, cancellationToken);
 
@@ -109,7 +109,7 @@ namespace backend.Controllers
             {
                 var loginData = result.Value!;
                 Response.SetRefreshToken(loginData.RefreshToken);
-                return Ok(new LoginResponseDto { User = loginData.User, Token = loginData.Token });
+                return Ok(new LoginResponse { User = loginData.User, Token = loginData.Token });
             }
 
             return ApiResponseHelper.BadRequest(HttpContext, result.Error!);
@@ -124,7 +124,7 @@ namespace backend.Controllers
         /// <response code="401">Missing or invalid refresh token.</response>
         /// <response code="500">Internal server error.</response>
         [HttpPost("refresh")]
-        [ProducesResponseType(typeof(RefreshTokenResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RefreshTokenResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
@@ -139,7 +139,7 @@ namespace backend.Controllers
 
                 Response.SetRefreshToken(tokenInfo.RefreshToken);
 
-                return Ok(new RefreshTokenResponseDto { Token = tokenInfo.Token });
+                return Ok(new RefreshTokenResponse { Token = tokenInfo.Token });
             }
 
             return ApiResponseHelper.BadRequest(HttpContext, result.Error!);
@@ -218,7 +218,7 @@ namespace backend.Controllers
         /// <response code="400">If email is not provided</response> 
         /// <response code="500">Internal server error.</response>
         [HttpGet("check_credentials")]
-        [ProducesResponseType(typeof(EmailAvailabilityDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EmailAvailabilityRequest), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CheckIfEmailIsNotUsed([FromQuery] string email, CancellationToken cancellationToken)

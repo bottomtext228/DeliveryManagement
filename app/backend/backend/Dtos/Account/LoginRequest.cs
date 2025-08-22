@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-
 namespace backend.Dtos.Account
 {
-    public class LoginRequestDto
+    public class LoginRequest
     {
         [Required]
         [EmailAddress(ErrorMessage = "Неправильный формат почты")]

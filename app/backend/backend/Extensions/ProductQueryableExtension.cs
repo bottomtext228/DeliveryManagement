@@ -40,7 +40,7 @@ namespace backend.Extensions
             return queryable;
         }
 
-        public static async Task<PaginatedResponseDto<ProductDto>> ToPaginationResponseAsync(this IQueryable<Product> queryable, ProductQueryDto query, CancellationToken cancellationToken = default)
+        public static async Task<PaginatedResponse<ProductDto>> ToPaginationResponseAsync(this IQueryable<Product> queryable, ProductQueryDto query, CancellationToken cancellationToken = default)
         {
             var totalCount = await queryable.CountAsync(cancellationToken);
             var totalPages = (int)Math.Ceiling(totalCount / (double)query.PageSize);
@@ -51,7 +51,7 @@ namespace backend.Extensions
                 .Select(p => p.ToProductDto())
                 .ToListAsync(cancellationToken);
 
-            var response = new PaginatedResponseDto<ProductDto>
+            var response = new PaginatedResponse<ProductDto>
             {
                 Data = products,
                 PageNumber = query.PageNumber,

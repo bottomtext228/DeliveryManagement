@@ -98,7 +98,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromForm] CreateProductDto model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromForm] CreateProductRequest model, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
@@ -131,7 +131,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductDto model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductRequest model, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 

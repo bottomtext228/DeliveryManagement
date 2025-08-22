@@ -1,7 +1,7 @@
 
 namespace backend.Dtos.Account
 {
-    public class RefreshTokenRequestDto
+    public class RefreshTokenRequest
     {
         public string RefreshToken { get; set; } = string.Empty;
     }

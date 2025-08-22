@@ -39,7 +39,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] CreateOrderDto model, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] CreateOrderRequest model, CancellationToken cancellationToken)
         {
             var userId = User.GetUserId()!;
 

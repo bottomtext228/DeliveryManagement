@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using backend.Dtos.Common;
 
 namespace backend.Dtos.Catalog

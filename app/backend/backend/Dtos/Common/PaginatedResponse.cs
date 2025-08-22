@@ -1,7 +1,7 @@
 
 namespace backend.Dtos.Common
 {
-    public class PaginatedResponseDto<T>
+    public class PaginatedResponse<T>
     {
         public List<T> Data { get; set; }
         public int PageNumber { get; set; }

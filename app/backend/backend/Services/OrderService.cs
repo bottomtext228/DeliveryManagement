@@ -1,3 +1,4 @@
+using backend.Dtos.Common;
 using backend.Dtos.Order;
 using backend.Errors;
 using backend.Interfaces.Services;
@@ -19,7 +20,7 @@ namespace backend.Services
             _countryMap = countryMap;
         }
 
-        public async Task<Result<OrderDto>> CreateAsync(CreateOrderDto model, string userId, CancellationToken cancellationToken = default)
+        public async Task<Result<OrderDto>> CreateAsync(CreateOrderRequest model, string userId, CancellationToken cancellationToken = default)
         {
             var pickUpPoint = _countryMap.Towns.Find(t => t.Id == model.PickUpPointTownId);
             if (pickUpPoint == null)
