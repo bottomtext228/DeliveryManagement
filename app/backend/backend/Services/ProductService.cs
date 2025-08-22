@@ -19,7 +19,8 @@ namespace backend.Services
             _dbContext = dbContext;
             _fileService = fileService;
         }
-        public async Task<Result<PaginatedResponseDto<ProductDto>>> GetAllAsync(int? companyId, ProductQueryDto query)
+        
+        public async Task<Result<PaginatedResponseDto<ProductDto>>> GetAllAsync(int? companyId, ProductQueryDto query, CancellationToken cancellationToken = default)
         {
             IQueryable<Product> queryableProducts = _dbContext.Products;
 
@@ -30,11 +31,11 @@ namespace backend.Services
 
             queryableProducts = queryableProducts.ApplyFiltering(query).ApplySorting(query);
 
-            var response = await queryableProducts.ToPaginationResponseAsync(query);
+            var response = await queryableProducts.ToPaginationResponseAsync(query, cancellationToken);
             return response;
         }
 
-        public async Task<Result<ProductDetailDto>> GetByIdAsync(int productId, int? companyId)
+        public async Task<Result<ProductDetailDto>> GetByIdAsync(int productId, int? companyId, CancellationToken cancellationToken = default)
         {
             var query = _dbContext.Products.AsQueryable();
 
@@ -45,7 +46,7 @@ namespace backend.Services
                 .Include(e => e.Company)
                 .Where(e => e.Id == productId)
                 .Select(e => e.ToProductDetailDto())
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
 
             if (productDetail == null) return ProductErrors.NotFound(productId);
@@ -53,13 +54,13 @@ namespace backend.Services
             return productDetail;
         }
 
-        public async Task<Result<ProductDetailDto>> CreateAsync(CreateProductDto model, int companyId)
+        public async Task<Result<ProductDetailDto>> CreateAsync(CreateProductDto model, int companyId, CancellationToken cancellationToken = default)
         {
             var company = await _dbContext.Companies
                        .Include(c => c.Stocks)
                        .Include(c => c.PickUpPoints)
                        .Include(c => c.Products)
-                       .FirstOrDefaultAsync(e => e.Id == companyId);
+                       .FirstOrDefaultAsync(e => e.Id == companyId, cancellationToken);
 
             if (company == null) return CompanyErrors.NotFound(companyId);
 
@@ -78,14 +79,14 @@ namespace backend.Services
             };
 
             company.Products.Add(product);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(); // do not pass cancellation token here because file already saved
 
             return product.ToProductDetailDto();
         }
 
-        public async Task<Result> EditAsync(int productId, EditProductDto model, int companyId)
+        public async Task<Result> EditAsync(int productId, EditProductDto model, int companyId, CancellationToken cancellationToken = default)
         {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(e => e.Id == productId && e.CompanyId == companyId);
+            var product = await _dbContext.Products.FirstOrDefaultAsync(e => e.Id == productId && e.CompanyId == companyId, cancellationToken);
             if (product == null) return ProductErrors.NotFound(productId);
 
             product.Name = model.Name;
@@ -100,20 +101,20 @@ namespace backend.Services
                 product.Image = fileName;
             }
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(); // do not pass cancellation token here because file already saved
 
             return Result.Success();
         }
 
-        public async Task<Result> DeleteAsync(int productId, int companyId)
+        public async Task<Result> DeleteAsync(int productId, int companyId, CancellationToken cancellationToken = default)
         {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(e => e.Id == productId && e.CompanyId == companyId);
+            var product = await _dbContext.Products.FirstOrDefaultAsync(e => e.Id == productId && e.CompanyId == companyId, cancellationToken);
             if (product == null) return ProductErrors.NotFound(productId);
 
 
             _dbContext.Products.Remove(product);
             _fileService.DeleteFile(product.Image);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();  // do not pass cancellation token here because file already deleted
 
             return Result.Success();
         }

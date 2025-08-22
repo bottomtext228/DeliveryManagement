@@ -46,10 +46,13 @@ namespace backend.Services
             return _roadsCache;
         }
 
-        public async Task<Result<ComputeRouteResponseDto>> ComputeRouteAsync(ComputeRouteRequestDto model)
+        public async Task<Result<ComputeRouteResponseDto>> ComputeRouteAsync(ComputeRouteRequestDto model, CancellationToken cancellationToken = default)
         {
             // find company
-            var company = await _dbContext.Companies.Include(e => e.Stocks).Include(e => e.PickUpPoints).FirstOrDefaultAsync(e => e.Id == model.CompanyId);
+            var company = await _dbContext.Companies
+                .Include(e => e.Stocks)
+                .Include(e => e.PickUpPoints)
+                .FirstOrDefaultAsync(e => e.Id == model.CompanyId, cancellationToken);
             if (company == null) return CompanyErrors.NotFound(model.CompanyId);
 
             if (!company.ValidateSetup()) return CompanyErrors.MissingSetup();

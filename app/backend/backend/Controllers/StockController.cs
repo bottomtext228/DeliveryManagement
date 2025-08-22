@@ -38,11 +38,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _stockService.GetAll(companyId!.Value);
+            var result = await _stockService.GetAllAsync(companyId!.Value, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,
@@ -66,6 +66,7 @@ namespace backend.Controllers
         ///     ]
         /// </remarks>
         /// <param name="townIds">List of town IDs where stocks will be created.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>No content.</returns>
         /// <response code="204">Stocks updated successfully.</response>
         /// <response code="400">Validation error or wrong town IDs.</response>
@@ -80,11 +81,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Set([FromBody] List<int> townIds)
+        public async Task<IActionResult> Set([FromBody] List<int> townIds, CancellationToken cancellationToken = default)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _stockService.Set(townIds, companyId!.Value);
+            var result = await _stockService.SetAsync(townIds, companyId!.Value, cancellationToken);
 
             return result.Map(
                 onSuccess: NoContent,

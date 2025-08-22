@@ -35,10 +35,10 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
-            var result = await _pickUpPointService.GetAll(companyId!.Value);
+            var result = await _pickUpPointService.GetAllAsync(companyId!.Value, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,
@@ -62,6 +62,7 @@ namespace backend.Controllers
         ///     ]
         /// </remarks>
         /// <param name="townIds">List of town IDs where pick up points will be created.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>No content if successful.</returns>
         /// <response code="204">Pick up points updated successfully.</response>
         /// <response code="400">Validation error or wrong town IDs.</response>
@@ -76,11 +77,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Set([FromBody] List<int> townIds)
+        public async Task<IActionResult> Set([FromBody] List<int> townIds, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _pickUpPointService.Set(townIds, companyId!.Value);
+            var result = await _pickUpPointService.SetAsync(townIds, companyId!.Value, cancellationToken);
 
             return result.Map(
                 onSuccess: NoContent,
@@ -92,6 +93,7 @@ namespace backend.Controllers
         /// Gets pick up points for a specific company by ID. Accessible only to users registered as a client.
         /// </summary>
         /// <param name="companyId">The ID of the company.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>List of pick-up point DTOs.</returns>
         /// <response code="200">Successfully retrieved pick up points.</response>
         /// <response code="401">Unauthorized.</response>
@@ -106,9 +108,9 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByCompanyId(int companyId)
+        public async Task<IActionResult> GetByCompanyId(int companyId, CancellationToken cancellationToken)
         {
-            var result = await _pickUpPointService.GetByCompanyId(companyId);
+            var result = await _pickUpPointService.GetByCompanyIdAsync(companyId, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,

@@ -4,7 +4,7 @@ namespace backend.Interfaces.Services
 {
     public interface IStockService
     {
-        Task<Result<IEnumerable<GetStocksDto>>> GetAll(int companyId);
-        Task<Result> Set(List<int> townIds, int companyId);
+        Task<Result<IEnumerable<GetStocksDto>>> GetAllAsync(int companyId, CancellationToken cancellationToken = default);
+        Task<Result> SetAsync(List<int> townIds, int companyId, CancellationToken cancellationToken = default);
     }
 }

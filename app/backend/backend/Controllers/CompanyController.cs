@@ -25,6 +25,7 @@ namespace backend.Controllers
         /// Retrieves a company by its ID. Accessible only to users registered as a client.
         /// </summary>
         /// <param name="id">The ID of the company to retrieve.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>The requested company data.</returns>
         /// <response code="200">Returns the requested company.</response>
         /// <response code="401">Unauthorized. Only clients can access this endpoint.</response>
@@ -39,9 +40,9 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var result = await _companyService.GetByIdAsync(id);
+            var result = await _companyService.GetByIdAsync(id, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,
@@ -64,11 +65,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CanCreateProduct()
+        public async Task<IActionResult> CanCreateProduct(CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _companyService.CanCreateProductAsync(companyId!.Value);
+            var result = await _companyService.CanCreateProductAsync(companyId!.Value, cancellationToken);
 
             return Ok(new CanCreateProductResponse
             {

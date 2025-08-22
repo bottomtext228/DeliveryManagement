@@ -18,22 +18,22 @@ namespace backend.Services
             _countryMap = countryMap;
         }
 
-        public async Task<Result<IEnumerable<GetStocksDto>>> GetAll(int companyId)
+        public async Task<Result<IEnumerable<GetStocksDto>>> GetAllAsync(int companyId, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.FindAsync(companyId);
+            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
             if (company == null) return CompanyErrors.NotFound(companyId);
 
 
             var stocks = await _dbContext.Stocks
                 .Where(s => s.CompanyId == companyId)
                 .Select(s => new GetStocksDto { Id = s.Id, CompanyId = s.CompanyId, TownId = s.TownId })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             return stocks;
         }
 
-        public async Task<Result> Set(List<int> townIds, int companyId)
+        public async Task<Result> SetAsync(List<int> townIds, int companyId, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.FindAsync(companyId);
+            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
             if (company == null) return CompanyErrors.NotFound(companyId);
 
             if (townIds.Count == 0) return TownErrors.NoTownsProvided();
@@ -44,13 +44,13 @@ namespace backend.Services
             if (missing.Count != 0) return TownErrors.TownsNotFound(missing);
 
             // delete previous stocks
-            await _dbContext.Stocks.Where(p => p.CompanyId == companyId).ExecuteDeleteAsync();
+            await _dbContext.Stocks.Where(p => p.CompanyId == companyId).ExecuteDeleteAsync(cancellationToken);
 
             // save new ones
             var newStocks = townIds.Select(townId => new Stock { CompanyId = companyId, TownId = townId });
             _dbContext.AddRange(newStocks);
             
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(); // do not pass cancellation token
 
             return Result.Success();
         }

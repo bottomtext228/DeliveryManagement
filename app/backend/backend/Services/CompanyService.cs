@@ -15,21 +15,24 @@ namespace backend.Services
             _dbContext = dbContext;
         }
 
-        public async Task<Result<CompanyDto>> GetByIdAsync(int companyId)
+        public async Task<Result<CompanyDto>> GetByIdAsync(int companyId, CancellationToken cancellationToken = default)
         {
             var companyDto = await _dbContext.Companies
                 .Where(e => e.Id == companyId)
                 .Select(e => e.ToCompanyDto())
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (companyDto == null) return CompanyErrors.NotFound(companyId);
 
             return companyDto;
         }
 
-        public async Task<Result> CanCreateProductAsync(int companyId)
+        public async Task<Result> CanCreateProductAsync(int companyId, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.Include(e => e.Stocks).Include(e => e.PickUpPoints).FirstOrDefaultAsync(e => e.Id == companyId);
+            var company = await _dbContext.Companies
+                .Include(e => e.Stocks)
+                .Include(e => e.PickUpPoints)
+                .FirstOrDefaultAsync(e => e.Id == companyId, cancellationToken);
             if (company == null) return CompanyErrors.NotFound(companyId);
 
             if (company.ValidateSetup()) return Result.Success();

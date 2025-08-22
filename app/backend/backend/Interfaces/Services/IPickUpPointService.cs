@@ -4,8 +4,8 @@ namespace backend.Interfaces.Services
 {
     public interface IPickUpPointService
     {
-        Task<Result<IEnumerable<PickUpPointDto>>> GetAll(int companyId);
-        Task<Result> Set(List<int> townIds, int companyId);
-        Task<Result<IEnumerable<PickUpPointDto>>> GetByCompanyId(int companyId);
+        Task<Result<IEnumerable<PickUpPointDto>>> GetAllAsync(int companyId, CancellationToken cancellationToken = default);
+        Task<Result> SetAsync(List<int> townIds, int companyId, CancellationToken cancellationToken = default);
+        Task<Result<IEnumerable<PickUpPointDto>>> GetByCompanyIdAsync(int companyId, CancellationToken cancellationToken = default);
     }
 }

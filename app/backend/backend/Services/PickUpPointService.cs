@@ -18,21 +18,21 @@ namespace backend.Services
             _countryMap = countryMap;
         }
 
-        public async Task<Result<IEnumerable<PickUpPointDto>>> GetAll(int companyId)
+        public async Task<Result<IEnumerable<PickUpPointDto>>> GetAllAsync(int companyId, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.FindAsync(companyId);
+            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
             if (company == null) return CompanyErrors.NotFound(companyId);
 
             var pickUpPoints = await _dbContext.PickUpPoints
                 .Where(p => p.CompanyId == companyId)
                 .Select(e => e.ToPickUpPointDto(_countryMap.Towns))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             return pickUpPoints;
         }
 
-        public async Task<Result> Set(List<int> townIds, int companyId)
+        public async Task<Result> SetAsync(List<int> townIds, int companyId, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.FindAsync(companyId);
+            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
             if (company == null) return CompanyErrors.NotFound(companyId);
 
             if (townIds.Count == 0) return TownErrors.NoTownsProvided();
@@ -43,7 +43,7 @@ namespace backend.Services
             if (missing.Count != 0) return TownErrors.TownsNotFound(missing);
 
             // delete previous pick up points
-            await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).ExecuteDeleteAsync();
+            await _dbContext.PickUpPoints.Where(p => p.CompanyId == companyId).ExecuteDeleteAsync(cancellationToken);
 
             // set new ones
             var newPickUpPoints = townIds.Select(townId => new PickUpPoint
@@ -54,20 +54,20 @@ namespace backend.Services
 
             _dbContext.AddRange(newPickUpPoints);
             
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(); // do not pass cancellation token
 
             return Result.Success();
         }
 
-        public async Task<Result<IEnumerable<PickUpPointDto>>> GetByCompanyId(int companyId)
+        public async Task<Result<IEnumerable<PickUpPointDto>>> GetByCompanyIdAsync(int companyId, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.FindAsync(companyId);
+            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
             if (company == null) return CompanyErrors.NotFound(companyId);
 
             var pickUpPoints = await _dbContext.PickUpPoints
                 .Where(p => p.CompanyId == companyId)
                 .Select(e => e.ToPickUpPointDto(_countryMap.Towns))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             return pickUpPoints;
         }
     }

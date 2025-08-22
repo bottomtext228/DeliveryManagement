@@ -15,7 +15,7 @@ using backend.Helpers;
 using System.Text.Json.Serialization;
 using backend.Interfaces.Services;
 using backend.Options;
-using Microsoft.Extensions.Options;
+
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
@@ -215,7 +215,7 @@ app.UseStaticFiles();
 
 // Handle 404 status code
 app.UseMiddleware<NotFoundMiddleware>();
-
+app.UseMiddleware<TaskCancellationHandlingMiddleware>();
 
 app.Run();
 

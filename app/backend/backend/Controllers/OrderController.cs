@@ -25,6 +25,7 @@ namespace backend.Controllers
         /// Creates a new order for one or more products with a specified pick up point and shipping preference. Accessible only to users registered as a client.
         /// </summary>
         /// <param name="model">Details of the order including product IDs, quantities, and pickup point.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Returns the created order dto or an error if validation fails.</returns>
         /// <response code="201">Order successfully created.</response>
         /// <response code="400">Validation error or products, pickup point, quantity not found.</response>
@@ -38,11 +39,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] CreateOrderDto model)
+        public async Task<IActionResult> Create([FromBody] CreateOrderDto model, CancellationToken cancellationToken)
         {
             var userId = User.GetUserId()!;
 
-            var result = await _orderService.CreateAsync(model, userId);
+            var result = await _orderService.CreateAsync(model, userId, cancellationToken);
 
             return result.Map(
                 onSuccess: value => Created(string.Empty, value),
@@ -64,11 +65,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var userId = User.GetUserId()!;
 
-            var result = await _orderService.GetAllAsync(userId);
+            var result = await _orderService.GetAllAsync(userId, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,
@@ -80,6 +81,7 @@ namespace backend.Controllers
         /// Deletes an order by its ID. Accessible only to users registered as a client.
         /// </summary>
         /// <param name="id">ID of the order to delete.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>No content on success.</returns>
         /// <response code="204">Order successfully deleted.</response>
         /// <response code="401">Unauthorized.</response>
@@ -93,11 +95,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var currentUserId = User.GetUserId()!;
 
-            var result = await _orderService.DeleteAsync(id, currentUserId);
+            var result = await _orderService.DeleteAsync(id, currentUserId, cancellationToken);
 
             return result.Map(
                 onSuccess: NoContent,

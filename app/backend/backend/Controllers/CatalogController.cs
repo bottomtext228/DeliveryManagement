@@ -26,6 +26,7 @@ namespace backend.Controllers
         /// Otherwise, returns all products.
         /// </summary>
         /// <param name="query">Pagination parameters: PageNumber and PageSize.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Paginated list of product DTOs.</returns>
         /// <response code="200">Returns list of products.</response>
         /// <response code="401">Unauthorized.</response>
@@ -36,11 +37,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAll([FromQuery] ProductQueryDto query)
+        public async Task<IActionResult> GetAll([FromQuery] ProductQueryDto query, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _productService.GetAllAsync(companyId, query);
+            var result = await _productService.GetAllAsync(companyId, query, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,
@@ -52,6 +53,7 @@ namespace backend.Controllers
         /// Retrieves a specific product by its ID. Companies can retrieve only products that belong to them.
         /// </summary>
         /// <param name="id">Product ID.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Product details.</returns>
         /// <response code="200">Returns the requested product detail.</response>
         /// <response code="401">Unauthorized.</response>
@@ -64,11 +66,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _productService.GetByIdAsync(id, companyId);
+            var result = await _productService.GetByIdAsync(id, companyId, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,
@@ -80,6 +82,7 @@ namespace backend.Controllers
         /// Creates a new product. Accessible only to users registered as a company.
         /// </summary>
         /// <param name="model">Product creation data.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Created product.</returns>
         /// <response code="201">Product successfully created.</response>
         /// <response code="400">Validation error or stocks/pick up points not set.</response>
@@ -95,11 +98,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromForm] CreateProductDto model)
+        public async Task<IActionResult> Create([FromForm] CreateProductDto model, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _productService.CreateAsync(model, companyId!.Value);
+            var result = await _productService.CreateAsync(model, companyId!.Value, cancellationToken);
 
             return result.Map(
                 onSuccess: product => CreatedAtAction(nameof(GetById), new { id = product.Id }, product),
@@ -112,6 +115,7 @@ namespace backend.Controllers
         /// </summary>
         /// <param name="id">Product ID.</param>
         /// <param name="model">Updated product data.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>No content.</returns>
         /// <response code="204">Product successfully updated.</response>
         /// <response code="400">Validation error.</response>
@@ -127,11 +131,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductDto model)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductDto model, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _productService.EditAsync(id, model, companyId!.Value);
+            var result = await _productService.EditAsync(id, model, companyId!.Value, cancellationToken);
 
             return result.Map(
                 onSuccess: NoContent,
@@ -143,6 +147,7 @@ namespace backend.Controllers
         /// Deletes a product owned by the current company. Accessible only to users registered as a company.
         /// </summary>
         /// <param name="id">Product ID.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>NoContent if deleted.</returns>
         /// <response code="204">Product successfully deleted.</response>
         /// <response code="401">Unauthorized.</response>
@@ -156,11 +161,11 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
-            var result = await _productService.DeleteAsync(id, companyId!.Value);
+            var result = await _productService.DeleteAsync(id, companyId!.Value, cancellationToken);
 
             return result.Map(
                 onSuccess: NoContent,

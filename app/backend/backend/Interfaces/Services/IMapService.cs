@@ -7,6 +7,6 @@ namespace backend.Interfaces.Services
     {
         IEnumerable<Town> GetTowns();
         int[][] GetRoads();
-        Task<Result<ComputeRouteResponseDto>> ComputeRouteAsync(ComputeRouteRequestDto model);
+        Task<Result<ComputeRouteResponseDto>> ComputeRouteAsync(ComputeRouteRequestDto model, CancellationToken cancellationToken = default);
     }
 }

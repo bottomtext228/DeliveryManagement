@@ -60,6 +60,7 @@ namespace backend.Controllers
         /// Previews the shipping route and cost for a given product and pick up point. Accessible only to users registered as a client.
         /// </summary>
         /// <param name="model">Preview order request containing product and pick up town ID.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Shipping route details.</returns>
         /// <response code="200">Route successfully calculated.</response>
         /// <response code="400">Validation error or company, pick up point not found or company did not set stocks/pick up points.</response>
@@ -74,9 +75,9 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ComputeRoute([FromBody] ComputeRouteRequestDto model)
+        public async Task<IActionResult> ComputeRoute([FromBody] ComputeRouteRequestDto model, CancellationToken cancellationToken)
         {
-            var result = await _mapService.ComputeRouteAsync(model);
+            var result = await _mapService.ComputeRouteAsync(model, cancellationToken);
 
             return result.Map(
                 onSuccess: Ok,

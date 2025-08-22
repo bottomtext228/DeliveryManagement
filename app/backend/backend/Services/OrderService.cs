@@ -19,7 +19,7 @@ namespace backend.Services
             _countryMap = countryMap;
         }
 
-        public async Task<Result<OrderDto>> CreateAsync(CreateOrderDto model, string userId)
+        public async Task<Result<OrderDto>> CreateAsync(CreateOrderDto model, string userId, CancellationToken cancellationToken = default)
         {
             var pickUpPoint = _countryMap.Towns.Find(t => t.Id == model.PickUpPointTownId);
             if (pickUpPoint == null)
@@ -34,7 +34,7 @@ namespace backend.Services
                 .Include(p => p.Company)
                 .ThenInclude(c => c.Stocks)
                 .Where(p => productIds.Contains(p.Id))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             // Check all products exist
             if (products.Count != model.Products.Count)
@@ -92,12 +92,12 @@ namespace backend.Services
             order.FinalPrice = totalProductPrice + order.ShippingPrice;
 
             _dbContext.Orders.Add(order);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return order.ToOrderDto(_countryMap.Towns);
         }
 
-        public async Task<Result<IEnumerable<OrderDto>>> GetAllAsync(string userId)
+        public async Task<Result<IEnumerable<OrderDto>>> GetAllAsync(string userId, CancellationToken cancellationToken = default)
         {
             var user = await _dbContext.Users.FindAsync(userId);
             if (user == null) return AccountErrors.NotFound(userId);
@@ -107,13 +107,13 @@ namespace backend.Services
                 .ThenInclude(e => e.Product)
                 .Where(e => e.UserId == userId)
                 .Select(e => e.ToOrderDto(_countryMap.Towns))
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
             return orders;
         }
 
-        public async Task<Result> DeleteAsync(int orderId, string userId)
+        public async Task<Result> DeleteAsync(int orderId, string userId, CancellationToken cancellationToken = default)
         {
-            var result = await _dbContext.Orders.Where(e => e.Id == orderId && e.UserId == userId).ExecuteDeleteAsync();
+            var result = await _dbContext.Orders.Where(e => e.Id == orderId && e.UserId == userId).ExecuteDeleteAsync(cancellationToken);
             if (result != 1) return OrderErrors.NotFound(orderId);
 
             return Result.Success();
