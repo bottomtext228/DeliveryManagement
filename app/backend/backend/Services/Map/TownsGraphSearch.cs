@@ -29,10 +29,10 @@ namespace backend.Services
 
             foreach (var stockTown in stockTowns)
             {
-                if (stockTown.Id == pickUpPointTown.Id)
+                if (stockTown.Id == pickUpPointTown.Id) // stock in the same town as pick up point
                 {
                     var path = new TownsPath { Time = 1, Price = 50, Towns = [pickUpPointTown] };
-                    return new Route { Cheapest = path, Fastest = path };
+                    return new Route { Cheapest = path, Fastest = path, IsEqual = true };
                 }
 
                 TownsPath cheapestPath;
