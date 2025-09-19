@@ -53,17 +53,6 @@ export default function OrderAdd() {
 
     const products = productQueries.map((q) => q.data?.data).filter((product): product is IProductDetail => !!product);
 
-    // set products quantities after getting products info
-    useEffect(() => {
-        if (products.length > 0 && Object.keys(productsQuantities).length === 0) {
-            const initialQuantities: Record<number, number> = {};
-            products.forEach((product) => {
-                initialQuantities[product.id] = cartList.find(item => item.productId == product.id)?.quantity || 1;
-            });
-            setProductsQuantities(initialQuantities);
-        }
-    }, [products, productsQuantities]);
-
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
@@ -93,7 +82,7 @@ export default function OrderAdd() {
     };
 
     const getProductQuantity = (id: number) => {
-        return productsQuantities[id];
+        return productsQuantities[id] ?? 1;
     };
 
     const checkSameCompany = (products: IProductDetail[]) => {
@@ -117,6 +106,18 @@ export default function OrderAdd() {
     const isPending = productQueries.some((q) => q.isPending) || pickUpPointsQuery.isPending;
     const isError = productQueries.some((q) => q.isError) || pickUpPointsQuery.isError;
 
+    // set products quantities after getting all info
+    useEffect(() => {
+        if (products.length > 0) {
+            const initialQuantities: Record<number, number> = {};
+            products.forEach((product) => {
+                initialQuantities[product.id] = cartList.find(item => item.productId == product.id)?.quantity || 1;
+            });
+
+            setProductsQuantities(initialQuantities);
+        }
+    }, [isPending]);
+
     if (!hasValidIds) return <ErrorPage message='Invalid IDs in URL.' />
 
     if (!validOrder) return <ErrorPage message='Products must be from the same company and there must be no duplicates.' />;
@@ -126,12 +127,13 @@ export default function OrderAdd() {
         const error = productQueries.find(e => e.error)?.error || pickUpPointsQuery.error;
         return <ErrorPage message={error?.message} />;
     }
+
     const pickUpPoints = pickUpPointsQuery?.data.data;
 
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
 
-        const items: ProductOrderDto[] = products.map(e => ({ productId: e.id, quantity: productsQuantities[e.id] }));
+        const items: ProductOrderDto[] = products.map(e => ({ productId: e.id, quantity: getProductQuantity(e.id) }));
 
         const dto: CreateOrderDto = {
             products: items,
@@ -220,7 +222,7 @@ export default function OrderAdd() {
                             })}
                         </div>
 
-                        
+
                         <div className="my-4 flex flex-col gap-2">
                             <label htmlFor="pickUpPointTownId" className="font-semibold">
                                 Пункт выдачи заказов:
