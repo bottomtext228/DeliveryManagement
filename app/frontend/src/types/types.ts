@@ -99,8 +99,8 @@ export interface CreateProductDto {
 }
 
 export enum RouteChoice {
-    Fastest = 0,
-    Cheapest = 1
+    Fastest = "Fastest",
+    Cheapest = "Cheapest"
 }
 
 export interface CreateOrderDto {
@@ -202,7 +202,7 @@ export interface ComputeRouteResponse {
 export interface ComputeRouteRequest {
     companyId: number,
     pickUpPointTownId: number,
-    choice: number
+    choice: RouteChoice
 }
 
 export interface RefreshTokenResponseDto {

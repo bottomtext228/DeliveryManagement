@@ -138,15 +138,15 @@ export default function OrderAdd() {
         const dto: CreateOrderDto = {
             products: items,
             pickUpPointTownId: data.pickUpPointTownId,
-            choice: parseInt(data.choice.toString()), // enums must be numbers
+            choice: data.choice ? data.choice : RouteChoice.Fastest,
         };
 
         mutation.mutate(dto);
     }
 
-    const handleChange: React.ChangeEventHandler<HTMLFormElement> = async (e: React.ChangeEvent<HTMLFormElement>) => {
+    const handleChange: React.ChangeEventHandler<HTMLFormElement> = async () => {
         const pickUpPointTownId = parseInt(pickUpPointTownIdRef.current?.value!);
-        const routeChoice = parseInt(routeChoiceRef.current?.value!);
+        const routeChoice = routeChoiceRef.current?.value as RouteChoice ?? RouteChoice.Fastest;
 
         if (pickUpPointTownId == 0) return; // default value;
 
@@ -156,7 +156,8 @@ export default function OrderAdd() {
 
         const dto: ComputeRouteRequest = {
             companyId: companyId!,
-            pickUpPointTownId: pickUpPointTownId, choice: routeChoice
+            pickUpPointTownId: pickUpPointTownId,
+            choice: routeChoice
         }
         try {
             const response = await computeRoute(dto);
@@ -252,32 +253,33 @@ export default function OrderAdd() {
                             </div>
                         </div>
 
-
-                        <div className="my-4 flex flex-col gap-2">
-                            <label htmlFor="choice" className="font-semibold">
-                                Выберите маршрут:
-                            </label>
-                            <div className="relative">
-                                <select
-                                    id="choice"
-                                    {...register('choice', { required: 'Необходимо выбрать маршрут!' })}
-                                    className="w-full appearance-none rounded-lg border cursor-pointer border-gray-300 bg-white px-4 py-3 pr-10 text-gray-800 shadow-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
-                                    defaultValue={RouteChoice.Fastest}
-                                    ref={routeChoiceRef}
-                                >
-                                    <option value={RouteChoice.Fastest} className='font-medium'>Быстрый</option>
-                                    <option value={RouteChoice.Cheapest} className='font-medium'>Дешевый</option>
-                                </select>
-                                {/* Dropdown Icon */}
-                                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" />
-                                    </svg>
-                                </div>
+                        {previewOrderData?.isRoutesEqual === false && <>
+                            <div className="text-sm text-neutral-600">* Доступно несколько маршрутов!</div>
+                            <div className="my-4 flex flex-col gap-2">
+                                <label htmlFor="choice" className="font-semibold">
+                                    Выберите маршрут:
+                                </label>
+                                <div className="relative">
+                                    <select
+                                        id="choice"
+                                        {...register('choice', { required: 'Необходимо выбрать маршрут!' })}
+                                        className="w-full appearance-none rounded-lg border cursor-pointer border-gray-300 bg-white px-4 py-3 pr-10 text-gray-800 shadow-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                                        defaultValue={RouteChoice.Fastest}
+                                        ref={routeChoiceRef}
+                                    >
+                                        <option value={RouteChoice.Fastest} className='font-medium'>Быстрый</option>
+                                        <option value={RouteChoice.Cheapest} className='font-medium'>Дешевый</option>
+                                    </select>
+                                    {/* Dropdown Icon */}
+                                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                                        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" />
+                                        </svg>
+                                    </div>
+                                </div>                        
                             </div>
-                            {previewOrderData?.isRoutesEqual && <div className='text-sm text-neutral-600'>* Маршруты одинаковы</div>}
-                        </div>
-
+                        </>
+                        }
                         {previewOrderData &&
                             (<>
                                 <div className='flex flex-col gap-1'>
