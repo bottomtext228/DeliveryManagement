@@ -10,7 +10,6 @@ import { productDetailQueryOptions } from "../../queries/productDetail.query";
 import { isAxiosError } from "axios";
 import ErrorPage from "../../components/Error/ErrorPage";
 import NotFound from "../../components/NotFound/NotFound";
-import { productsInfiniteQueryOptions } from "../../queries/products.query";
 import { useState } from "react";
 import ServerError from "../../components/Error/ServerError";
 import GoBackArrow from "../../components/Common/GoBackArrow";

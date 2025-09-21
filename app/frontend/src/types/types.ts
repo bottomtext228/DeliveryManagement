@@ -231,3 +231,8 @@ export interface CanCreateProductResponse {
 export interface UserProfileDto {
     ordersCount: number;
 }
+
+export interface UpdateCompanyDetailsRequest {
+    name: string,
+    description: string
+}

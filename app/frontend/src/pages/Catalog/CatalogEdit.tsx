@@ -12,7 +12,6 @@ import { getImageUrl } from "../../helpers/image.helper";
 import { useNumericParam } from "../../hooks/useNumericParam";
 import { isAxiosError } from "axios";
 import { productDetailQueryOptions } from "../../queries/productDetail.query";
-import { productsInfiniteQueryOptions } from "../../queries/products.query";
 import GoBackArrow from "../../components/Common/GoBackArrow";
 
 

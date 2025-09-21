@@ -7,11 +7,14 @@ import { profileQueryOptions } from "../../queries/profile.query";
 import Loading from "../../components/Loading/Loading";
 import ErrorPage from "../../components/Error/ErrorPage";
 import useCartStore from "../../store/user/cartStore";
+import CompanyInfo from "../../components/Account/CompanyInfo";
+
 export default function Account() {
     const user = useUser();
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
     const cartList = useCartStore(state => state.list);
+
     const { data, isLoading, isError, error } = useQuery({ ...profileQueryOptions(), select: (e) => e.data });
 
     if (isLoading) return <Loading />;
@@ -61,17 +64,7 @@ export default function Account() {
                         <img className="w-20 h-20 m-4 mx-auto" src="/location.svg"></img>
                         <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400">Карта</div>
                     </Link>
-                    <div className="border border-gray-200 rounded-xl p-2">
-                        <h2 className="font-semibold">
-                            Информация о компании
-                        </h2>
-                        <div>
-                            Название: {user.company?.name}
-                        </div>
-                        <div>
-                            {user.company?.description}
-                        </div>
-                    </div>
+                    <CompanyInfo company={user.company!} />
                 </>
             }
 
@@ -81,14 +74,15 @@ export default function Account() {
                         <img className="w-20 h-20 m-4 mx-auto" src="/cart.svg"></img>
                         <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400 ">Заказы</div>
                     </Link>
+                    <div>
+                        <div>
+                            Количество заказов: {data?.ordersCount}
+                        </div>
+                        <div>В корзине: {cartList.length}</div>
+                    </div>
                 </>
             }
-            <div>
-                <div>
-                    Количество заказов: {data?.ordersCount}
-                </div>
-                <div>В корзине: {cartList.length}</div>
-            </div>
+
         </div>
     </>
 }
