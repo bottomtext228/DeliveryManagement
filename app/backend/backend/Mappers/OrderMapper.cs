@@ -12,6 +12,7 @@ namespace backend.Mappers
             return new OrderDto
             {
                 Id = order.Id,
+                CompanyId = order.CompanyId,
                 Items = order.Items.Select(e => e.ToOrderItemDto()).ToList(),
                 Towns = [.. order.TownIds.Select(e => towns.Find(t => t.Id == e)!)],
                 FinalPrice = order.FinalPrice,

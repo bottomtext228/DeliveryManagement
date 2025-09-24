@@ -190,16 +190,36 @@ namespace backend.Services
             return Result.Success();
         }
 
-        public async Task<Result<UserProfileDto>> GetProfileAsync(string userId, CancellationToken cancellationToken = default)
+        public async Task<Result<ClientProfileDto>> GetClientProfileAsync(string userId, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return AccountErrors.NotFound(userId);
 
             var ordersCount = await _dbContext.Orders.CountAsync(e => e.UserId == userId, cancellationToken);
 
-            var profileInfo = new UserProfileDto
+            var profileInfo = new ClientProfileDto
             {
                 OrdersCount = ordersCount
+            };
+
+            return profileInfo;
+        }
+
+        public async Task<Result<CompanyProfileDto>> GetCompanyProfileAsync(string userId, int companyId, CancellationToken cancellationToken = default)
+        {
+
+            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
+            if (company is null)
+            {
+                return CompanyErrors.NotFound(companyId);
+            }
+
+            // TODO: add more info in client/company profiles
+          /*   _dbContext.Orders.Count(e => e.Items) */
+
+            var profileInfo = new CompanyProfileDto
+            {
+
             };
 
             return profileInfo;

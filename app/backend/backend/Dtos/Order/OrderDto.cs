@@ -7,15 +7,20 @@ namespace backend.Dtos.Order
     {
         public int Id { get; set; }
 
+        public int CompanyId { get; set; }
+
         public List<OrderItemDto> Items { get; set; } = [];
 
         public List<Town> Towns { get; set; } = [];
 
         public float ShippingPrice { get; set; }
+
         public float FinalPrice { get; set; }
+
         public int ShippingTime { get; set; }
 
         public OrderStatus Status { get; set; }
+        
         public DateTime CreatedAt { get; set; }
     }
 }

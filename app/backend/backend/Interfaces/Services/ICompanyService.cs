@@ -7,5 +7,6 @@ namespace backend.Interfaces.Services
     {
         Task<Result<CompanyDto>> GetByIdAsync(int companyId, CancellationToken cancellationToken = default);
         Task<Result> CanCreateProductAsync(int companyId, CancellationToken cancellationToken = default);
+        Task<Result> UpdateDetails(int companyId,  UpdateCompanyDetailsRequest model, CancellationToken cancellationToken = default);
     }
 }

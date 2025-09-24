@@ -8,6 +8,10 @@ namespace backend.Models
         public string UserId { get; set; }
         public User User { get; set; }
 
+        public int CompanyId { get; set; }
+        
+        public Company Company { get; set; } // we allow to order items only from one company at once
+
         public ICollection<OrderItem> Items { get; set; } = [];
 
         public float ShippingPrice { get; set; }

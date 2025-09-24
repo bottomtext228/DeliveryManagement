@@ -65,6 +65,7 @@ namespace backend.Services
             var order = new Order
             {
                 UserId = userId,
+                CompanyId = company.Id,
                 ShippingPrice = chosenRoute.Price,
                 ShippingTime = chosenRoute.Time,
                 TownIds = chosenRoute.Towns.Select(t => t.Id).ToList(),

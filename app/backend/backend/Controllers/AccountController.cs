@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using backend.Interfaces.Services;
 using backend.Extensions;
 using backend.Results;
+using backend.Models;
 
 namespace backend.Controllers
 {
@@ -181,19 +182,33 @@ namespace backend.Controllers
         /// <response code="500">Internal server error.</response>
         [HttpGet("profile")]
         [Authorize]
-        [ProducesResponseType(typeof(UserProfileDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ClientProfileDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CompanyProfileDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Profile(CancellationToken cancellationToken)
         {
-           var userId = User.GetUserId()!;
+            var userId = User.GetUserId()!;
+            var companyId = User.GetCompanyId();
 
-            var result = await _accountService.GetProfileAsync(userId, cancellationToken);
+            if (companyId is null)
+            {
+                var result = await _accountService.GetClientProfileAsync(userId, cancellationToken);
 
-            return result.Map(
-                onSuccess: Ok,
-                onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
-            );
+                return result.Map(
+                    onSuccess: Ok,
+                    onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+                );
+            }
+            else
+            {
+                var result = await _accountService.GetCompanyProfileAsync(userId, companyId.Value, cancellationToken);
+
+                return result.Map(
+                    onSuccess: Ok,
+                    onFailure: error => ApiResponseHelper.BadRequest(HttpContext, error)
+                );
+            }
         }
 
         /// <summary>

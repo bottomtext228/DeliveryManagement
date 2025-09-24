@@ -1,6 +1,6 @@
 namespace backend.Dtos.Account
 {
-    public class UserProfileDto
+    public class ClientProfileDto
     {
         public int OrdersCount { get; set; }
     }

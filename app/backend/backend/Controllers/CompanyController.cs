@@ -50,6 +50,18 @@ namespace backend.Controllers
             );
         }
 
+        [HttpPut("{id:int}")]
+        [Authorize(Roles = "company")]
+        public async Task<IActionResult> UpdateDetails([FromRoute] int id, [FromForm] UpdateCompanyDetailsRequest model, CancellationToken cancellationToken)
+        {
+            var result = await _companyService.UpdateDetails(id, model, cancellationToken);
+
+            return result.Map(
+                onSuccess: NoContent,
+                onFailure: error => ApiResponseHelper.NotFound(HttpContext, error)
+            );
+
+        }
         /// <summary>
         /// Checks if the current company can create a product. Accessible only to users registered as a company.
         /// </summary>
