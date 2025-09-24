@@ -41,7 +41,6 @@ export default function OrderAdd() {
 
     const [productsQuantities, setProductsQuantities] = useState<Record<number, number>>({});
 
-
     // get ids from the search params
     const isValidId = (id: string) => /^\d+$/.test(id);
     const ids = (searchParams.get("ids")?.split(",") || []).filter(isValidId);
@@ -201,13 +200,13 @@ export default function OrderAdd() {
                                                 <div className="text-gray-500">
                                                     &times;
                                                 </div>
-                                                <button onClick={() => decrementQuantity(product.id)}
+                                                <button type="button" onClick={() => decrementQuantity(product.id)}
                                                     className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow duration-3000 transition-all">
                                                 </button>
                                                 <div className="text-gray-500">
                                                     {getProductQuantity(product.id)}
                                                 </div>
-                                                <button onClick={() => incrementQuantity(product.id)}
+                                                <button type="button" onClick={() => incrementQuantity(product.id)}
                                                     className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 after:w-4 after:h-1 after:bg-neutral-600 hover:after:bg-neutral-900 after:rotate-90 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow">
                                                 </button>
                                                 <div>
