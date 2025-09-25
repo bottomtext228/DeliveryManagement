@@ -192,35 +192,39 @@ namespace backend.Services
 
         public async Task<Result<ClientProfileDto>> GetClientProfileAsync(string userId, CancellationToken cancellationToken = default)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return AccountErrors.NotFound(userId);
+            var profileInfo = await _dbContext.Users.
+                Where(e => e.Id == userId)
+                .Select(e => new ClientProfileDto
+                {
+                    OrdersCount = _dbContext.Orders.Count(e => e.UserId == userId),
+                    OrdersCost = _dbContext.Orders.Where(e => e.UserId == userId).Sum(e => e.FinalPrice)
+                }).FirstOrDefaultAsync(cancellationToken);
 
-            var ordersCount = await _dbContext.Orders.CountAsync(e => e.UserId == userId, cancellationToken);
-
-            var profileInfo = new ClientProfileDto
+            if (profileInfo is null)
             {
-                OrdersCount = ordersCount
-            };
+                return AccountErrors.NotFound(userId);
+            }
 
             return profileInfo;
         }
 
         public async Task<Result<CompanyProfileDto>> GetCompanyProfileAsync(string userId, int companyId, CancellationToken cancellationToken = default)
         {
+            var profileInfo = await _dbContext.Companies
+                .Where(e => e.Id == companyId)
+                .Select(e => new CompanyProfileDto
+                {
+                    OrdersCount = _dbContext.Orders.Count(e => e.CompanyId == companyId),
+                    OrderedProductsCount = _dbContext.OrderItems.Include(e => e.Order).Count(e => e.Order.CompanyId == companyId),
+                    PickUpPointsCount = _dbContext.PickUpPoints.Count(e => e.CompanyId == companyId),
+                    StocksCount = _dbContext.Stocks.Count(e => e.CompanyId == companyId),
+                    ProductsCount = _dbContext.Products.Count(e => e.CompanyId == companyId)
+                }).FirstOrDefaultAsync(cancellationToken);
 
-            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
-            if (company is null)
+            if (profileInfo is null)
             {
                 return CompanyErrors.NotFound(companyId);
             }
-
-            // TODO: add more info in client/company profiles
-          /*   _dbContext.Orders.Count(e => e.Items) */
-
-            var profileInfo = new CompanyProfileDto
-            {
-
-            };
 
             return profileInfo;
         }
