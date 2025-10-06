@@ -20,7 +20,7 @@ namespace backend.Services
 
         public async Task<Result<IEnumerable<GetStocksDto>>> GetAllAsync(int companyId, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
+            var company = await _dbContext.Companies.FindAsync([companyId], cancellationToken);
             if (company == null) return CompanyErrors.NotFound(companyId);
 
 
@@ -33,7 +33,7 @@ namespace backend.Services
 
         public async Task<Result> SetAsync(List<int> townIds, int companyId, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
+            var company = await _dbContext.Companies.FindAsync([companyId], cancellationToken);
             if (company == null) return CompanyErrors.NotFound(companyId);
 
             if (townIds.Count == 0) return TownErrors.NoTownsProvided();

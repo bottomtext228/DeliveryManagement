@@ -34,7 +34,7 @@ namespace backend.Controllers
         [HttpGet]
         [Authorize(Roles = "client,company")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedResponse<ProductDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll([FromQuery] ProductQueryDto query, CancellationToken cancellationToken)
@@ -131,7 +131,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] EditProductRequest model, CancellationToken cancellationToken)
+        public async Task<IActionResult> EditById([FromRoute] int id, [FromForm] EditProductRequest model, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 
@@ -161,7 +161,7 @@ namespace backend.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteById(int id, CancellationToken cancellationToken)
         {
             var companyId = User.GetCompanyId();
 

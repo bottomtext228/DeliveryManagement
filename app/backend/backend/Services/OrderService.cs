@@ -101,7 +101,7 @@ namespace backend.Services
 
         public async Task<Result<IEnumerable<OrderDto>>> GetAllAsync(string userId, CancellationToken cancellationToken = default)
         {
-            var user = await _dbContext.Users.FindAsync(userId);
+            var user = await _dbContext.Users.FindAsync([userId], cancellationToken);
             if (user == null) return AccountErrors.NotFound(userId);
             
             var orders = await _dbContext.Orders

@@ -29,7 +29,7 @@ namespace backend.Services
 
         public async Task<Result> UpdateDetails(int companyId, UpdateCompanyDetailsRequest model, CancellationToken cancellationToken = default)
         {
-            var company = await _dbContext.Companies.FindAsync(companyId, cancellationToken);
+            var company = await _dbContext.Companies.FindAsync([companyId], cancellationToken);
 
             if (company == null) return CompanyErrors.NotFound(companyId);
 
