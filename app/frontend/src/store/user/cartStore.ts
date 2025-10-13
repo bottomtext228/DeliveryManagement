@@ -7,9 +7,10 @@ interface CartState {
     list: CartItem[],
     add: (productId: number) => void,
     remove: (productId: number, decreaseQuantity?: boolean) => void,
+    getProductsCount: () => number
 }
 
-const useCartStore = create<CartState>()(persist((set) => (
+const useCartStore = create<CartState>()(persist((set, get) => (
     {
         list: [],
         add: (productId) => set(({ list }) => {
@@ -26,7 +27,8 @@ const useCartStore = create<CartState>()(persist((set) => (
                 if (decreaseQuantity) list[index].quantity--; else list.splice(index, 1);
             }
             return { list: [...list] };
-        })
+        }),
+        getProductsCount: () => get().list.reduce((acc, item) => acc + item.quantity, 0)
     }
 ),
     {

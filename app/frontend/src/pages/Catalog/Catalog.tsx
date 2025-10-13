@@ -94,8 +94,8 @@ export default function CatalogAll() {
         <div className="max-w-[1440px] w-[90%] mx-auto">
             <div className="flex flex-col gap-2 rounded-xl p-2 border-amber-500 border-2 md:w-[60%] mx-auto my-4 md:my-16">
 
-                <label htmlFor="id"></label>
-                <input id="name" type="text" value={formName} placeholder="Поиск" onChange={handleOnNameChange} onKeyDown={handleOnKeyDown}
+                <label htmlFor="name"></label>
+                <input id="name" type="text" value={formName} placeholder="Поиск" autoComplete="on" onChange={handleOnNameChange} onKeyDown={handleOnKeyDown}
                     className="border border-[#d9d9d9] p-2 rounded-xl outline-none w-full" />
 
                 <div className="flex md:flex-row flex-col md:items-center gap-1.5">

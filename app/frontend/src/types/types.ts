@@ -228,8 +228,17 @@ export interface CanCreateProductResponse {
     message?: string;
 }
 
-export interface UserProfileDto {
-    ordersCount: number;
+export interface ClientProfileDto {
+    ordersCount: number,
+    ordersCost: number
+}
+
+export interface CompanyProfileDto {
+    ordersCount: number, 
+    orderedProductsCount: number,
+    pickUpPointsCount : number,
+    stocksCount: number,
+    productsCount: number
 }
 
 export interface UpdateCompanyDetailsRequest {

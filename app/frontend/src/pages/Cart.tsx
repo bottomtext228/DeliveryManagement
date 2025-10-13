@@ -11,7 +11,7 @@ export default function Cart() {
     const addToCart = useCartStore(store => store.add);
     const removeFromCart = useCartStore(store => store.remove);
     const cartList = useCartStore(store => store.list);
-
+    const getProductsCount = useCartStore(store => store.getProductsCount);
 
     const result = useQueries({
         queries: cartList.map((item) => (productDetailQueryOptions(item.productId))),
@@ -50,16 +50,6 @@ export default function Cart() {
         if (cartItem && cartItem.quantity > 1) removeFromCart(productId, true);
     }
 
-
-    const calculateProductsCount = () => {
-        let count = 0;
-        for (let i = 0; i < cartList.length; i++) {
-            count += cartList[i].quantity;
-        }
-        return count;
-    }
-
-
     const groupedByCompanies: IProduct[][] = groupBy(products, ({ companyId }) => [companyId]);
 
     return (
@@ -68,7 +58,7 @@ export default function Cart() {
             <div className="max-w-[1440px] w-[90%] mx-auto">
                 <div className="flex h-8 gap-8 items-end mb-8">
                     <h1 className="font-bold text-2xl">Корзина</h1>
-                    <div className="">Всего: {calculateProductsCount()}</div>
+                    <div className="">Всего: {getProductsCount()}</div>
                 </div>
                 {
                     cartList.length ? (
