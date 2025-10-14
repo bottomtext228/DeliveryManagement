@@ -3,5 +3,6 @@ import { getOrders } from "../../api/orders/getOrders";
 
 export const useOrders = () => useQuery({
     queryKey: ['orders'],
-    queryFn: getOrders
+    queryFn: getOrders,
+    select: e => e.data
 });

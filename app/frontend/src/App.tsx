@@ -27,7 +27,7 @@ function App() {
                 const response = await AuthService.getMe();
                 login(response.data as IUser);
                 return;
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error(error);
             }
         }

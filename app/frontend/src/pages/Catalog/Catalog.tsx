@@ -1,12 +1,11 @@
 import Product from "../../components/Product/Product";
 import { Link } from "react-router-dom";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
 import { useUser } from "../../hooks/useUser";
 import ErrorPage from "../../components/Error/ErrorPage";
-import { productsInfiniteQueryOptions } from "../../queries/products.query";
 import { useEffect, useRef, useState } from "react";
 import { ProductSortBy } from "../../types/types";
+import { useProducts } from "../../hooks/queries/useProducts";
 
 export default function CatalogAll() {
     const user = useUser();
@@ -27,14 +26,13 @@ export default function CatalogAll() {
 
     const pageSize = 20;
 
-    const { isError, isPending, error, data, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery(productsInfiniteQueryOptions(
+    const { isError, isPending, error, data, hasNextPage, isFetchingNextPage, fetchNextPage } = useProducts(
         pageSize,
         name,
         minPrice,
         maxPrice,
         sortBy,
-        sortIsDescending
-    ));
+        sortIsDescending);
 
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -80,7 +78,7 @@ export default function CatalogAll() {
             handleOnApplyFilters();
         }
     }
-    
+
     const handleOnApplyFilters = () => {
         setName(formName);
         setMinPrice(formMinPrice ? +formMinPrice : undefined);

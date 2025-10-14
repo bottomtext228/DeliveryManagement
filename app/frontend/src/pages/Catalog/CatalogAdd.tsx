@@ -2,13 +2,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { CreateProductDto } from "../../types/types";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { createProduct } from "../../api/catalog/createProduct";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ServerError from "../../components/Error/ServerError";
-import { canCompanyCreateProduct } from "../../api/company/canCompanyCreateProduct";
 import Loading from "../../components/Loading/Loading";
 import ErrorPage from "../../components/Error/ErrorPage";
 import WarningCard from "../../components/Common/WarningCard";
+import { useCreateProduct } from "../../hooks/mutations/useCreateProduct";
+import { useCanCompantCreateProduct } from "../../hooks/queries/useCanCompanyCreateProduct";
 
 interface FormValues {
     name: string,
@@ -25,24 +24,10 @@ export default function CatalogAdd() {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
     const [serverError, setServerError] = useState<unknown>(null);
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
 
-    const mutation = useMutation({
-        mutationFn: createProduct,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['products'] });
-            navigate('/catalog')
-        },
-        onError: (error) => {
-            setServerError(error);
-        }
-    })
+    const createProduct = useCreateProduct();
 
-    const { isLoading, isError, error, data: canCreateProductResponse } = useQuery({
-        queryFn: canCompanyCreateProduct,
-        queryKey: ['can-create-product'],
-        select: e => e.data
-    });
+    const { isLoading, isError, error, data: canCreateProductResponse } = useCanCompantCreateProduct();
 
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
@@ -52,7 +37,14 @@ export default function CatalogAdd() {
             price: data.price, sizeX: data.sizeX, sizeY: data.sizeY, sizeZ: data.sizeZ, image: data.image[0]
         };
 
-        mutation.mutate(dto);
+        createProduct.mutate(dto, {
+            onSuccess: () => {
+                navigate('/catalog')
+            },
+            onError: (error: unknown) => {
+                setServerError(error);
+            }
+        });
     }
 
     if (isLoading) return <Loading />;
@@ -80,7 +72,7 @@ export default function CatalogAdd() {
                         <Link className='w-4 h-4' to='/catalog'><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></Link>
                     </div>
                     <div className="relative mt-4">
-                        <input id="name" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />
+                        <input id="name" autoComplete="on" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />
                         <label htmlFor="name" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                             Название
                         </label>
@@ -97,7 +89,7 @@ export default function CatalogAdd() {
 
                     <div className="relative mt-4">
                         <input id="weight" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('weight', { required: 'Вес не может быть пустым!' })} placeholder=" " />
-                        <label htmlFor="weigt" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                        <label htmlFor="weight" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
                             Вес
                         </label>
                     </div>

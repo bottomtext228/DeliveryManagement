@@ -1,11 +1,11 @@
-import { useQueries } from "@tanstack/react-query";
 import useCartStore from "../store/user/cartStore";
 import Loading from "../components/Loading/Loading";
 import { groupBy } from "../helpers/polyfill.helper";
-import { IProduct } from "../types/types";
+import { IProduct, IProductDetail } from "../types/types";
 import CartCompanyCard from "../components/Cart/CartCompanyCard";
-import { productDetailQueryOptions } from "../queries/productDetail.query";
 import EmptyStateCard from "../components/Common/EmptyStateCard";
+import { useProductsDetail } from "../hooks/queries/useProductDetail";
+import ErrorPage from "../components/Error/ErrorPage";
 
 export default function Cart() {
     const addToCart = useCartStore(store => store.add);
@@ -13,28 +13,19 @@ export default function Cart() {
     const cartList = useCartStore(store => store.list);
     const getProductsCount = useCartStore(store => store.getProductsCount);
 
-    const result = useQueries({
-        queries: cartList.map((item) => (productDetailQueryOptions(item.productId))),
-        combine: (results) => {
-            return {
-                isPending: results.some((r) => r.isPending),
-                isError: results.some((r) => r.isError),
-                data: results.map((r) => r.data),
-                error: results.map((r) => r.error).filter(Boolean)
-            };
-        },
-    });
+    const productQueries = useProductsDetail(cartList.map(item => item.productId));
 
-    const { isPending, isError, error, data } = result;
+    const isPending = productQueries.some(e => e.isPending);
+    const isError = productQueries.some(e => e.isError);
 
     if (isPending) return <Loading></Loading>
 
     if (isError) {
-        console.log(error);
-        return <span>Error</span>
+        const error = productQueries.find(e => e.error)?.error;
+        return <ErrorPage message={error?.message} />;
     }
 
-    const products = data.map(e => e?.data).filter(Boolean);
+    const products = productQueries.map(e => e.data).filter((product): product is IProductDetail => !!product);
 
     function handleDeleteClick(productId: number) {
         removeFromCart(productId);

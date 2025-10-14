@@ -43,7 +43,7 @@ export default function Navbar() {
                         <div>{user?.email}</div>
                         <RoleBadge roles={user?.roles!}></RoleBadge>
                         <button onClick={() => {
-                            navigate('/'); setTimeout(() => logout(), 100);
+                            navigate('/auth/login'); setTimeout(() => logout(), 100);
                         }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">
                             Выйти
                         </button>

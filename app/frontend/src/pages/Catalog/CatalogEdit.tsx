@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { EditProductDto } from "../../types/types";
-import { editProduct } from "../../api/catalog/editProduct";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loading from "../../components/Loading/Loading";
 import ServerError from "../../components/Error/ServerError";
 import { useEffect, useState } from "react";
@@ -11,8 +9,9 @@ import ErrorPage from "../../components/Error/ErrorPage";
 import { getImageUrl } from "../../helpers/image.helper";
 import { useNumericParam } from "../../hooks/useNumericParam";
 import { isAxiosError } from "axios";
-import { productDetailQueryOptions } from "../../queries/productDetail.query";
 import GoBackArrow from "../../components/Common/GoBackArrow";
+import { useProductDetail } from "../../hooks/queries/useProductDetail";
+import { useEditProduct } from "../../hooks/mutations/useEditProduct";
 
 
 interface FormValues {
@@ -31,16 +30,11 @@ export default function CatalogEdit() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>();
     const navigate = useNavigate();
     const [serverError, setServerError] = useState<unknown>(null);
-    const queryClient = useQueryClient();
-    const { isPending, isError, data, error } = useQuery({
-        ...productDetailQueryOptions(id!),
-        enabled: id !== null
-    });
+    const { isPending, isError, data: product, error } = useProductDetail(id);
 
 
     useEffect(() => {
-        if (data) {
-            const product = data.data;
+        if (product) {
             reset({
                 name: product.name,
                 description: product.description,
@@ -51,23 +45,10 @@ export default function CatalogEdit() {
                 weight: product.weight
             });
         }
-    }, [data, reset]);
+    }, [product, reset]);
 
 
-    const mutation = useMutation({
-        mutationFn: (dto: EditProductDto) => editProduct(id!, dto),
-        onSuccess: () => {
-            queryClient.invalidateQueries(productDetailQueryOptions(id!));
-            queryClient.invalidateQueries({ queryKey: ['products'] });
-            navigate(`/catalog/${id}`);
-        },
-        onError: (error) => {
-            if (isAxiosError(error)) {
-                setServerError(error);
-            }
-        }
-
-    });
+    const editProduct = useEditProduct(id!);
 
 
     if (id === null) {
@@ -85,9 +66,6 @@ export default function CatalogEdit() {
         return <ErrorPage message={error.message} />
     }
 
-    const product = data.data;
-
-
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
 
@@ -96,7 +74,16 @@ export default function CatalogEdit() {
             price: data.price, sizeX: data.sizeX, sizeY: data.sizeY, sizeZ: data.sizeZ, image: data.image?.[0]
         };
 
-        mutation.mutate(dto);
+        editProduct.mutate(dto, {
+            onSuccess: () => {
+                navigate(`/catalog/${id}`);
+            },
+            onError: (error) => {
+                if (isAxiosError(error)) {
+                    setServerError(error);
+                }
+            }
+        });
     }
 
 

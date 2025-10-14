@@ -3,5 +3,6 @@ import { getStocks } from "../../api/stock/getStocks";
 
 export const useStocks = () => useQuery({
     queryKey: ['stocks'],
-    queryFn: getStocks
+    queryFn: getStocks,
+    select: e => e.data
 });

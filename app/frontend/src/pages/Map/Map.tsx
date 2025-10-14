@@ -1,17 +1,16 @@
-import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query'
 import TownsMap from '../../components/Towns/TownsMap';
 import TownsSidebar from '../../components/Towns/TownsSidebar';
 import { MapModes, Town } from '../../types/types';
 import { useEffect, useState } from 'react';
-import { setStocks } from '../../api/stock/setStocks';
-import { setPickUpPoints } from '../../api/pickUpPoint/setPickUpPoints';
 import Loading from '../../components/Loading/Loading';
-import { townsQueryOptions } from '../../queries/towns.query';
-import { pickUpPointsQueryOptions } from '../../queries/pickUpPoints.query';
-import { stocksQueryOptions } from '../../queries/stocks.query';
-import { roadsQueryOptions } from '../../queries/roads.query';
 import ErrorPage from '../../components/Error/ErrorPage';
 import ServerError from '../../components/Error/ServerError';
+import { useTowns } from '../../hooks/queries/useTowns';
+import { useRoads } from '../../hooks/queries/useRoads';
+import { usePickUpPoints } from '../../hooks/queries/usePickUpPoints';
+import { useStocks } from '../../hooks/queries/useStocks';
+import { useSetPickUpPoints } from '../../hooks/mutations/useSetPickUpPoints';
+import { useSetStocks } from '../../hooks/mutations/useSetStocks';
 
 
 export default function Map() {
@@ -22,54 +21,29 @@ export default function Map() {
     const [selectedStocks, setSelectedStockTowns] = useState<Town[]>([]);
     const [currentMode, setCurrentMode] = useState<MapModes>(MapModes.SetStocks);
 
-    const [townsResult, roadsResult, pickUpPointsResult, stocksResult] = useQueries({
-        queries: [
-            townsQueryOptions(),
-            roadsQueryOptions(),
-            pickUpPointsQueryOptions(),
-            stocksQueryOptions()
-        ]
-    });
+    const townsResult = useTowns();
+    const roadsResult = useRoads();
+    const pickUpPointsResult = usePickUpPoints();
+    const stocksResult = useStocks();
 
     useEffect(() => {
         if (townsResult.status !== 'success') return; // wait until towns info arrives
-        const towns = townsResult.data.data;
+        const towns = townsResult.data;
 
         if (pickUpPointsResult.status == 'success') {
             // map pick up points to towns
-            setSelectedPickUpPointTowns(pickUpPointsResult.data.data.map((e) => towns.find((t: Town) => t.id == e.townId)!));
+            setSelectedPickUpPointTowns(pickUpPointsResult.data.map((e) => towns.find((t: Town) => t.id == e.townId)!));
         }
 
         if (stocksResult.status == 'success') {
             // map stocks to towns
-            setSelectedStockTowns(stocksResult.data.data.map((e) => towns.find((t: Town) => t.id == e.townId)!));
+            setSelectedStockTowns(stocksResult.data.map((e) => towns.find((t: Town) => t.id == e.townId)!));
         }
 
     }, [townsResult.status, pickUpPointsResult.status, stocksResult.status]);
 
-    const queryClient = useQueryClient();
-
-    const stocksMutation = useMutation({
-        mutationFn: setStocks,
-        onSuccess: () => {
-            queryClient.invalidateQueries(stocksQueryOptions());
-            setStocksServerError(null);
-        },
-        onError: (error) => {
-            setStocksServerError(error);
-        }
-    })
-
-    const pickUpPointsMutation = useMutation({
-        mutationFn: setPickUpPoints,
-        onSuccess: () => {
-            queryClient.invalidateQueries(pickUpPointsQueryOptions());
-            setPickUpPointsServerError(null);
-        },
-        onError: (error) => {
-            setPickUpPointsServerError(error);
-        }
-    })
+    const setStocks = useSetStocks();
+    const setPickUpPoints = useSetPickUpPoints();
 
     if (townsResult.isPending || roadsResult.isPending || pickUpPointsResult.isPending || stocksResult.isPending)
         return <Loading />
@@ -79,8 +53,8 @@ export default function Map() {
         return <ErrorPage message={error?.message} />
     }
 
-    const towns = townsResult.data.data;
-    const roads = roadsResult.data.data;
+    const towns = townsResult.data;
+    const roads = roadsResult.data;
 
     const handleTownClick = (id: number) => {
         const town: Town = towns.find((e: Town) => e.id == id)!;
@@ -118,8 +92,23 @@ export default function Map() {
     }
 
     const handleSaveChangesClick = () => {
-        stocksMutation.mutate(selectedStocks);
-        pickUpPointsMutation.mutate(selectedPickUpPoints);
+        setStocks.mutate(selectedStocks, {
+            onSuccess: () => {
+                setStocksServerError(null);
+            },
+            onError: (error) => {
+                setStocksServerError(error);
+            }
+        });
+
+        setPickUpPoints.mutate(selectedPickUpPoints, {
+            onSuccess: () => {
+                setPickUpPointsServerError(null);
+            },
+            onError: (error) => {
+                setPickUpPointsServerError(error);
+            }
+        });
     }
 
     return (<>

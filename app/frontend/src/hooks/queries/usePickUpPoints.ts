@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPickUpPoints } from "../../api/pickUpPoint/getPickUpPoints";
 
-export const usePickUpPoints = (companyId: number | null) => useQuery({
+// used by company to retrieve its pick up points
+export const usePickUpPoints = () => useQuery({
     queryKey: ['pickuppoints'],
     queryFn: getPickUpPoints,
-    enabled: !!companyId
+    select: e => e.data
 });

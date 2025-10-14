@@ -60,7 +60,7 @@ export default function Dropdown() {
                     </div>
                     {user &&
                         <div>
-                            <button onClick={() => { setIsOpen(false); navigate('/'); setTimeout(() => logout(), 100); }} className="w-full px-4 py-1 my-1 text-left text-red-600 opacity-85 hover:bg-neutral-200" type="button">Выйти</button>
+                            <button onClick={() => { setIsOpen(false); navigate('/auth/login'); setTimeout(() => logout(), 100); }} className="w-full px-4 py-1 my-1 text-left text-red-600 opacity-85 hover:bg-neutral-200" type="button">Выйти</button>
                         </div>
                     }
                 </div>

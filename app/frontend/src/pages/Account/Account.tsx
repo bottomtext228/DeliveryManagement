@@ -2,8 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
 import useUserStore from "../../store/user/userStore";
 import RoleBadge from "../../components/Role/RoleBadge";
-import { useQuery } from "@tanstack/react-query";
-import { profileQueryOptions } from "../../queries/profile.query";
 import Loading from "../../components/Loading/Loading";
 import ErrorPage from "../../components/Error/ErrorPage";
 import useCartStore from "../../store/user/cartStore";
@@ -11,6 +9,7 @@ import CompanyInfo from "../../components/Account/CompanyInfo";
 import { ClientProfileDto, CompanyProfileDto } from "../../types/types";
 import CompanyProfileCard from "../../components/Account/CompanyProfileCard";
 import ClientProfileCard from "../../components/Account/ClientProfileCard";
+import { useProfile } from "../../hooks/queries/useProfile";
 
 export default function Account() {
     const user = useUser();
@@ -18,7 +17,7 @@ export default function Account() {
     const navigate = useNavigate();
     const cartList = useCartStore(state => state.list);
 
-    const { data, isLoading, isError, error } = useQuery({ ...profileQueryOptions(), select: (e) => e.data });
+    const { data, isLoading, isError, error } = useProfile();
 
     if (isLoading) return <Loading />;
 
@@ -52,7 +51,7 @@ export default function Account() {
                             </div>
                         }
                         <button onClick={() => {
-                            navigate('/'); setTimeout(() => logout(), 100);
+                            navigate('/auth/login'); setTimeout(() => logout(), 100);
                         }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">
                             Выйти
                         </button>
@@ -63,7 +62,7 @@ export default function Account() {
                     {user.roles.includes('company') &&
                         <CompanyProfileCard data={data as CompanyProfileDto} />
                     }
-                    
+
                     {user.roles.includes('client') &&
                         <ClientProfileCard data={data as ClientProfileDto} />
                     }

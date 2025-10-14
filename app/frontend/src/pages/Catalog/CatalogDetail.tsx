@@ -1,18 +1,17 @@
 import { Link, useNavigate } from "react-router-dom"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteProduct } from "../../api/catalog/deleteProduct";
 import Loading from "../../components/Loading/Loading";
 import { useUser } from "../../hooks/useUser";
 import useCartStore from "../../store/user/cartStore";
 import ProductDetail from "../../components/Product/ProductDetail";
 import { useNumericParam } from "../../hooks/useNumericParam";
-import { productDetailQueryOptions } from "../../queries/productDetail.query";
 import { isAxiosError } from "axios";
 import ErrorPage from "../../components/Error/ErrorPage";
 import NotFound from "../../components/NotFound/NotFound";
 import { useState } from "react";
 import ServerError from "../../components/Error/ServerError";
 import GoBackArrow from "../../components/Common/GoBackArrow";
+import { useProductDetail } from "../../hooks/queries/useProductDetail";
+import { useDeleteProduct } from "../../hooks/mutations/useDeleteProduct";
 
 
 export default function CatalogDetail() {
@@ -23,22 +22,10 @@ export default function CatalogDetail() {
     const removeFromCart = useCartStore(state => state.remove);
     const cartList = useCartStore(state => state.list);
     const [serverError, setServerError] = useState<unknown>(null);
-    const queryClient = useQueryClient();
 
-    const mutation = useMutation({
-        mutationFn: deleteProduct,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['products'] });
-            navigate('/catalog');
-        },
-        onError: (error) => {
-            setServerError(error);
-        }
-    })
-    const { isPending, isError, data, error } = useQuery({
-        ...productDetailQueryOptions(id!),
-        enabled: id !== null
-    });
+    const deleteProduct = useDeleteProduct();
+
+    const { isPending, isError, data, error } = useProductDetail(id);
 
     if (id === null) {
         return <NotFound />
@@ -55,12 +42,20 @@ export default function CatalogDetail() {
         return <ErrorPage message={error.message} />
     }
 
-    const product = data.data;
+    const product = data;
+    
     const cartItem = cartList.find(e => e.productId == product.id);
 
     const handleDelete = async () => {
         if (confirm('Удалить продукт?')) {
-            mutation.mutate(id);
+            deleteProduct.mutate(id, {
+                onSuccess: () => {
+                    navigate('/catalog');
+                },
+                onError: (error) => {
+                    setServerError(error);
+                }
+            });
         }
     }
 

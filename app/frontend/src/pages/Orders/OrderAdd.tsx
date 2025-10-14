@@ -2,22 +2,16 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { RouteChoice, CreateOrderDto, IProductDetail, ComputeRouteRequest, ProductOrderDto, ComputeRouteResponse } from '../../types/types';
-import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import Loading from '../../components/Loading/Loading';
-import { createOrder } from '../../api/orders/createOrder';
 import useCartStore from '../../store/user/cartStore';
 import { computeRoute } from '../../api/map/computeRoute';
 import { formatHours } from '../../helpers/format.helper';
 import { getImageUrl } from '../../helpers/image.helper';
-import { productDetailQueryOptions } from '../../queries/productDetail.query';
 import ErrorPage from '../../components/Error/ErrorPage';
-import { ordersQueryOptions } from '../../queries/orders.query';
-import { companyPickUpPointsQueryOptions } from '../../queries/companyPickUpPoints.query';
 import ServerError from '../../components/Error/ServerError';
-import { usePickUpPoints } from '../../hooks/queries/usePickUpPoints';
 import { useCreateOrder } from '../../hooks/mutations/useCreateOrder';
-
-
+import { useProductsDetail } from '../../hooks/queries/useProductDetail';
+import { useCompanyPickUpPoints } from '../../hooks/queries/useCompanyPickUpPoints';
 
 interface FormValues {
     productId: number,
@@ -25,8 +19,6 @@ interface FormValues {
     choice: RouteChoice,
     quantity: number
 }
-
-
 
 export default function OrderAdd() {
     const [searchParams] = useSearchParams();
@@ -45,17 +37,14 @@ export default function OrderAdd() {
 
     // get ids from the search params
     const isValidId = (id: string) => /^\d+$/.test(id);
-    const ids = (searchParams.get("ids")?.split(",") || []).filter(isValidId);
+    const ids = (searchParams.get("ids")?.split(",") || []).filter(isValidId).map(id => Number(id));
     const hasValidIds = ids.length > 0;
 
-    const productQueries = useQueries({
-        queries: hasValidIds ? ids.map((id) => (productDetailQueryOptions(Number(id)))) : []
-    });
+    const productQueries = useProductsDetail(ids);
 
-    const products = productQueries.map((q) => q.data?.data).filter((product): product is IProductDetail => !!product);
+    const products = productQueries.map((e) => e.data).filter((product): product is IProductDetail => !!product);
 
     const createOrder = useCreateOrder();
-
 
     const updateQuantity = (id: number, amount: number) => {
         setProductsQuantities((prev) => ({
@@ -64,16 +53,17 @@ export default function OrderAdd() {
         }));
     };
 
+    const getProductQuantity = (id: number) => {
+        return productsQuantities[id] ?? 1;
+    };
+
+
     const incrementQuantity = (id: number) => {
-        updateQuantity(id, (productsQuantities[id] || 1) + 1);
+        updateQuantity(id, getProductQuantity(id) + 1);
     };
 
     const decrementQuantity = (id: number) => {
-        updateQuantity(id, (productsQuantities[id] || 1) - 1);
-    };
-
-    const getProductQuantity = (id: number) => {
-        return productsQuantities[id] ?? 1;
+        updateQuantity(id, getProductQuantity(id) - 1);
     };
 
     const checkSameCompany = (products: IProductDetail[]) => {
@@ -89,10 +79,10 @@ export default function OrderAdd() {
     const validOrder = checkSameCompany(products) && checkDuplicatedProducts(products);
     const companyId = validOrder ? products[0]?.companyId : null;
 
-    const pickUpPointsQuery = usePickUpPoints(companyId);
+    const pickUpPointsQuery = useCompanyPickUpPoints(companyId);
 
-    const isPending = productQueries.some((q) => q.isPending) || pickUpPointsQuery.isPending;
-    const isError = productQueries.some((q) => q.isError) || pickUpPointsQuery.isError;
+    const isPending = productQueries.some(e => e.isPending) || pickUpPointsQuery.isPending;
+    const isError = productQueries.some(e => e.isError) || pickUpPointsQuery.isError;
 
     // set products quantities after getting all info
     useEffect(() => {
@@ -111,12 +101,13 @@ export default function OrderAdd() {
     if (!validOrder) return <ErrorPage message='Products must be from the same company and there must be no duplicates.' />;
 
     if (isPending) return <Loading />;
+    
     if (isError) {
         const error = productQueries.find(e => e.error)?.error || pickUpPointsQuery.error;
         return <ErrorPage message={error?.message} />;
     }
 
-    const pickUpPoints = pickUpPointsQuery?.data.data;
+    const pickUpPoints = pickUpPointsQuery.data;
 
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();

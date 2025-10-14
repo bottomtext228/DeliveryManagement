@@ -3,5 +3,6 @@ import { getRoads } from "../../api/map/getRoads";
 
 export const useRoads = () => useQuery({
     queryKey: ['roads'],
-    queryFn: getRoads
+    queryFn: getRoads,
+    select: e => e.data
 });
