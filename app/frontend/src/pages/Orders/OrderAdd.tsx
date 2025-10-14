@@ -14,6 +14,8 @@ import ErrorPage from '../../components/Error/ErrorPage';
 import { ordersQueryOptions } from '../../queries/orders.query';
 import { companyPickUpPointsQueryOptions } from '../../queries/companyPickUpPoints.query';
 import ServerError from '../../components/Error/ServerError';
+import { usePickUpPoints } from '../../hooks/queries/usePickUpPoints';
+import { useCreateOrder } from '../../hooks/mutations/useCreateOrder';
 
 
 
@@ -52,19 +54,9 @@ export default function OrderAdd() {
 
     const products = productQueries.map((q) => q.data?.data).filter((product): product is IProductDetail => !!product);
 
-    const queryClient = useQueryClient();
+    const createOrder = useCreateOrder();
 
-    const mutation = useMutation({
-        mutationFn: createOrder,
-        onSuccess: () => {
-            queryClient.invalidateQueries(ordersQueryOptions());
-            products.forEach(e => removeFromCart(e.id)); // remove from cart products that we ordered
-            navigate('/orders');
-        },
-        onError: (error) => {
-            setServerError(error);
-        }
-    })
+
     const updateQuantity = (id: number, amount: number) => {
         setProductsQuantities((prev) => ({
             ...prev,
@@ -97,10 +89,7 @@ export default function OrderAdd() {
     const validOrder = checkSameCompany(products) && checkDuplicatedProducts(products);
     const companyId = validOrder ? products[0]?.companyId : null;
 
-    const pickUpPointsQuery = useQuery({
-        ...companyPickUpPointsQueryOptions(companyId!),
-        enabled: !!companyId,
-    });
+    const pickUpPointsQuery = usePickUpPoints(companyId);
 
     const isPending = productQueries.some((q) => q.isPending) || pickUpPointsQuery.isPending;
     const isError = productQueries.some((q) => q.isError) || pickUpPointsQuery.isError;
@@ -140,7 +129,15 @@ export default function OrderAdd() {
             choice: data.choice ? data.choice : RouteChoice.Fastest,
         };
 
-        mutation.mutate(dto);
+        createOrder.mutate(dto, {
+            onSuccess: () => {
+                products.forEach(e => removeFromCart(e.id)); // remove from cart products that we ordered
+                navigate('/orders');
+            },
+            onError: (error) => {
+                setServerError(error);
+            }
+        });
     }
 
     const handleChange: React.ChangeEventHandler<HTMLFormElement> = async () => {
@@ -275,7 +272,7 @@ export default function OrderAdd() {
                                             <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" />
                                         </svg>
                                     </div>
-                                </div>                        
+                                </div>
                             </div>
                         </>
                         }

@@ -1,24 +1,26 @@
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import Loading from "../../components/Loading/Loading";
 import Order from "../../components/Order/Order";
 import { deleteOrder } from "../../api/orders/deleterOrder";
-import { townsQueryOptions } from "../../queries/towns.query";
 import { ordersQueryOptions } from "../../queries/orders.query";
 import ErrorPage from "../../components/Error/ErrorPage";
 import { useState } from "react";
 import ServerError from "../../components/Error/ServerError";
 import EmptyStateCard from "../../components/Common/EmptyStateCard";
+import { useOrders } from "../../hooks/queries/useOrders";
+import { useTowns } from "../../hooks/queries/useTowns";
 
 export default function Orders() {
     const [serverError, setServerError] = useState<unknown>(null);
     const queryClient = useQueryClient();
-    const [ordersResult, townsResult] = useQueries({
+  /*   const [ordersResult, townsResult] = useQueries({
         queries: [
             ordersQueryOptions(),
             townsQueryOptions()
         ]
-    });
-
+    }); */
+    const ordersResult = useOrders();
+    const townsResult = useTowns();
 
     const mutation = useMutation({
         mutationFn: deleteOrder,
