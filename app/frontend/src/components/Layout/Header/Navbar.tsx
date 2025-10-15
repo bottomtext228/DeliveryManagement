@@ -23,6 +23,7 @@ export default function Navbar() {
         setIsDropdownOpen(false);
     }
 
+
     return (
         <>
             <button className="mr-auto md:hidden" onClick={() => setIsNavbarOpen(true)}>
@@ -39,10 +40,10 @@ export default function Navbar() {
                     <div className='w-full text-lg opacity-80'>Меню профиля</div>
                 </div>
 
-                {authState == AuthState.AUTHORIZED ? <>
+                {authState == AuthState.AUTHORIZED && user ? <>
                     <div className='p-2 font-mono flex flex-col gap-y-1 border rounded-lg border-gray-300 w-[90%] mx-auto'>
-                        <div>{user?.email}</div>
-                        <RoleBadge roles={user?.roles!}></RoleBadge>
+                        <div>{user.email}</div>
+                        <RoleBadge roles={user.roles}></RoleBadge>
                         <button onClick={() => {
                             navigate('/auth/login'); setTimeout(() => logout(), 100);
                         }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">
@@ -54,12 +55,12 @@ export default function Navbar() {
                         <li className='p-2'>
                             <NavLink to='/account' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Аккаунт</NavLink>
                         </li>
-                        {user?.roles.includes('company') && <>
+                        {user.roles.includes('company') && <>
                             <li className='p-2'>
                                 <NavLink to='/map' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Карта</NavLink>
                             </li>
                         </>}
-                        {user?.roles.includes('client') &&
+                        {user.roles.includes('client') &&
                             <>
                                 <li className='p-2'>
                                     <NavLink to='/cart' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Корзина</NavLink>

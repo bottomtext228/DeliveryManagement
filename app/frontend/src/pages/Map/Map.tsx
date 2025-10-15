@@ -40,7 +40,7 @@ export default function Map() {
             setSelectedStockTowns(stocksResult.data.map((e) => towns.find((t: Town) => t.id == e.townId)!));
         }
 
-    }, [townsResult.status, pickUpPointsResult.status, stocksResult.status]);
+    }, [townsResult.status, pickUpPointsResult.status, stocksResult.status, townsResult.data, pickUpPointsResult.data, stocksResult.data]);
 
     const setStocks = useSetStocks();
     const setPickUpPoints = useSetPickUpPoints();

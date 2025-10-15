@@ -37,7 +37,7 @@ export function ScrollAnimation({ children, visibleClasses, hiddenClasses, durat
                 observer.unobserve(element);
             }
         };
-    }, []);
+    }, [threshold]);
 
 
     return Children.map(children, (child) => {

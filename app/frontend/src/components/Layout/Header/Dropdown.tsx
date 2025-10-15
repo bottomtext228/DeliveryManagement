@@ -38,7 +38,7 @@ export default function Dropdown() {
                     {user ?
                         <div>
                             <div className="w-full px-4 py-1 text-left text-black opacity-85">
-                                <div className='font-semibold text-ellipsis whitespace-pre-wrap overflow-hidden'>{user?.email}</div>
+                                <div className='font-semibold text-ellipsis whitespace-pre-wrap overflow-hidden'>{user.email}</div>
                                 <RoleBadge roles={user.roles}></RoleBadge>
                             </div>
                         </div> :

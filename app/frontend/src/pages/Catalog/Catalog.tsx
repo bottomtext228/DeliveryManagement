@@ -48,7 +48,7 @@ export default function CatalogAll() {
         observer.observe(loadMoreRef.current);
 
         return () => observer.disconnect();
-    }, [hasNextPage, isFetchingNextPage]);
+    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
 
     if (isError) {
