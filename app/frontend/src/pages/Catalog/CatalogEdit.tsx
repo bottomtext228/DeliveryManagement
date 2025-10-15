@@ -104,7 +104,7 @@ export default function CatalogEdit() {
                             <input className="w-0 h-0 opacity-0 overflow-hidden absolute -z-[1]" id="image" {...register("image")} type="file" accept=".jpg, .jpeg, .png" onChange={
                                 (e: React.ChangeEvent<HTMLInputElement>) => {
                                     const file = e.target.files?.item(0);
-                                    if (file !== null && file !== undefined) {
+                                    if (file) {
                                         const image = (document.querySelector('#image-preview')! as HTMLImageElement);
                                         image.src = URL.createObjectURL(file);
                                         (document.querySelector('#image-label')! as HTMLLabelElement).innerText = file.name;
@@ -118,7 +118,7 @@ export default function CatalogEdit() {
                     <div className="mt-8 flex-1/3">
                         <div className="mb-4">
                             <div>
-                                <input id="name" className="p-0.5 w-full font-bold border border-gray-200 rounded-md outline-none md:w-54" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />
+                                <input id="name" className="px-2 py-0.5 w-full font-bold border border-gray-200 rounded-md outline-none md:w-54" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />
                                 {errors.name && <div className="text-red-500">{errors.name.message}</div>}
                             </div>
                         </div>
@@ -132,7 +132,7 @@ export default function CatalogEdit() {
                                 <div className="flex gap-16">
                                     <div className="w-18">Вес</div>
                                     <div className="font-bold">
-                                        <input id="weight" type="number" min={0} max={1000} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
+                                        <input id="weight" type="number" min={0} max={1000} step={0.0001} className="w-22 px-2 py-0.5 mr-1 border border-gray-200 rounded-md outline-none"
                                             {...register('weight', { required: 'Вес не может быть пустым!' })}
                                         />
                                         <span>кг</span>
@@ -143,7 +143,7 @@ export default function CatalogEdit() {
                                 <div className="flex gap-16">
                                     <div className="w-18">Длина</div>
                                     <div className="font-bold">
-                                        <input id="sizeX" type="number" min={0} max={10} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
+                                        <input id="sizeX" type="number" min={0} max={10} step={0.0001} className="w-22 px-2 py-0.5 mr-1 border border-gray-200 rounded-md outline-none"
                                             {...register('sizeX', { required: 'Ширина не может быть пустой!' })} placeholder=" "
                                         />
                                         <span>м</span>
@@ -153,7 +153,7 @@ export default function CatalogEdit() {
                                 <div className="flex gap-16">
                                     <div className="w-18">Ширина</div>
                                     <div className="font-bold">
-                                        <input id="sizeY" type="number" min={0} max={10} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
+                                        <input id="sizeY" type="number" min={0} max={10} step={0.0001} className="w-22 px-2 py-0.5 mr-1 border border-gray-200 rounded-md outline-none"
                                             {...register('sizeY', { required: 'Ширина не может быть пустой!' })} placeholder=" "
                                         />
                                         <span>м</span>
@@ -165,7 +165,7 @@ export default function CatalogEdit() {
                                 <div className="flex gap-16">
                                     <div className="w-18">Высота</div>
                                     <div className="font-bold">
-                                        <input id="sizeZ" type="number" min={0} max={10} step={0.0001} className="w-16 p-0.5 mr-1 border border-gray-200 rounded-md outline-none"
+                                        <input id="sizeZ" type="number" min={0} max={10} step={0.0001} className="w-22 px-2 py-0.5 mr-1 border border-gray-200 rounded-md outline-none"
                                             {...register('sizeZ', { required: 'Высота не может быть пустой!' })} placeholder=" "
                                         />
                                         <span>м</span>
@@ -177,17 +177,17 @@ export default function CatalogEdit() {
                         <div className="mt-12">
                             <h3 className="font-bold">Описание:</h3>
                             <div>
-                                <textarea id="description" className="w-full border border-gray-200 rounded-md outline-none h-38" {...register('description', { required: 'Описание не может быть пустым!' })} placeholder=" " />
+                                <textarea id="description" className="w-full px-2 py-0.5 border border-gray-200 rounded-md outline-none h-38" {...register('description', { required: 'Описание не может быть пустым!' })} placeholder=" " />
                             </div>
                         </div>
                     </div>
                     <div className="mt-6 flex-1/3">
                         <div className="flex flex-col h-48 border-2 max-w-72 border-amber-500 rounded-2xl">
                             <div className="p-6 font-semibold ">
-                                <input id="price" type="number" min={0} max={1000000} className="border p-0.5 border-gray-200 rounded-md outline-none w-18"
+                                <input id="price" type="number" min={0} max={1000000} className="border px-2 py-0.5 border-gray-200 rounded-md outline-none w-28"
                                     {...register('price', { required: 'Стоимость не может быть пустой!' })} placeholder=" "
                                 />
-                                <span>₽</span>
+                                <span className="ml-1">₽</span>
                                 {errors.price && <div className="text-red-500">{errors.price.message}</div>} </div>
                             <div className="mt-auto mb-2 mx-auto w-[75%] flex flex-col gap-2">
                                 <button type="submit" className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">Сохранить</button>
