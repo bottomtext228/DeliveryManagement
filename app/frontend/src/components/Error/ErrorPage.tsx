@@ -1,4 +1,3 @@
-import { Link, useNavigate } from "react-router-dom";
 import WarningCard from "../Common/WarningCard";
 
 interface Props {

@@ -17,11 +17,11 @@ let isRefreshing = false;
 // Queue of failed requests waiting for a token refresh to complete
 let failedQueue: Array<{
     resolve: () => void;
-    reject: (error: any) => void;
+    reject: (error: unknown) => void;
 }> = [];
 
 // Processes the queue of failed requests once the token is refreshed or refresh fails
-const processQueue = (error: any) => {
+const processQueue = (error: unknown) => {
     failedQueue.forEach(prom => {
         if (!error) {
             // Retry the original request after successful token refresh
