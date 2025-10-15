@@ -10,7 +10,7 @@ import { getImageUrl } from '../../helpers/image.helper';
 import ErrorPage from '../../components/Error/ErrorPage';
 import ServerError from '../../components/Error/ServerError';
 import { useCreateOrder } from '../../hooks/mutations/useCreateOrder';
-import { useProductsDetail } from '../../hooks/queries/useProductDetail';
+import { useProductsDetail } from '../../hooks/queries/useProductsDetail';
 import { useCompanyPickUpPoints } from '../../hooks/queries/useCompanyPickUpPoints';
 
 interface FormValues {
@@ -57,7 +57,6 @@ export default function OrderAdd() {
         return productsQuantities[id] ?? 1;
     };
 
-
     const incrementQuantity = (id: number) => {
         updateQuantity(id, getProductQuantity(id) + 1);
     };
@@ -94,6 +93,7 @@ export default function OrderAdd() {
 
             setProductsQuantities(initialQuantities);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isPending]);
 
     if (!hasValidIds) return <ErrorPage message='Invalid IDs in URL.' />
@@ -101,7 +101,7 @@ export default function OrderAdd() {
     if (!validOrder) return <ErrorPage message='Products must be from the same company and there must be no duplicates.' />;
 
     if (isPending) return <Loading />;
-    
+
     if (isError) {
         const error = productQueries.find(e => e.error)?.error || pickUpPointsQuery.error;
         return <ErrorPage message={error?.message} />;
@@ -132,8 +132,10 @@ export default function OrderAdd() {
     }
 
     const handleChange: React.ChangeEventHandler<HTMLFormElement> = async () => {
-        const pickUpPointTownId = parseInt(pickUpPointTownIdRef.current?.value!);
-        const routeChoice = routeChoiceRef.current?.value as RouteChoice ?? RouteChoice.Fastest;
+        if (!pickUpPointTownIdRef.current || !routeChoiceRef.current) return;
+
+        const pickUpPointTownId = parseInt(pickUpPointTownIdRef.current.value);
+        const routeChoice = routeChoiceRef.current.value as RouteChoice ?? RouteChoice.Fastest;
 
         if (pickUpPointTownId == 0) return; // default value;
 

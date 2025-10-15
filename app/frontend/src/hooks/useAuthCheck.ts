@@ -22,7 +22,7 @@ export const useAuthCheck = () => {
                     const response = await AuthService.getMe();
                     login(response.data as IUser);
                     return;
-                } catch (error: any) {
+                } catch (error) {
                     console.error(error);
                 }
             }
@@ -31,5 +31,6 @@ export const useAuthCheck = () => {
         };
 
         checkAuth();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 };

@@ -22,6 +22,7 @@ export default function Navbar() {
     function handleDropdownClick() {
         setIsDropdownOpen(false);
     }
+
     return (
         <>
             <button className="mr-auto md:hidden" onClick={() => setIsNavbarOpen(true)}>

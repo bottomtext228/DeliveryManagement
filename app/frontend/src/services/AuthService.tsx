@@ -12,7 +12,7 @@ export const AuthService = {
     async getMe(): Promise<AxiosResponse<IUser | undefined>> {
         return instance.get('/api/account/me');
     },
-    async checkEmail(email: string): Promise<AxiosResponse<CheckEmailResponse, any>> {
+    async checkEmail(email: string): Promise<AxiosResponse<CheckEmailResponse>> {
         return instance.get<CheckEmailResponse>('/api/account/check_credentials', {
             params: {
                 email: email

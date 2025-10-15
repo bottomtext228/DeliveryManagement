@@ -1,9 +1,8 @@
-import { useQuery } from "@tanstack/react-query"
 import { CartItem, IProduct } from "../../types/types"
 import CartItemCard from "./CartItemCard"
-import { getCompany } from "../../api/company/getCompany"
 import LoadingSpinner from "../Loading/LoadingSpinner"
 import { Link } from "react-router-dom"
+import { useCompany } from "../../hooks/queries/useCompany"
 
 interface Props {
     companyId: number,
@@ -15,16 +14,11 @@ interface Props {
 }
 
 export default function CartCompanyCard({ companyId, products, cartList, handleDeleteClick, handleIncreaseQuantityClick, handleDecreaseQuantityClick }: Props) {
-    const { isPending, isError, error, data } = useQuery({
-        queryKey: ['company', companyId],
-        queryFn: () => getCompany(companyId),
-        refetchOnWindowFocus: false
-    })
+    const { isPending, isError, error, data: company } = useCompany(companyId);
 
     if (isPending) return <LoadingSpinner></LoadingSpinner>
-    if (isError) return <span>Error: {error.name}</span>
-
-    const company = data.data;
+    
+    if (isError) return <span>Error: {error.name}</span> // TODO: refactor error handling
 
     const calculateFinalPrice = () => {
         let price = 0;

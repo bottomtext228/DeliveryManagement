@@ -19,7 +19,7 @@ const useUserStore = create<UserState>((set) => ({
         try {
             await instance.post('/api/account/logout');
         }
-        catch (error: any) {
+        catch (error) {
             console.error(error);
         } finally {
             set({ user: null });

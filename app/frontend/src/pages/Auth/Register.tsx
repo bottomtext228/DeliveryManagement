@@ -58,7 +58,7 @@ export default function Register() {
             login(loginData.user);
             navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
         }
-        catch (error: any) {
+        catch (error) {
             setServerError(error);
         }
 
@@ -77,7 +77,7 @@ export default function Register() {
                 } else {
                     setServerError(response.data.message);
                 }
-            } catch (error: any) {
+            } catch (error) {
                 console.error(error);
             }
         } else {

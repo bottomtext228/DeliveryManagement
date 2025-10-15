@@ -15,6 +15,8 @@ export function ScrollAnimation({ children, visibleClasses, hiddenClasses, durat
 
 
     useEffect(() => {
+        const element = elementRef.current;
+
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
@@ -26,13 +28,13 @@ export function ScrollAnimation({ children, visibleClasses, hiddenClasses, durat
             }
         );
 
-        if (elementRef.current) {
-            observer.observe(elementRef.current);
+        if (element) {
+            observer.observe(element);
         }
 
         return () => {
-            if (elementRef.current) {
-                observer.unobserve(elementRef.current);
+            if (element) {
+                observer.unobserve(element);
             }
         };
     }, []);
@@ -47,5 +49,5 @@ export function ScrollAnimation({ children, visibleClasses, hiddenClasses, durat
                 }, className: child.props.className + `  transition-all motion-reduce:transition-none ${isVisible ? visibleClasses : hiddenClasses}`
             })
         }
-    }); 
+    });
 }

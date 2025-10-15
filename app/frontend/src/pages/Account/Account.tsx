@@ -4,7 +4,6 @@ import useUserStore from "../../store/user/userStore";
 import RoleBadge from "../../components/Role/RoleBadge";
 import Loading from "../../components/Loading/Loading";
 import ErrorPage from "../../components/Error/ErrorPage";
-import useCartStore from "../../store/user/cartStore";
 import CompanyInfo from "../../components/Account/CompanyInfo";
 import { ClientProfileDto, CompanyProfileDto } from "../../types/types";
 import CompanyProfileCard from "../../components/Account/CompanyProfileCard";
@@ -15,7 +14,6 @@ export default function Account() {
     const user = useUser();
     const logout = useUserStore(state => state.logout);
     const navigate = useNavigate();
-    const cartList = useCartStore(state => state.list);
 
     const { data, isLoading, isError, error } = useProfile();
 

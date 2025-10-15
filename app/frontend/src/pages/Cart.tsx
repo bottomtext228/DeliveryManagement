@@ -1,10 +1,9 @@
 import useCartStore from "../store/user/cartStore";
 import Loading from "../components/Loading/Loading";
-import { groupBy } from "../helpers/polyfill.helper";
-import { IProduct, IProductDetail } from "../types/types";
+import { IProductDetail } from "../types/types";
 import CartCompanyCard from "../components/Cart/CartCompanyCard";
 import EmptyStateCard from "../components/Common/EmptyStateCard";
-import { useProductsDetail } from "../hooks/queries/useProductDetail";
+import { useProductsDetail } from "../hooks/queries/useProductsDetail";
 import ErrorPage from "../components/Error/ErrorPage";
 
 export default function Cart() {
@@ -41,7 +40,7 @@ export default function Cart() {
         if (cartItem && cartItem.quantity > 1) removeFromCart(productId, true);
     }
 
-    const groupedByCompanies: IProduct[][] = groupBy(products, ({ companyId }) => [companyId]);
+    const groupedByCompanies = Object.groupBy(products, ({ companyId }) => companyId);
 
     return (
         <section className="my-4 md:my-16">
@@ -58,7 +57,7 @@ export default function Cart() {
                                 <CartCompanyCard
                                     key={companyId}
                                     companyId={Number(companyId)}
-                                    products={products}
+                                    products={products!}
                                     cartList={cartList}
                                     handleDeleteClick={handleDeleteClick}
                                     handleIncreaseQuantityClick={handleIncreaseQuantityClick}

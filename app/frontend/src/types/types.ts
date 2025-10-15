@@ -146,10 +146,6 @@ export interface Town {
     position: Vector2D
 }
 
-export interface Road {
-
-}
-
 export enum MapModes {
     SetStocks,
     SetPickUpPoints
