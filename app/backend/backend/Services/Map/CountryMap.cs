@@ -3,7 +3,7 @@ namespace backend.Services
 {
     public class CountryMap
     {
-        public List<Town> Towns = new();
+        public List<Town> Towns = [];
 
         public Graph Graph { get; set; }
         public CountryMap()
@@ -22,14 +22,13 @@ namespace backend.Services
                 new Town(8, 78, 347, "Ростов-на-Дону"),
                 new Town(9, 205, 379, "Волгоград"),
                 new Town(10, 415, 118, "Ярославль"),
-                new Town (11, 332, 276, "Новгород"),
+                new Town(11, 332, 276, "Новгород"),
                 new Town(12, 278, 353, "Саратов"),
                 new Town(13, 460, 54, "Вологда"),
                 new Town(14, 464, 159, "Иваново"),
                 new Town(15, 426, 213, "Владимир"),
                 new Town(16, 437, 315, "Казань"),
                 new Town(17, 525, 338, "Ижевск"),
-                //new Town(18, 527, 418, "Ярославль"),
        };
             Towns.AddRange(towns);
 
