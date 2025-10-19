@@ -132,10 +132,10 @@ export default function OrderAdd() {
     }
 
     const handleChange: React.ChangeEventHandler<HTMLFormElement> = async () => {
-        if (!pickUpPointTownIdRef.current || !routeChoiceRef.current) return;
+        if (!pickUpPointTownIdRef.current) return;
 
         const pickUpPointTownId = parseInt(pickUpPointTownIdRef.current.value);
-        const routeChoice = routeChoiceRef.current.value as RouteChoice ?? RouteChoice.Fastest;
+        const routeChoice = routeChoiceRef?.current?.value as RouteChoice ?? RouteChoice.Fastest;
 
         if (pickUpPointTownId == 0) return; // default value;
 

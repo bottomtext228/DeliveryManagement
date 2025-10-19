@@ -7,7 +7,7 @@ import { useNumericParam } from "../../hooks/useNumericParam";
 import { isAxiosError } from "axios";
 import ErrorPage from "../../components/Error/ErrorPage";
 import NotFound from "../../components/NotFound/NotFound";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ServerError from "../../components/Error/ServerError";
 import GoBackArrow from "../../components/Common/GoBackArrow";
 import { useProductDetail } from "../../hooks/queries/useProductDetail";
@@ -26,7 +26,11 @@ export default function CatalogDetail() {
     const deleteProduct = useDeleteProduct();
 
     const { isPending, isError, data, error } = useProductDetail(id);
-
+    useEffect(() => {
+        addToCart(255);
+        addToCart(444);
+        addToCart(111);
+    }, []);
     if (id === null) {
         return <NotFound />
     }

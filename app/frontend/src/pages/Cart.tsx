@@ -4,7 +4,8 @@ import { IProductDetail } from "../types/types";
 import CartCompanyCard from "../components/Cart/CartCompanyCard";
 import EmptyStateCard from "../components/Common/EmptyStateCard";
 import { useProductsDetail } from "../hooks/queries/useProductsDetail";
-import ErrorPage from "../components/Error/ErrorPage";
+import { isAxiosError } from "axios";
+import { useEffect } from "react";
 
 export default function Cart() {
     const addToCart = useCartStore(store => store.add);
@@ -15,14 +16,26 @@ export default function Cart() {
     const productQueries = useProductsDetail(cartList.map(item => item.productId));
 
     const isPending = productQueries.some(e => e.isPending);
-    const isError = productQueries.some(e => e.isError);
+
+    // remove not found (404) products from the cart
+    useEffect(() => {
+        const failedQueries = productQueries.filter(e => e.isError);
+        failedQueries.forEach((query) => {
+            const index = productQueries.indexOf(query);
+            const error = query.error;
+
+            if (isAxiosError(error)) {
+                if (error.response?.status == 404) {
+                    const productId = cartList[index]?.productId;
+                    if (productId) {
+                        removeFromCart(productId);
+                    }
+                }
+            }
+        });
+    }, [cartList, productQueries, removeFromCart])
 
     if (isPending) return <Loading></Loading>
-
-    if (isError) {
-        const error = productQueries.find(e => e.error)?.error;
-        return <ErrorPage message={error?.message} />;
-    }
 
     const products = productQueries.map(e => e.data).filter((product): product is IProductDetail => !!product);
 

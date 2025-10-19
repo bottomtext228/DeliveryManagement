@@ -87,6 +87,9 @@ export default function CatalogAll() {
         setSortIsDescending(formSortIsDescending)
     }
 
+    const products = data?.pages.flatMap((page) => page.data.data) ?? [];
+    const isUser = user?.roles.includes('client') === true;
+
     return (<section className="my-4 md:my-16">
 
         <div className="max-w-[1440px] w-[90%] mx-auto">
@@ -122,7 +125,6 @@ export default function CatalogAll() {
                 <button onClick={handleOnApplyFilters} className="rounded-xl text-xl p-2 mt-2 bg-amber-500 hover:bg-amber-600 font-semibold w-full">Искать</button>
             </div>
 
-
             {user?.roles.includes('company') &&
                 <Link to='/catalog/add' className="mb-8 w-fit bg-amber-500 hover:bg-amber-600 flex justify-between gap-1.5 items-center rounded-xl text-white font-semibold p-2">
                     <div className="text-lg">Добавить</div>
@@ -130,25 +132,19 @@ export default function CatalogAll() {
                 </Link>
             }
 
-            {!isPending && (data?.pages[0]?.data.totalCount !== 0 ? data?.pages.map((page, index) => {
-                const isUser = user?.roles.includes('client') === true;
-                return (
-                    <div key={index} className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
-                        {page.data.data.map((product) => (
-                            <Product key={product.id} product={product} renderCart={isUser} />
-                        ))}
+            {!isPending && (products.length > 0 ?
+                (<div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
+                    {
+                        products.map(product => <Product product={product} key={product.id} renderCart={isUser} />)
+                    }
+                </div>) : <>
+                    <div className="flex flex-col items-start w-full gap-y-2">
+                        <h2 className="text-4xl font-semibold">Ничего не найдено...</h2>
+                        <div>Попробуйте изменить фильтры.</div>
+                        <small>&#40;А может быть товаров и вовсе нет&#41;</small>
                     </div>
-                )
+                </>)
             }
-            ) : <>
-                <div className="flex flex-col items-start w-full gap-y-2">
-                    <h2 className="text-4xl font-semibold">Ничего не найдено...</h2>
-                    <div>Попробуйте изменить фильтры.</div>
-                    <small>&#40;А может быть товаров и вовсе нет&#41;</small>
-                </div>
-            </>)
-            }
-
 
             <div ref={loadMoreRef} className="my-8">{isFetchingNextPage && <Loading />}</div>
         </div>
