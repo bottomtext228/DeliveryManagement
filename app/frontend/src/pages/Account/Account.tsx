@@ -9,6 +9,7 @@ import { ClientProfileDto, CompanyProfileDto } from "../../types/types";
 import CompanyProfileCard from "../../components/Account/CompanyProfileCard";
 import ClientProfileCard from "../../components/Account/ClientProfileCard";
 import { useProfile } from "../../hooks/queries/useProfile";
+import { NavCard } from "../../components/Common/NavCard";
 
 export default function Account() {
     const user = useUser();
@@ -69,28 +70,15 @@ export default function Account() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
                     {user.roles.includes('company') &&
                         <>
-                            <Link to='/catalog' className="flex flex-col h-40 transition-transform transform border border-gray-200 rounded-2xl hover:scale-102 group">
-                                <img className="w-20 h-20 m-4 mx-auto" src="/box.svg"></img>
-                                <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400">Товары</div>
-                            </Link>
-                            <Link to='/map' className="flex flex-col h-40 transition-transform transform border border-gray-200 rounded-2xl hover:scale-102 group">
-                                <img className="w-20 h-20 m-4 mx-auto" src="/location.svg"></img>
-                                <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400">Карта</div>
-                            </Link>
-
+                            <NavCard link="/catalog" image="/box.svg" label="Товары" />
+                            <NavCard link="/map" image="/location.svg" label="Карта" />
                         </>
                     }
 
                     {user.roles.includes('client') &&
                         <>
-                            <Link to='/orders' className="flex flex-col h-40 transition-transform transform border border-gray-200 rounded-2xl hover:scale-102 group">
-                                <img className="w-20 h-20 m-4 mx-auto" src="/box.svg"></img>
-                                <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400">Заказы</div>
-                            </Link>
-                            <Link to='/cart' className="flex flex-col h-40 transition-transform transform border border-gray-200 rounded-2xl hover:scale-102 group">
-                                <img className="w-20 h-20 m-4 mx-auto" src="/cart.svg"></img>
-                                <div className="m-4 mx-auto mt-auto text-2xl font-semibold group-hover:text-amber-400 ">Корзина</div>
-                            </Link>
+                            <NavCard link="/orders" image="/box.svg" label="Заказы" />
+                            <NavCard link="/map" image="/cart.svg" label="Корзина" />
                         </>
                     }
                 </div>
