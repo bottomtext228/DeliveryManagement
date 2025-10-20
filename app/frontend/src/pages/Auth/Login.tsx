@@ -8,6 +8,7 @@ import { ILoginResponse } from "../../types/types";
 import { useForm, SubmitHandler } from "react-hook-form";
 import ServerError from "../../components/Error/ServerError";
 import AlreadyLoggedIn from "./AlreadyLoggedIn";
+import { CloseButton } from "../../components/Common/CloseButton";
 
 interface FormValues {
     email: string
@@ -42,7 +43,7 @@ export default function Login() {
             const loginData = response.data as ILoginResponse;
             setTokenToLocalStorage(loginData.token);
             login(loginData.user);
-            navigate(location.state?.returnUrl ? location.state.returnUrl : '/');
+            navigate(location.state?.returnUrl ? location.state.returnUrl : '/', { replace: true });
         }
         catch (error) {
             setServerError(error);
@@ -67,7 +68,9 @@ export default function Login() {
             <div className="p-6 border border-gray-300 shadow-xl rounded-2xl h-fit">
                 <div className="flex items-center justify-between">
                     <h3 className="text-2xl font-bold text-neutral-800">Войти в Terrapin</h3>
-                    <Link className='w-4 h-4' to='/'><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></Link>
+                    <Link className='w-4 h-4' to='/'>
+                        <CloseButton />
+                    </Link>
                 </div>
                 <div>
                     <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>

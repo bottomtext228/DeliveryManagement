@@ -12,6 +12,7 @@ import ServerError from '../../components/Error/ServerError';
 import { useCreateOrder } from '../../hooks/mutations/useCreateOrder';
 import { useProductsDetail } from '../../hooks/queries/useProductsDetail';
 import { useCompanyPickUpPoints } from '../../hooks/queries/useCompanyPickUpPoints';
+import { CloseButton } from '../../components/Common/CloseButton';
 
 interface FormValues {
     productId: number,
@@ -93,7 +94,7 @@ export default function OrderAdd() {
 
             setProductsQuantities(initialQuantities);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isPending]);
 
     if (!hasValidIds) return <ErrorPage message='Invalid IDs in URL.' />
@@ -173,7 +174,9 @@ export default function OrderAdd() {
                     <form onSubmit={handleSubmit(onSubmit)} onChange={handleChange}>
                         <div className="flex items-center justify-between">
                             <h3 className="text-2xl font-bold text-neutral-800">Новый заказ</h3>
-                            <button type='button' className='w-4 h-4' onClick={() => navigate(-1)}><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></button>
+                            <button type='button' className='w-4 h-4' onClick={() => navigate(-1)}>
+                                <CloseButton />
+                            </button>
                         </div>
 
                         <div className='flex flex-col gap-5 my-4'>

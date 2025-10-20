@@ -5,6 +5,7 @@ import RoleBadge from '../../Role/RoleBadge';
 import useUserStore from '../../../store/user/userStore';
 import { useAuthState, AuthState } from '../../../hooks/useAuthState';
 import { useUser } from '../../../hooks/useUser';
+import { CloseButton } from '../../Common/CloseButton';
 
 
 export default function Navbar() {
@@ -33,9 +34,9 @@ export default function Navbar() {
                 <img className='w-12 h-12 opacity-80' src='/person.svg'></img>
             </button>
             <div className={`md:hidden bg-white p-0.5 h-full fixed top-0 w-full max-w-[15em] ${isDropdownOpen ? 'right-0' : '-right-full'} z-50 transition-all duration-300 ease-in-out`}>
-                <div className='relative flex h-8 text-center'>
-                    <button className="absolute left-0 top-[50%] -translate-y-[50%] flex transform items-center justify-center w-8 h-8 opacity-75 md:hidden z-10" onClick={() => setIsDropdownOpen(false)}>
-                        <img src='/cross.svg' className="w-4 h-4"></img>
+                <div className='relative flex h-8 text-center items-center'>
+                    <button className="float-left absolute transform items-center justify-center w-8 h-8 p-2 md:hidden z-10" onClick={() => setIsDropdownOpen(false)}>
+                        <CloseButton />
                     </button>
                     <div className='w-full text-lg opacity-80'>Меню профиля</div>
                 </div>
@@ -45,7 +46,7 @@ export default function Navbar() {
                         <div>{user.email}</div>
                         <RoleBadge roles={user.roles}></RoleBadge>
                         <button onClick={() => {
-                            navigate('/auth/login'); setTimeout(() => logout(), 100);
+                            setIsDropdownOpen(false); navigate('/auth/login'); setTimeout(() => logout(), 100);
                         }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">
                             Выйти
                         </button>
@@ -93,11 +94,11 @@ export default function Navbar() {
             <nav id='nav' className={`md:flex md:justify-around md:static  md:items-center md:bg-transparent bg-white p-0.5 md:w-8xl md:max-w-full md:h-24 h-full fixed top-0 w-full max-w-[15em] ${isNavbarOpen ? 'left-0' : '-left-full'} z-50 transition-all duration-300 ease-in-out`}>
                 <div className="md:flex md:justify-center md:items-center">
                     <Link className="hidden md:block" to='/'><img src="/logo.png" className="w-64"></img></Link>
-                    <div className='relative flex h-8 text-center'>
-                        <button className="absolute left-0 top-[50%] -translate-y-[50%] flex transform items-center justify-center w-8 h-8 opacity-75 z-10 md:hidden" onClick={() => setIsNavbarOpen(false)}>
-                            <img src='/cross.svg' className="w-4 h-4"></img>
+                    <div className='relative flex h-8 text-center items-center'>
+                        <button className="float-left absolute flex transform items-center justify-center w-8 h-8 p-2 z-10 md:hidden" onClick={() => setIsNavbarOpen(false)}>
+                            <CloseButton />
                         </button>
-                        <div className='w-full text-lg opacity-80 md:hidden'>Навигация</div>
+                        <div className='w-full text-lg opacity-80 mx-auto md:hidden'>Навигация</div>
                     </div>
                     <ul className="block mt-1.5 md:flex md:ml-2 md:mt-0 font-semibold">
                         <li className="flex items-center justify-center p-2 w-18">

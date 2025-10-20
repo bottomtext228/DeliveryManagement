@@ -8,6 +8,7 @@ import ErrorPage from "../../components/Error/ErrorPage";
 import WarningCard from "../../components/Common/WarningCard";
 import { useCreateProduct } from "../../hooks/mutations/useCreateProduct";
 import { useCanCompantCreateProduct } from "../../hooks/queries/useCanCompanyCreateProduct";
+import { CloseButton } from "../../components/Common/CloseButton";
 
 interface FormValues {
     name: string,
@@ -69,7 +70,9 @@ export default function CatalogAdd() {
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
                     <div className="flex items-center justify-between">
                         <h3 className="text-2xl font-bold text-neutral-800">Новый товар</h3>
-                        <Link className='w-4 h-4' to='/catalog'><img className='duration-150 opacity-50 transient-colors hover:opacity-70' src="/cross.svg"></img></Link>
+                        <Link className='w-4 h-4' to='/catalog'>
+                            <CloseButton />
+                        </Link>
                     </div>
                     <div className="relative mt-4">
                         <input id="name" autoComplete="on" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />

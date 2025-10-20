@@ -66,7 +66,7 @@ export default function CompanyInfo({ company }: Props) {
                     {errors.description && <span className="text-red-500 text-sm pt-1">{errors.description.message}</span>}
                 </div>
 
-                <button type="submit" className="mt-auto mx-auto w-full h-10 text-white text-lg hover:text-neutral-200 p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-500 hover:bg-amber-600">
+                <button type="submit" className="mt-auto mx-auto w-full h-10 text-white text-lg hover:text-neutral-200 active:text-neutral-300 p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-500 hover:bg-amber-600 active:bg-amber-700">
                     Сохранить
                 </button>
             </form>
