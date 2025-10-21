@@ -8,7 +8,7 @@ import { useUser } from '../../../hooks/useUser';
 import { CloseButton } from '../../Common/CloseButton';
 
 
-export default function Navbar() {
+export default function     Navbar() {
     const [isNavbarOpen, setIsNavbarOpen] = useState<boolean>(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const logout = useUserStore(state => state.logout);
@@ -93,7 +93,7 @@ export default function Navbar() {
 
             <nav id='nav' className={`md:flex md:justify-around md:static  md:items-center md:bg-transparent bg-white p-0.5 md:w-8xl md:max-w-full md:h-24 h-full fixed top-0 w-full max-w-[15em] ${isNavbarOpen ? 'left-0' : '-left-full'} z-50 transition-all duration-300 ease-in-out`}>
                 <div className="md:flex md:justify-center md:items-center">
-                    <Link className="hidden md:block" to='/'><img src="/logo.png" className="w-64"></img></Link>
+                    <Link className="hidden md:block" to='/'><img src="/logo.png" className="w-64 active:scale-99" draggable={false}></img></Link>
                     <div className='relative flex h-8 text-center items-center'>
                         <button className="float-left absolute flex transform items-center justify-center w-8 h-8 p-2 z-10 md:hidden" onClick={() => setIsNavbarOpen(false)}>
                             <CloseButton />
@@ -102,13 +102,13 @@ export default function Navbar() {
                     </div>
                     <ul className="block mt-1.5 md:flex md:ml-2 md:mt-0 font-semibold">
                         <li className="flex items-center justify-center p-2 w-18">
-                            <NavLink to='/' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleNavbarClick}>Главная</NavLink>
+                            <NavLink to='/' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400' : 'hover:text-orange-400 active:text-orange-500'} onClick={handleNavbarClick}>Главная</NavLink>
                         </li>
                         <li className="flex items-center justify-center p-2 w-18">
-                            <NavLink to='/catalog' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleNavbarClick}>Каталог</NavLink>
+                            <NavLink to='/catalog' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400' : 'hover:text-orange-400 active:text-orange-500'} onClick={handleNavbarClick}>Каталог</NavLink>
                         </li>
                         <li className="flex items-center justify-start p-2 w-18">
-                            <NavLink to='/about' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleNavbarClick}>О нас</NavLink>
+                            <NavLink to='/about' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400' : 'hover:text-orange-400 active:text-orange-500'} onClick={handleNavbarClick}>О нас</NavLink>
                         </li>
                     </ul>
                 </div>

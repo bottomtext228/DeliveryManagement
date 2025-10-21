@@ -1,11 +1,9 @@
-import { useNavigate } from "react-router-dom"
-
 export default function GoBackArrow() {
-    const navigate = useNavigate();
-
     return (
-        <button onClick={() => navigate(-1)} className="flex items-center justify-center w-20 p-2 mb-4 text-white rounded-lg bg-amber-500 hover:bg-amber-600">
-            <img src="/arrow-left.svg" className="w-8"></img>
-        </button>
+        <img
+            className="w-5 h-5 duration-150 opacity-50 transient-colors hover:opacity-70 active:opacity-80"
+            src="/arrow-left.svg"
+            draggable={false}>
+        </img>
     )
 }

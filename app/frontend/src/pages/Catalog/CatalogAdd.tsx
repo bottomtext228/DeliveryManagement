@@ -9,6 +9,8 @@ import WarningCard from "../../components/Common/WarningCard";
 import { useCreateProduct } from "../../hooks/mutations/useCreateProduct";
 import { useCanCompantCreateProduct } from "../../hooks/queries/useCanCompanyCreateProduct";
 import { CloseButton } from "../../components/Common/CloseButton";
+import InputField from "../../components/Common/Form/InputField";
+import TextAreaField from "../../components/Common/Form/TextareaField";
 
 interface FormValues {
     name: string,
@@ -22,7 +24,7 @@ interface FormValues {
 }
 export default function CatalogAdd() {
 
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+    const { register, handleSubmit, formState: { errors }, setValue, clearErrors } = useForm<FormValues>();
     const [serverError, setServerError] = useState<unknown>(null);
     const navigate = useNavigate();
 
@@ -74,63 +76,30 @@ export default function CatalogAdd() {
                             <CloseButton />
                         </Link>
                     </div>
-                    <div className="relative mt-4">
-                        <input id="name" autoComplete="on" className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />
-                        <label htmlFor="name" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
-                            Название
-                        </label>
-                    </div>
-                    {errors.name && <div className="text-red-500">{errors.name.message}</div>}
 
-                    <div className="relative mt-4">
-                        <textarea id="description" className="block w-full h-38 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('description', { required: 'Описание не может быть пустым!' })} placeholder=" " />
-                        <label htmlFor="description" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
-                            Описание
-                        </label>
-                    </div>
-                    {errors.description && <div className="text-red-500">{errors.description.message}</div>}
+                    <InputField id="name" label="Название" error={errors.name} autoComplete="on"
+                        {...register('name', { required: 'Название не может быть пустым!' })}
+                    />
+                    <TextAreaField id="description" label="Описание" error={errors.description}
+                        {...register('description', { required: 'Описание не может быть пустым!' })}
+                    />
+                    <InputField id="weight" label="Вес" error={errors.weight} type="number" min={0} max={10} step={0.0001}
+                        {...register('weight', { required: 'Вес не может быть пустым!' })}
+                    />
+                    <InputField id="price" label="Стоимость" error={errors.price} type="number" min={0} max={1000000}
+                        {...register('price', { required: 'Стоимость не может быть пустой!' })}
+                    />
+                    <InputField id="sizeX" label="Длина" error={errors.sizeX} type="number" min={0} max={10} step={0.0001}
+                        {...register('sizeX', { required: 'Длина не может быть пустой!' })}
+                    />
 
-                    <div className="relative mt-4">
-                        <input id="weight" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('weight', { required: 'Вес не может быть пустым!' })} placeholder=" " />
-                        <label htmlFor="weight" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
-                            Вес
-                        </label>
-                    </div>
-                    {errors.weight && <div className="text-red-500">{errors.weight.message}</div>}
+                    <InputField id="sizeY" label="Ширина" error={errors.sizeY} type="number" min={0} max={10} step={0.0001}
+                        {...register('sizeY', { required: 'Ширина не может быть пустой!' })}
+                    />
 
-                    <div className="relative mt-4">
-                        <input id="price" type="number" min={0} max={1000000} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('price', { required: 'Стоимость не может быть пустой!' })} placeholder=" " />
-                        <label htmlFor="price" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
-                            Стоимость
-                        </label>
-                    </div>
-                    {errors.price && <div className="text-red-500">{errors.price.message}</div>}
-
-                    <div className="relative mt-4">
-                        <input id="sizeX" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeX', { required: 'Длина не может быть пустой!' })} placeholder=" " />
-                        <label htmlFor="sizeX" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
-                            Длина
-                        </label>
-                    </div>
-                    {errors.sizeX && <div className="text-red-500">{errors.sizeX.message}</div>}
-
-                    <div className="relative mt-4">
-                        <input id="sizeY" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeY', { required: 'Ширина не может быть пустой!' })} placeholder=" " />
-                        <label htmlFor="sizeY" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
-                            Ширина
-                        </label>
-                    </div>
-                    {errors.sizeY && <div className="text-red-500">{errors.sizeY.message}</div>}
-
-
-                    <div className="relative mt-4">
-                        <input id="sizeZ" type="number" min={0} max={10} step={0.0001} className="block w-full h-14.5 outline-none border border-gray-300 focus:outline-none focus:ring-4 focus:border-blue-400 duration-150 focus:ring-blue-200 rounded-lg p-3 pt-6.5 pb-2.5 peer" {...register('sizeZ', { required: 'Высота не может быть пустой!' })} placeholder=" " />
-                        <label htmlFor="sizeZ" className="absolute pointer-events-none text-md text-black duration-100 peer-placeholder-shown:opacity-100 peer-focus:opacity-70 opacity-70 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] start-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
-                            Высота
-                        </label>
-                    </div>
-                    {errors.sizeZ && <div className="text-red-500">{errors.sizeZ.message}</div>}
-
+                    <InputField id="sizeZ" label="Высота" error={errors.sizeZ} type="number" min={0} max={10} step={0.0001}
+                        {...register('sizeZ', { required: 'Высота не может быть пустой!' })}
+                    />
 
                     <div className="w-full mt-4">
                         <label htmlFor="image" className="flex w-full h-12 my-4 border border-gray-300 rounded-lg">
@@ -138,13 +107,15 @@ export default function CatalogAdd() {
                             <div className="flex items-center justify-center border-l border-gray-300 flex-1/5"><img src="/upload-file.svg" className="w-12 h-12"></img></div>
                         </label>
                         <input className="w-0 h-0 opacity-0 overflow-hidden absolute -z-[1]" id="image" {...register("image", { required: 'Изображение обязательно!' })} type="file" accept=".jpg, .jpeg, .png" onChange={
-                            (e: React.ChangeEvent<HTMLInputElement>) => {
+                            (e: React.ChangeEvent<HTMLInputElement>) => { // TODO: abstract file inputs and fix errors
                                 const file = e.target.files?.item(0);
                                 if (file !== null && file !== undefined) {
                                     const image = (document.querySelector('#image-preview')! as HTMLImageElement);
                                     image.src = URL.createObjectURL(file);
                                     image.classList.add('border', 'border-gray-300');
                                     (document.querySelector('#image-label')! as HTMLLabelElement).innerText = file.name;
+                                    setValue("image", e.target.files!);
+                                    clearErrors("image");
                                 }
                             }
                         }></input>

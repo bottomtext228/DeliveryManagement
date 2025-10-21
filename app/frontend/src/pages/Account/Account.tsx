@@ -78,7 +78,7 @@ export default function Account() {
                     {user.roles.includes('client') &&
                         <>
                             <NavCard link="/orders" image="/box.svg" label="Заказы" />
-                            <NavCard link="/map" image="/cart.svg" label="Корзина" />
+                            <NavCard link="/cart" image="/cart.svg" label="Корзина" />
                         </>
                     }
                 </div>

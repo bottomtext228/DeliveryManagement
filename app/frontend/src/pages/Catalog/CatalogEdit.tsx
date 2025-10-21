@@ -9,7 +9,7 @@ import ErrorPage from "../../components/Error/ErrorPage";
 import { getImageUrl } from "../../helpers/image.helper";
 import { useNumericParam } from "../../hooks/useNumericParam";
 import { isAxiosError } from "axios";
-import GoBackArrow from "../../components/Common/GoBackArrow";
+import GoBackButton from "../../components/Common/GoBackButton";
 import { useProductDetail } from "../../hooks/queries/useProductDetail";
 import { useEditProduct } from "../../hooks/mutations/useEditProduct";
 
@@ -91,7 +91,7 @@ export default function CatalogEdit() {
 
         <>
             <div className="max-w-[1440px] w-[90%] mx-auto my-4">
-                <GoBackArrow></GoBackArrow>
+                <GoBackButton></GoBackButton>
                 {serverError !== null && <ServerError error={serverError} />}
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">
@@ -118,7 +118,7 @@ export default function CatalogEdit() {
                     <div className="mt-8 flex-1/3">
                         <div className="mb-4">
                             <div>
-                                <input id="name" className="px-2 py-0.5 w-full font-bold border border-gray-200 rounded-md outline-none md:w-54" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " />
+                                <input id="name" className="px-2 py-0.5 w-full font-bold border border-gray-200 rounded-md outline-none md:w-54" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " autoComplete="on" />
                                 {errors.name && <div className="text-red-500">{errors.name.message}</div>}
                             </div>
                         </div>

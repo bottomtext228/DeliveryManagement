@@ -6,6 +6,7 @@ import ErrorPage from "../../components/Error/ErrorPage";
 import { useEffect, useRef, useState } from "react";
 import { ProductSortBy } from "../../types/types";
 import { useProducts } from "../../hooks/queries/useProducts";
+import Button from "../../components/Common/Button";
 
 export default function CatalogAll() {
     const user = useUser();
@@ -122,7 +123,9 @@ export default function CatalogAll() {
                     </select>
                 </div>
 
-                <button onClick={handleOnApplyFilters} className="rounded-xl text-xl p-2 mt-2 bg-amber-500 hover:bg-amber-600 font-semibold w-full">Искать</button>
+                <div className="mt-2" onClick={handleOnApplyFilters}>
+                    <Button label="Искать"/>
+                </div>
             </div>
 
             {user?.roles.includes('company') &&

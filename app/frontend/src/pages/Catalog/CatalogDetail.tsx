@@ -9,7 +9,7 @@ import ErrorPage from "../../components/Error/ErrorPage";
 import NotFound from "../../components/NotFound/NotFound";
 import { useEffect, useState } from "react";
 import ServerError from "../../components/Error/ServerError";
-import GoBackArrow from "../../components/Common/GoBackArrow";
+import GoBackButton from "../../components/Common/GoBackButton";
 import { useProductDetail } from "../../hooks/queries/useProductDetail";
 import { useDeleteProduct } from "../../hooks/mutations/useDeleteProduct";
 
@@ -69,7 +69,7 @@ export default function CatalogDetail() {
 
     return (
         <div className="max-w-[1440px] w-[90%] mx-auto my-4">
-            <GoBackArrow />
+            <GoBackButton />
             {serverError !== null && <ServerError error={serverError} />}
             <div className="flex flex-col md:flex-row gap-x-8">
                 <ProductDetail product={product}></ProductDetail>

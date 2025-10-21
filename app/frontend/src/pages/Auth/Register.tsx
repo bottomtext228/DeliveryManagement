@@ -5,10 +5,11 @@ import { setTokenToLocalStorage } from "../../helpers/localstorage.helper";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthState, useAuthState } from "../../hooks/useAuthState";
 import useUserStore from "../../store/user/userStore";
-import RegisterFormGeneral from "../../components/Register/RegisterFormGeneral";
-import RegisterFormCompany from "../../components/Register/RegisterFormCompany";
+
 import ServerError from "../../components/Error/ServerError";
 import AlreadyLoggedIn from "./AlreadyLoggedIn";
+import RegisterFormCompany from "../../components/Auth/RegisterFormCompany";
+import RegisterFormGeneral from "../../components/Auth/RegisterFormGeneral";
 
 interface FormValues {
     email: string
