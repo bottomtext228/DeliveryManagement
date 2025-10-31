@@ -12,9 +12,9 @@ export default function ProductDetail({ product }: Props) {
                 <img className="border border-gray-200 rounded-xl " src={getImageUrl(product.image)}></img>
             </div>
             <div className="mt-8 flex-1/3">
-                <div className="mb-4">
-                    <p className="font-bold">{product.name}</p>
-
+                <div className="mb-4 max-w-md max-h-30">
+                    <p className="font-semibold overflow-hidden text-ellipsis">{product.name}</p>
+                    <span className="text-neutral-600 inline-block overflow-hidden text-ellipsis whitespace-nowrap">{product.companyName}</span>
                 </div>
                 <div>
                     <table className="font-bold text-left">

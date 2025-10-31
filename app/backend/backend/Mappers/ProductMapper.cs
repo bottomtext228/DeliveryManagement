@@ -5,9 +5,17 @@ namespace backend.Mappers
 {
     public static class ProductMapper
     {
+        // need to .Include() Company entity!
         public static ProductDto ToProductDto(this Product product)
         {
-            return new ProductDto { Id = product.Id, Name = product.Name, Price = product.Price, Image = product.Image };
+            return new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+                Image = product.Image,
+                CompanyName = product.Company.Name
+            };
         }
 
         // need to .Include() Company entity!

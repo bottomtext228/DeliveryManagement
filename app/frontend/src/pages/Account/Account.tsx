@@ -1,6 +1,4 @@
-import { useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
-import useUserStore from "../../store/user/userStore";
 import RoleBadge from "../../components/Role/RoleBadge";
 import Loading from "../../components/Loading/Loading";
 import ErrorPage from "../../components/Error/ErrorPage";
@@ -10,11 +8,10 @@ import CompanyProfileCard from "../../components/Account/CompanyProfileCard";
 import ClientProfileCard from "../../components/Account/ClientProfileCard";
 import { useProfile } from "../../hooks/queries/useProfile";
 import { NavCard } from "../../components/Common/NavCard";
+import LogoutButton from "../../components/Common/LogoutButton";
 
 export default function Account() {
     const user = useUser();
-    const logout = useUserStore(state => state.logout);
-    const navigate = useNavigate();
 
     const { data, isLoading, isError, error } = useProfile();
 
@@ -24,7 +21,6 @@ export default function Account() {
 
     if (!user) return <ErrorPage message="User object is empty" />;
 
-    // TODO: add more info to account page, maybe add a new endpoint for that info.
     return <>
         <div className="flex md:flex-row flex-col py-16 lg:gap-16 gap-8 max-w-[1440px] w-[90%] mx-auto justify-center">
             <div className="flex flex-col gap-8">
@@ -49,11 +45,7 @@ export default function Account() {
                                 {user.company.name}
                             </div>
                         }
-                        <button onClick={() => {
-                            navigate('/auth/login'); setTimeout(() => logout(), 100);
-                        }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">
-                            Выйти
-                        </button>
+                        <LogoutButton />
                     </div>
                 </div>
 

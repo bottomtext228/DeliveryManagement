@@ -5,7 +5,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
     id: string;
     label: string;
     type?: string;
-    error: FieldError | undefined;
+    error?: FieldError;
 }
 
 const InputField = forwardRef<HTMLInputElement, Props>(

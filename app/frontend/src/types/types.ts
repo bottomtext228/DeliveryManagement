@@ -55,7 +55,8 @@ export interface IProduct {
     id: number,
     name: string,
     price: number,
-    image: string
+    image: string,
+    companyName: string
 }
 
 export interface IVector {

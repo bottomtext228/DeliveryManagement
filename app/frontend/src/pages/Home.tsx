@@ -61,7 +61,7 @@ export default function Home() {
                                     </span>
                                 </div>
 
-                                <Link to='/auth/register' state={{ choice: 'customer' }} className="relative p-4 border-orange-500 font-bold text-center transition-all border-2 shadow-lg hover:scale-105 rounded-4xl bg-linear-to-r from-orange-200 to-orange-500 hover:from-orange-300 xl:w-72 md:w-48 w-72 md:text-sm xl:text-lg md:top-5 lg:left-15">стать покупателем</Link>
+                                <Link to='/auth/register' state={{ choice: 'customer' }} className="relative p-4 border-orange-500 font-bold text-center transition-all border-2 shadow-lg rounded-4xl bg-linear-to-r from-orange-200 to-orange-500 hover:from-orange-300 active:scale-98 xl:w-72 md:w-48 w-72 md:text-sm xl:text-lg md:top-5 lg:left-15">стать покупателем</Link>
                             </div>
                         </ScrollAnimation>
                         <ScrollAnimation duration={1000} delay={400} visibleClasses="opacity-100 translate-y-0" hiddenClasses="opacity-0 translate-y-[40%]">
@@ -90,7 +90,7 @@ export default function Home() {
                                         Мы предлагаем минимальный процент комиссии из всех маркетплейсов.
                                     </span>
                                 </div>
-                                <Link to='/auth/register' state={{ choice: 'company' }} className="border-2 border-neutral-500 relative p-4 font-bold text-center transition-all hover:scale-105 rounded-4xl bg-linear-to-r from-neutral-200 to-neutral-500 hover:from-neutral-300 xl:w-72 md:w-48 w-72 md:text-sm xl:text-lg md:top-5 lg:right-15">стать продавцом</Link>
+                                <Link to='/auth/register' state={{ choice: 'company' }} className="border-2 border-neutral-500 relative p-4 font-bold text-center transition-all rounded-4xl bg-linear-to-r from-neutral-200 to-neutral-500 hover:from-neutral-300 active:scale-98 xl:w-72 md:w-48 w-72 md:text-sm xl:text-lg md:top-5 lg:right-15">стать продавцом</Link>
                             </div>
                         </ScrollAnimation>
                     </div>

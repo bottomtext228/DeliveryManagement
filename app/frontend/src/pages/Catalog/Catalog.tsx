@@ -124,14 +124,17 @@ export default function CatalogAll() {
                 </div>
 
                 <div className="mt-2" onClick={handleOnApplyFilters}>
-                    <Button label="Искать"/>
+                    <Button label="Искать" />
                 </div>
             </div>
 
             {user?.roles.includes('company') &&
-                <Link to='/catalog/add' className="mb-8 w-fit bg-amber-500 hover:bg-amber-600 flex justify-between gap-1.5 items-center rounded-xl text-white font-semibold p-2">
+                <Link
+                    to='/catalog/add'
+                    className="mb-8 w-fit text-white hover:text-neutral-100 active:text-neutral-200 bg-amber-400 hover:bg-amber-500 active:bg-amber-600 flex justify-between gap-1.5 items-center rounded-xl font-semibold p-2"
+                >
                     <div className="text-lg">Добавить</div>
-                    <img className="w-4 h-4" src='/plus.svg'></img>
+                    <img className="w-4 h-4" src='/plus.svg' draggable={false}></img>
                 </Link>
             }
 

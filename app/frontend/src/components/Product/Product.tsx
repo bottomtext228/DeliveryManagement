@@ -10,14 +10,17 @@ interface Props {
 
 export default function Product({ product, renderCart }: Props) {
     return (
-        <article className="flex flex-col w-full h-full">
-            <Link to={`/catalog/${product.id}`} className="mx-auto flex-8/10">
-                <img className="object-contain rounded-xl" src={getImageUrl(product.image)}>
+        <article className="flex flex-col w-full h-full min-h-60 md:min-h-85 max-h-120 rounded-xl border border-gray-300 p-2">
+            <Link to={`/catalog/${product.id}`} className="mx-auto flex-8/10 h-10">
+                <img className="object-contain rounded-xl  max-h-full" src={getImageUrl(product.image)} alt={product.name}>
                 </img>
             </Link>
             <div className="pb-1 mt-2 ml-2 flex-1/12">
                 <p className="font-bold">{product.price} ₽</p>
-                <p className="overflow-hidden font-semibold whitespace-nowrap">{product.name}</p>
+                <div className="flex flex-col sm:flex-row overflow-hidden whitespace-nowrap">
+                    <p className="font-semibold">{product.name}</p>
+                    <span className="text-neutral-300 inline-block overflow-hidden text-ellipsis whitespace-nowrap"><span className="mx-1">/</span>{product.companyName}</span>
+                </div>
             </div>
             {renderCart &&
                 <CartSection productId={product.id}></CartSection>

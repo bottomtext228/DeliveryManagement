@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useUserStore from '../../../store/user/userStore';
 import { useUser } from '../../../hooks/useUser';
 import RoleBadge from '../../Role/RoleBadge';
+import DropdownRow from '../../Common/DropdownRow';
 
 export default function Dropdown() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -26,7 +27,7 @@ export default function Dropdown() {
     function handleClick() {
         setIsOpen(false);
     }
-    
+
     return (<>
         <div ref={dropdownRef} className='relative'>
             <button onClick={() => setIsOpen(!isOpen)} className={`w-20 rounded-lg px-3 py-1.5 border border-transparent hover:border-neutral-400  hover:bg-neutral-300 ${isOpen && 'bg-gray-300'} flex justify-center items-center mx-auto duration-300 transition-all`}>
@@ -42,25 +43,27 @@ export default function Dropdown() {
                                 <RoleBadge roles={user.roles}></RoleBadge>
                             </div>
                         </div> :
-                        <Link onClick={handleClick} to='/auth/login' className='block px-4 py-2 opacity-85 hover:bg-neutral-200'>
+                        <Link onClick={handleClick} to='/auth/login' className='block px-4 py-2 opacity-85 hover:bg-neutral-200 active:bg-neutral-300'>
                             Войти в аккаунт
                         </Link>
                     }
                     <div className='flex flex-col'>
-                        {user && <Link onClick={handleClick} to='/account' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Аккаунт</Link>}
-                        {user?.roles.includes('company') && <>
-                            <Link onClick={handleClick} to='/map' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Карта</Link>
-                        </>}
+                        {user && <DropdownRow label='Аккаунт' link='/account' onClick={handleClick} />}
+                        {user?.roles.includes('company') &&
+                            <>
+                                <DropdownRow label='Карта' link='/map' onClick={handleClick} />
+                            </>
+                        }
                         {user?.roles.includes('client') &&
                             <>
-                                <Link onClick={handleClick} to='/cart' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Корзина</Link>
-                                <Link onClick={handleClick} to='/orders' className="px-4 py-1 my-1 opacity-85 hover:bg-neutral-200">Заказы</Link>
+                                <DropdownRow label='Корзина' link='/cart' onClick={handleClick} />
+                                <DropdownRow label='Заказы' link='/orders' onClick={handleClick} />
                             </>
                         }
                     </div>
                     {user &&
                         <div>
-                            <button onClick={() => { setIsOpen(false); navigate('/auth/login'); setTimeout(() => logout(), 100); }} className="w-full px-4 py-1 my-1 text-left text-red-600 opacity-85 hover:bg-neutral-200" type="button">Выйти</button>
+                            <button onClick={() => { setIsOpen(false); navigate('/auth/login'); setTimeout(() => logout(), 100); }} className="w-full px-4 py-1 my-1 text-left text-red-600 opacity-85 hover:bg-neutral-200 active:bg-neutral-300" type="button">Выйти</button>
                         </div>
                     }
                 </div>

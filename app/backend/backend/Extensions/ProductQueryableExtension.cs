@@ -48,7 +48,8 @@ namespace backend.Extensions
             var products = await queryable
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
-                .Select(p => p.ToProductDto())
+                .Include(e => e.Company)
+                .Select(e => e.ToProductDto())
                 .ToListAsync(cancellationToken);
 
             var response = new PaginatedResponse<ProductDto>

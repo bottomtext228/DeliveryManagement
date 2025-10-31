@@ -12,6 +12,7 @@ import { isAxiosError } from "axios";
 import GoBackButton from "../../components/Common/GoBackButton";
 import { useProductDetail } from "../../hooks/queries/useProductDetail";
 import { useEditProduct } from "../../hooks/mutations/useEditProduct";
+import InputFile from "../../components/Common/Form/InputFile";
 
 
 interface FormValues {
@@ -27,7 +28,7 @@ interface FormValues {
 
 export default function CatalogEdit() {
     const id = useNumericParam();
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>();
+    const { register, handleSubmit, formState: { errors }, reset, clearErrors } = useForm<FormValues>();
     const navigate = useNavigate();
     const [serverError, setServerError] = useState<unknown>(null);
     const { isPending, isError, data: product, error } = useProductDetail(id);
@@ -95,24 +96,11 @@ export default function CatalogEdit() {
                 {serverError !== null && <ServerError error={serverError} />}
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">
-                        <img id="image-preview" className="border border-gray-200 rounded-xl" src={getImageUrl(product.image)}></img>
-                        <div className="w-full mt-4">
-                            <label htmlFor="image" className="flex w-full h-12 my-4 border border-gray-300 rounded-lg">
-                                <div id='image-label' className="flex items-center justify-start p-3 overflow-hidden flex-4/5 text-ellipsis whitespace-nowrap">Выберите файл...</div>
-                                <div className="flex items-center justify-center border-l border-gray-300 flex-1/5"><img src="/upload-file.svg" className="w-12 h-12"></img></div>
-                            </label>
-                            <input className="w-0 h-0 opacity-0 overflow-hidden absolute -z-[1]" id="image" {...register("image")} type="file" accept=".jpg, .jpeg, .png" onChange={
-                                (e: React.ChangeEvent<HTMLInputElement>) => {
-                                    const file = e.target.files?.item(0);
-                                    if (file) {
-                                        const image = (document.querySelector('#image-preview')! as HTMLImageElement);
-                                        image.src = URL.createObjectURL(file);
-                                        (document.querySelector('#image-label')! as HTMLLabelElement).innerText = file.name;
-                                    }
-                                }
-                            }></input>
-
-                        </div>
+                        <InputFile id="image" label="Изображение" error={errors.image}
+                            defaultSrc={getImageUrl(product.image)}
+                            {...register("image")}
+                            clearError={() => clearErrors("image")}
+                        />
                     </div>
 
                     <div className="mt-8 flex-1/3">

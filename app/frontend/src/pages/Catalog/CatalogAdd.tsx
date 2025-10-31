@@ -11,6 +11,8 @@ import { useCanCompantCreateProduct } from "../../hooks/queries/useCanCompanyCre
 import { CloseButton } from "../../components/Common/CloseButton";
 import InputField from "../../components/Common/Form/InputField";
 import TextAreaField from "../../components/Common/Form/TextareaField";
+import InputFile from "../../components/Common/Form/InputFile";
+import Button from "../../components/Common/Button";
 
 interface FormValues {
     name: string,
@@ -22,9 +24,10 @@ interface FormValues {
     weight: number,
     image: FileList
 }
+
 export default function CatalogAdd() {
 
-    const { register, handleSubmit, formState: { errors }, setValue, clearErrors } = useForm<FormValues>();
+    const { register, handleSubmit, formState: { errors }, clearErrors } = useForm<FormValues>();
     const [serverError, setServerError] = useState<unknown>(null);
     const navigate = useNavigate();
 
@@ -101,34 +104,14 @@ export default function CatalogAdd() {
                         {...register('sizeZ', { required: 'Высота не может быть пустой!' })}
                     />
 
-                    <div className="w-full mt-4">
-                        <label htmlFor="image" className="flex w-full h-12 my-4 border border-gray-300 rounded-lg">
-                            <div id='image-label' className="flex items-center justify-start p-3 overflow-hidden flex-4/5 text-ellipsis whitespace-nowrap">Выберите файл...</div>
-                            <div className="flex items-center justify-center border-l border-gray-300 flex-1/5"><img src="/upload-file.svg" className="w-12 h-12"></img></div>
-                        </label>
-                        <input className="w-0 h-0 opacity-0 overflow-hidden absolute -z-[1]" id="image" {...register("image", { required: 'Изображение обязательно!' })} type="file" accept=".jpg, .jpeg, .png" onChange={
-                            (e: React.ChangeEvent<HTMLInputElement>) => { // TODO: abstract file inputs and fix errors
-                                const file = e.target.files?.item(0);
-                                if (file !== null && file !== undefined) {
-                                    const image = (document.querySelector('#image-preview')! as HTMLImageElement);
-                                    image.src = URL.createObjectURL(file);
-                                    image.classList.add('border', 'border-gray-300');
-                                    (document.querySelector('#image-label')! as HTMLLabelElement).innerText = file.name;
-                                    setValue("image", e.target.files!);
-                                    clearErrors("image");
-                                }
-                            }
-                        }></input>
+                    <InputFile id="image" label="Изображение" error={errors.image}
+                        {...register("image", { required: 'Изображение обязательно!' })}
+                        clearError={() => clearErrors("image")}
+                    />
 
+                    <div className="mt-8 font-semibold">
+                        <Button label="Создать" rounded="lg"></Button>
                     </div>
-                    <div className="w-full h-full">
-                        <img id="image-preview" className="object-contain w-full h-full rounded-2xl"></img>
-                    </div>
-                    {errors.image && <div className="text-red-500">{errors.image.message}</div>}
-
-                    <button type="submit" className="w-full p-2 mt-4 text-xl font-semibold text-white rounded-lg cursor-pointer bg-amber-400 hover:bg-amber-500">
-                        Создать
-                    </button>
                 </form >
             </div>
         </div >

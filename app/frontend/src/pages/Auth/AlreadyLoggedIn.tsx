@@ -9,8 +9,18 @@ export default function AlreadyLoggedIn() {
                 Вы уже вошли в аккаунт.
             </div>
             <div className="flex gap-8">
-                <Link to='/' className="bg-amber-500  p-2 rounded-lg text-white font-semibold text-lg  hover:bg-amber-600 w-24 text-center">Главная</Link>
-                <button onClick={() => navigate(-1)} className="bg-neutral-500 p-2 rounded-lg text-white font-semibold text-lg hover:bg-neutral-600 w-24 text-center">Назад</button>
+                <Link
+                    to='/'
+                    className="text-white hover:text-neutral-100 active:text-neutral-200 bg-amber-400 hover:bg-amber-500 active:bg-amber-600  p-2 rounded-lg font-semibold text-lg  w-24 text-center"
+                >
+                    Главная
+                </Link>
+                <button
+                    onClick={() => navigate(-1)}
+                    className="text-white hover:text-neutral-100 active:text-neutral-200 bg-neutral-500 hover:bg-neutral-600 active:bg-neutral-700 p-2 rounded-lg  font-semibold text-lg  w-24 text-center"
+                >
+                    Назад
+                </button>
             </div>
         </div>
     )

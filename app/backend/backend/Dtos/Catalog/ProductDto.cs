@@ -6,5 +6,6 @@ namespace backend.Dtos.Catalog
         public string Name { get; set; } = string.Empty;
         public float Price { get; set; }
         public string Image { get; set; } = string.Empty;
+        public string CompanyName { get; set; } = string.Empty;
     }
 }

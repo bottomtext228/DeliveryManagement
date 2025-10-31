@@ -1,18 +1,18 @@
 import { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Dropdown from './Dropdown';
 import RoleBadge from '../../Role/RoleBadge';
-import useUserStore from '../../../store/user/userStore';
 import { useAuthState, AuthState } from '../../../hooks/useAuthState';
 import { useUser } from '../../../hooks/useUser';
 import { CloseButton } from '../../Common/CloseButton';
+import NavLinkItem from '../../Common/NavLinkItem';
+import LogoutButton from '../../Common/LogoutButton';
 
 
-export default function     Navbar() {
+export default function Navbar() {
     const [isNavbarOpen, setIsNavbarOpen] = useState<boolean>(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-    const logout = useUserStore(state => state.logout);
-    const navigate = useNavigate();
+
     const user = useUser();
     const authState = useAuthState();
 
@@ -23,7 +23,6 @@ export default function     Navbar() {
     function handleDropdownClick() {
         setIsDropdownOpen(false);
     }
-
 
     return (
         <>
@@ -44,51 +43,29 @@ export default function     Navbar() {
                 {authState == AuthState.AUTHORIZED && user ? <>
                     <div className='p-2 font-mono flex flex-col gap-y-1 border rounded-lg border-gray-300 w-[90%] mx-auto'>
                         <div>{user.email}</div>
-                        <RoleBadge roles={user.roles}></RoleBadge>
-                        <button onClick={() => {
-                            setIsDropdownOpen(false); navigate('/auth/login'); setTimeout(() => logout(), 100);
-                        }} className="p-2 mt-auto text-sm transition-colors duration-150 bg-white border rounded-lg w-18 text-rose-500 hover:text-white border-rose-500 hover:bg-red-600">
-                            Выйти
-                        </button>
+                        <RoleBadge roles={user.roles} />
+                        <LogoutButton onClick={() => setIsDropdownOpen(false)} />
                     </div>
 
                     <ul className='mt-1.5 font-semibold'>
-                        <li className='p-2'>
-                            <NavLink to='/account' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Аккаунт</NavLink>
-                        </li>
+                        <NavLinkItem label='Аккаунт' link='/account' onClick={handleDropdownClick} />
                         {user.roles.includes('company') && <>
-                            <li className='p-2'>
-                                <NavLink to='/map' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Карта</NavLink>
-                            </li>
+                            <NavLinkItem label='Карта' link='/map' onClick={handleDropdownClick} />
                         </>}
                         {user.roles.includes('client') &&
                             <>
-                                <li className='p-2'>
-                                    <NavLink to='/cart' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Корзина</NavLink>
-                                </li>
-                                <li className='p-2'>
-                                    <NavLink to='/orders' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Заказы</NavLink>
-                                </li>
+                                <NavLinkItem label='Корзина' link='/cart' onClick={handleDropdownClick} />
+                                <NavLinkItem label='Заказы' link='/orders' onClick={handleDropdownClick} />
                             </>
                         }
                     </ul>
                 </>
                     :
-                    <>
-                        <ul className='mt-1.5 font-semibold'>
-                            <li className='p-2'>
-                                <NavLink to='/auth/login' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Войти</NavLink>
-                            </li>
-                            <li className='p-2'>
-                                <NavLink to='/auth/register' state className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400 font-semibold' : 'hover:text-orange-400'} onClick={handleDropdownClick}>Создать аккаунт</NavLink>
-                            </li>
-                        </ul>
-                    </>
+                    <ul className='mt-1.5 font-semibold'>
+                        <NavLinkItem label='Войти' link='/auth/login' onClick={handleDropdownClick} />
+                        <NavLinkItem label='Создать аккаунт' link='/auth/register' onClick={handleDropdownClick} />
+                    </ul>
                 }
-
-
-
-
             </div >
 
             <nav id='nav' className={`md:flex md:justify-around md:static  md:items-center md:bg-transparent bg-white p-0.5 md:w-8xl md:max-w-full md:h-24 h-full fixed top-0 w-full max-w-[15em] ${isNavbarOpen ? 'left-0' : '-left-full'} z-50 transition-all duration-300 ease-in-out`}>
@@ -101,15 +78,9 @@ export default function     Navbar() {
                         <div className='w-full text-lg opacity-80 mx-auto md:hidden'>Навигация</div>
                     </div>
                     <ul className="block mt-1.5 md:flex md:ml-2 md:mt-0 font-semibold">
-                        <li className="flex items-center justify-center p-2 w-18">
-                            <NavLink to='/' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400' : 'hover:text-orange-400 active:text-orange-500'} onClick={handleNavbarClick}>Главная</NavLink>
-                        </li>
-                        <li className="flex items-center justify-center p-2 w-18">
-                            <NavLink to='/catalog' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400' : 'hover:text-orange-400 active:text-orange-500'} onClick={handleNavbarClick}>Каталог</NavLink>
-                        </li>
-                        <li className="flex items-center justify-start p-2 w-18">
-                            <NavLink to='/about' className={({ isActive }) => isActive ? 'border-b border-b-amber-400 text-orange-400' : 'hover:text-orange-400 active:text-orange-500'} onClick={handleNavbarClick}>О нас</NavLink>
-                        </li>
+                        <NavLinkItem label='Главная' link='/' onClick={handleNavbarClick} />
+                        <NavLinkItem label='Каталог' link='/catalog' onClick={handleNavbarClick} />
+                        <NavLinkItem label='О нас' link='/about' onClick={handleNavbarClick} />
                     </ul>
                 </div>
                 <div className="hidden md:block">
