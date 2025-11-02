@@ -5,17 +5,17 @@ namespace backend.Errors
         private const string Prefix = "Town";
         public static Error NoTownsProvided()
         {
-            return Error.BadRequest(Prefix, "At least one town must be provided.");
+            return Error.BadRequest(Prefix, "Как минимум один город должен быть указан.");
         }
 
         public static Error DuplicateTowns(IEnumerable<int> duplicates)
         {
-            return Error.BadRequest(Prefix, $"Duplicate town IDs found: {string.Join(", ", duplicates)}");
+            return Error.BadRequest(Prefix, $"Найдены дубликаты ID городов: {string.Join(", ", duplicates)}.");
         }
 
         public static Error TownsNotFound(IEnumerable<int> missing)
         {
-            return Error.BadRequest(Prefix, $"The following towns with IDs not found: {string.Join(", ", missing)}");
+            return Error.BadRequest(Prefix, $"Города со следующими ID не найдены: {string.Join(", ", missing)}.");
         }
     }
 }

@@ -6,7 +6,7 @@ namespace backend.Results
     {
         public IDictionary<string, string> Errors { get; }
         public ValidationError(IDictionary<string, string> errors)
-            : base("ValidationError", "One or more validation errors occurred.")
+            : base("ValidationError", "One or more validation errors occurred.", ErrorType.BadRequest)
         {
             Errors = errors;
         }

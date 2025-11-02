@@ -6,12 +6,12 @@ namespace backend.Errors
 
         public static Error NotFound(int companyId)
         {
-            return Error.NotFound(Prefix, $"Company with ID {companyId} not found.");
+            return Error.NotFound(Prefix, $"Комания с ID {companyId} не найдена.");
         }
 
         public static Error MissingSetup()
         {
-            return Error.BadRequest(Prefix, "The company must set stocks and pick up points before creating a product.");
+            return Error.BadRequest(Prefix, "Компания должна указать склады и пункты выдачи заказов перед созданием продукта.");
         }
     }
 }

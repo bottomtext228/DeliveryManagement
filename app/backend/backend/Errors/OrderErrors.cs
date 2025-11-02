@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace backend.Errors
 {
     public static class OrderErrors
@@ -10,22 +5,22 @@ namespace backend.Errors
         private const string Prefix = "Order";
         public static Error MissingProducts(IEnumerable<int> productIds)
         {
-            return Error.BadRequest(Prefix, $"The following products with IDs not found: {string.Join(", ", productIds)}");
+            return Error.BadRequest(Prefix, $"Продукты со следующими ID не найдены: {string.Join(", ", productIds)}.");
         }
 
         public static Error CompanyMismatch()
         {
-            return Error.BadRequest(Prefix, "All products must belong to the same company");
+            return Error.BadRequest(Prefix, "Все продукты должны принадлежать одной компании.");
         }
 
         public static Error InvalidQuantity(int productId)
         {
-            return Error.BadRequest(Prefix, $"Invalid quantity for product {productId}.");
+            return Error.BadRequest(Prefix, $"Неверное количество продукта с ID {productId}.");
         }
 
         public static Error NotFound(int orderId)
         {
-            return Error.NotFound(Prefix, $"Order with ID {orderId} not found.");
+            return Error.NotFound(Prefix, $"Заказ с ID {orderId} не найден.");
         }
     }
 }

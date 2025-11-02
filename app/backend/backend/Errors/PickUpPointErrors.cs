@@ -6,7 +6,7 @@ namespace backend.Errors
 
         public static Error NotFound(int townId)
         {
-            return Error.NotFound(Prefix, $"PickUpPoint with Town ID {townId} not found.");
+            return Error.NotFound(Prefix, $"Пункт выдачи заказов с ID города {townId} не найден.");
         }
     }
 }

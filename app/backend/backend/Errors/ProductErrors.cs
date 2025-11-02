@@ -5,7 +5,7 @@ namespace backend.Errors
         private const string Prefix = "Product";
         public static Error NotFound(int productId)
         {
-            return Error.NotFound(Prefix, $"Product with ID {productId} was not found.");
+            return Error.NotFound(Prefix, $"Продукт с ID {productId} не найден.");
         }
     }
 }
