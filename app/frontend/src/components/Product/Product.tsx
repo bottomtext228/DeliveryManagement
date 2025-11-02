@@ -12,7 +12,7 @@ export default function Product({ product, renderCart }: Props) {
     return (
         <article className="flex flex-col w-full h-full min-h-60 md:min-h-85 max-h-120 rounded-xl border border-gray-300 p-2">
             <Link to={`/catalog/${product.id}`} className="mx-auto flex-8/10 h-10">
-                <img className="object-contain rounded-xl  max-h-full" src={getImageUrl(product.image)} alt={product.name}>
+                <img className="object-contain rounded-xl  max-h-full" src={getImageUrl(product.image)} alt={product.name} draggable={false}>
                 </img>
             </Link>
             <div className="pb-1 mt-2 ml-2 flex-1/12">

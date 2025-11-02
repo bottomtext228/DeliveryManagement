@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import Button from './Button';
 
 interface Props {
     title: string,
@@ -20,13 +21,11 @@ export default function WarningCard({ title, message, link, linkMessage }: Props
                     {message}
                 </div>
             }
-            <div className="flex gap-8">
+            <div className="flex gap-8 p-2 font-semibold text-lg text-center">
                 {link &&
-                    <Link to={link} className="bg-amber-500  p-2 rounded-lg text-white font-semibold text-lg  hover:bg-amber-600 w-24 text-center">
-                        {linkMessage}
-                    </Link>
+                    <Button label={linkMessage!} link={link} rounded="lg" width="24" />
                 }
-                <button onClick={() => navigate(-1)} className="bg-neutral-500 p-2 rounded-lg text-white font-semibold text-lg hover:bg-neutral-600 w-24 text-center">Назад</button>
+                <Button label="Назад" onClick={() => navigate(-1)} dark={true} rounded="lg" width="24" />
             </div>
         </div>
     )

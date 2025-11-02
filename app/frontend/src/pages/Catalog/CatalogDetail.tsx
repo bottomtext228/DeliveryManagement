@@ -13,7 +13,6 @@ import GoBackButton from "../../components/Common/GoBackButton";
 import { useProductDetail } from "../../hooks/queries/useProductDetail";
 import { useDeleteProduct } from "../../hooks/mutations/useDeleteProduct";
 
-
 export default function CatalogDetail() {
     const id = useNumericParam();
     const navigate = useNavigate();
@@ -43,7 +42,7 @@ export default function CatalogDetail() {
     }
 
     const product = data;
-    
+
     const cartItem = cartList.find(e => e.productId == product.id);
 
     const handleDelete = async () => {
@@ -71,18 +70,36 @@ export default function CatalogDetail() {
                 <ProductDetail product={product}></ProductDetail>
                 <div className="mt-6 flex-1/3">
                     <div className="flex flex-col h-48 border-2 max-w-72 border-amber-500 rounded-2xl">
-                        <div className="p-6 font-semibold">{product.price} ₽</div>
-                        <div className="mt-auto mb-2 mx-auto w-[75%] flex flex-col gap-2">
+                        <div className="p-4 font-semibold">{product.price} ₽</div>
+                        <div className="mt-auto p-4 mx-auto w-full flex flex-col gap-2">
                             {user?.roles.includes('company') ?
                                 <>
-                                    <button onClick={handleEdit} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">Редактировать</button>
-                                    <button onClick={handleDelete} className="block w-full p-1 font-semibold text-center bg-red-600 shadow-sm shadow-neutral-500 rounded-xl hover:bg-red-700">Удалить</button>
+                                    <button
+                                        onClick={handleEdit}
+                                        className="block w-full p-2 font-semibold text-center rounded-xl active:scale-98 border border-neutral-200 bg-neutral-100 hover:bg-neutral-200 active:bg-neutral-300"
+                                    >
+                                        Редактировать
+                                    </button>
+                                    <button
+                                        onClick={handleDelete}
+                                        className="block w-full p-2 font-semibold text-center rounded-xl active:scale-98 text-white bg-red-600 shadow-neutral-500 hover:bg-red-700"
+                                    >
+                                        Удалить
+                                    </button>
                                 </>
                                 : <>
-                                    <button onClick={() => cartItem ? removeFromCart(product.id) : addToCart(product.id)} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">
+                                    <button
+                                        onClick={() => cartItem ? removeFromCart(product.id) : addToCart(product.id)}
+                                        className={`block w-full p-2 font-semibold text-center rounded-xl active:scale-98 ${cartItem ? "border border-neutral-200 bg-neutral-100 hover:bg-neutral-200 active:bg-neutral-300" : "text-white bg-neutral-400 hover:bg-neutral-500 active:bg-neutral-600"}`}
+                                    >
                                         {cartItem ? "Убрать из корзины" : "В корзину"}
                                     </button>
-                                    <Link to={`/orders/add?ids=${product.id}`} className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-amber-400 hover:bg-amber-500">Заказать</Link>
+                                    <Link
+                                        to={`/orders/add?ids=${product.id}`}
+                                        className="block w-full p-2 font-semibold text-center rounded-xl text-white hover:text-neutral-100 active:text-neutral-200 active:scale-98 bg-amber-400 hover:bg-amber-500 active:bg-amber-600"
+                                    >
+                                        Заказать
+                                    </Link>
                                 </>
                             }
                         </div>

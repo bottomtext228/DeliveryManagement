@@ -107,6 +107,7 @@ namespace backend.Services
             var orders = await _dbContext.Orders
                 .Include(e => e.Items)
                 .ThenInclude(e => e.Product)
+                .ThenInclude(e => e.Company)
                 .Where(e => e.UserId == userId)
                 .Select(e => e.ToOrderDto(_countryMap.Towns))
                 .ToListAsync(cancellationToken);

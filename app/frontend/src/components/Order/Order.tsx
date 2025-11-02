@@ -43,7 +43,7 @@ export default function Order({ order, handleDeleteClick }: Props) {
                         <div>{formatOrderStatus(order.status)}</div>
                     </div>
                     <div className="ml-auto">
-                        <button onClick={() => handleDeleteClick(order.id)} className="bg-red-600 hover:bg-red-700 transition-colors duration-150 font-semibold text-white p-2 rounded-lg">Отменить</button>
+                        <button onClick={() => handleDeleteClick(order.id)} className="font-semibold p-2 rounded-lg text-white hover:text-neutral-100 active:text-neutral-200 bg-red-600 hover:bg-red-700 active:bg-red-800 active:scale-98 transition-colors duration-150">Отменить</button>
                     </div>
                 </div>
             </div>

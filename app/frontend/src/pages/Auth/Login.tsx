@@ -12,6 +12,7 @@ import Button from "../../components/Common/Button";
 import InputField from "../../components/Common/Form/InputField";
 import InputPasswordField from "../../components/Common/Form/InputPasswordField";
 import { useState } from "react";
+import LinkText from "../../components/Common/LinkText";
 
 interface FormValues {
     email: string
@@ -91,7 +92,7 @@ export default function Login() {
                 </div>
             </div>
             <div className="w-full p-4 mx-auto my-4 text-center border border-gray-300 rounded-2xl">
-                Нет аккаунта? <Link to='/auth/register' className="text-blue-600 hover:brightness-90 hover:underline">Создать</Link>
+                Нет аккаунта? <LinkText to="/auth/register">Создать</LinkText>
             </div>
         </div>
     </>)

@@ -17,8 +17,15 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
     const { isPending, isError, error, data: company } = useCompany(companyId);
 
     if (isPending) return <LoadingSpinner></LoadingSpinner>
-    
-    if (isError) return <span>Error: {error.name}</span> // TODO: refactor error handling
+
+    if (isError) {
+        console.error(error);
+        return (
+            <div className="border border-gray-200 p-3 rounded-xl">
+                <div>Произошла ошибка при загрузке компании...</div>
+            </div>
+        )
+    }
 
     const calculateFinalPrice = () => {
         let price = 0;
@@ -31,7 +38,7 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
 
     return (
         <div className="border border-gray-200 p-3 rounded-xl">
-            <div className="flex items-end gap-x-2 mb-1">
+            <div className="flex items-center gap-x-2 mb-1">
                 <div className="text-sm text-neutral-600">Компания:</div>
                 <h2 className="font-bold">{company.name}</h2>
             </div>
@@ -53,7 +60,12 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
                 <div className='font-medium'>{calculateFinalPrice()}₽</div>
             </div>
             <div className="mt-4 mb-2">
-                <Link to={`/orders/add?ids=${products.map(e => e.id).join(',')}`} className="mr-auto bg-red-600 text-white font-semibold p-2 rounded-lg hover:bg-red-700">Заказать всё</Link>
+                <Link
+                    to={`/orders/add?ids=${products.map(e => e.id).join(',')}`}
+                    className="block w-28 mr-auto font-semibold p-2 rounded-lg text-white hover:text-neutral-100 active:text-neutral-200 bg-red-600 hover:bg-red-700 active:bg-red-800 active:scale-98"
+                >
+                    Заказать всё
+                </Link>
             </div>
         </div>
     )

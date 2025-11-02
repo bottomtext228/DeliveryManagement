@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AuthService } from "../../services/AuthService";
 import { ILoginResponse } from "../../types/types";
 import { setTokenToLocalStorage } from "../../helpers/localstorage.helper";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthState, useAuthState } from "../../hooks/useAuthState";
 import useUserStore from "../../store/user/userStore";
 
@@ -10,6 +10,7 @@ import ServerError from "../../components/Error/ServerError";
 import AlreadyLoggedIn from "./AlreadyLoggedIn";
 import RegisterFormCompany from "../../components/Auth/RegisterFormCompany";
 import RegisterFormGeneral from "../../components/Auth/RegisterFormGeneral";
+import LinkText from "../../components/Common/LinkText";
 
 interface FormValues {
     email: string
@@ -105,7 +106,7 @@ export default function Register() {
                 <>
                     <RegisterFormGeneral handleGeneralSubmit={handleGeneralSubmit} isCompany={isCompany} handleChangeIsCompany={handleChangeIsCompany} formData={formData} setFormData={setFormData}></RegisterFormGeneral>
                     <div className="w-full p-4 mx-auto my-4 text-center border border-gray-300 rounded-2xl">
-                        Уже есть аккаунт? <Link to='/auth/login' className="text-blue-600 hover:brightness-90 hover:underline">Войти</Link>
+                        Уже есть аккаунт? <LinkText to="/auth/login">Войти</LinkText>
                     </div>
                 </>
                 : <RegisterFormCompany handleCompanySubmit={handleCompanySubmit} handleGoBack={handleGoBack} formData={formData} setFormData={setFormData} ></RegisterFormCompany>

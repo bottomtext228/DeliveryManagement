@@ -30,9 +30,9 @@ export default function Dropdown() {
 
     return (<>
         <div ref={dropdownRef} className='relative'>
-            <button onClick={() => setIsOpen(!isOpen)} className={`w-20 rounded-lg px-3 py-1.5 border border-transparent hover:border-neutral-400  hover:bg-neutral-300 ${isOpen && 'bg-gray-300'} flex justify-center items-center mx-auto duration-300 transition-all`}>
+            <button onClick={() => setIsOpen(!isOpen)} className={`w-20 rounded-lg px-3 py-1.5 border border-transparent hover:border-neutral-400 hover:bg-neutral-300 ${isOpen && 'bg-gray-300'} active:bg-neutral-400 flex justify-center items-center mx-auto duration-150 transition-all`}>
                 <img className="w-10 h-10" src="/person.svg"></img>
-                <img className={`w-4 h-4 rotate-${isOpen ? '180' : '0'} transition-all duration-200`} src='/caret-down.svg'></img>
+                <img className={`w-4 h-4 ${isOpen ? 'rotate-360' : 'rotate-180'}  transition-all duration-150`} src='/caret-down.svg'></img>
             </button>
             {isOpen &&
                 <div className="absolute right-0 z-10 mt-2 w-40 origin-top-right divide-y-[1px] divide-gray-300  rounded-md  bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden">

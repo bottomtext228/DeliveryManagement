@@ -94,7 +94,7 @@ export default function CatalogAll() {
     return (<section className="my-4 md:my-16">
 
         <div className="max-w-[1440px] w-[90%] mx-auto">
-            <div className="flex flex-col gap-2 rounded-xl p-2 border-amber-500 border-2 md:w-[60%] mx-auto my-4 md:my-16">
+            <div className="flex flex-col gap-2 rounded-xl p-2 border-amber-400 border-2 md:w-[60%] mx-auto my-4 md:my-16">
 
                 <label htmlFor="name"></label>
                 <input id="name" type="text" value={formName} placeholder="Поиск" autoComplete="on" onChange={handleOnNameChange} onKeyDown={handleOnKeyDown}
@@ -139,7 +139,7 @@ export default function CatalogAll() {
             }
 
             {!isPending && (products.length > 0 ?
-                (<div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
+                (<div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
                     {
                         products.map(product => <Product product={product} key={product.id} renderCart={isUser} />)
                     }

@@ -177,8 +177,11 @@ export default function CatalogEdit() {
                                 />
                                 <span className="ml-1">₽</span>
                                 {errors.price && <div className="text-red-500">{errors.price.message}</div>} </div>
-                            <div className="mt-auto mb-2 mx-auto w-[75%] flex flex-col gap-2">
-                                <button type="submit" className="block w-full p-1 font-semibold text-center shadow-sm shadow-neutral-500 rounded-xl bg-neutral-50 hover:bg-neutral-200">Сохранить</button>
+                            <div className="mt-auto p-2 w-full  mx-auto flex flex-col gap-2">
+                                <button type="submit" className="block w-full p-2 font-semibold text-center rounded-xl active:scale-98 border border-neutral-200 bg-neutral-100 hover:bg-neutral-200 active:bg-neutral-300"
+                                >
+                                    Сохранить
+                                </button>
                             </div>
                         </div>
                     </div>

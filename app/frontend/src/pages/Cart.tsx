@@ -6,8 +6,31 @@ import EmptyStateCard from "../components/Common/EmptyStateCard";
 import { useProductsDetail } from "../hooks/queries/useProductsDetail";
 import { isAxiosError } from "axios";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function Cart() {
+    const location = useLocation();
+    const scrollToId = location.state?.scrollTo;
+
+    // watch dom until the cart item is rendered to scroll to it
+    useEffect(() => {
+        if (!scrollToId) return;
+        
+        const tryScroll = () => {
+            const el = document.getElementById(scrollToId);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                observer.disconnect();
+            }
+        };
+
+        const observer = new MutationObserver(tryScroll);
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        return () => observer.disconnect();
+    }, [scrollToId]);
+
+
     const addToCart = useCartStore(store => store.add);
     const removeFromCart = useCartStore(store => store.remove);
     const cartList = useCartStore(store => store.list);
@@ -61,7 +84,7 @@ export default function Cart() {
             <div className="max-w-[1440px] w-[90%] mx-auto">
                 <div className="flex h-8 gap-8 items-end mb-8">
                     <h1 className="font-bold text-2xl">Корзина</h1>
-                    <div className="">Всего: {getProductsCount()}</div>
+                    <div>Всего: {getProductsCount()}</div>
                 </div>
                 {
                     cartList.length ? (

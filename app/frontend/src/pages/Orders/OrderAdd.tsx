@@ -13,6 +13,9 @@ import { useCreateOrder } from '../../hooks/mutations/useCreateOrder';
 import { useProductsDetail } from '../../hooks/queries/useProductsDetail';
 import { useCompanyPickUpPoints } from '../../hooks/queries/useCompanyPickUpPoints';
 import { CloseButton } from '../../components/Common/CloseButton';
+import QuantityController from '../../components/Common/QuantityController';
+import Button from '../../components/Common/Button';
+import DropdownIcon from '../../components/Common/DropdownIcon';
 
 interface FormValues {
     productId: number,
@@ -186,29 +189,12 @@ export default function OrderAdd() {
                                         <div className='w-16 h-16'><img className='w-full h-full' src={getImageUrl(product.image)} alt={product.name} /></div>
                                         <div className="flex flex-col">
                                             <div className="font-bold ">{product.name}</div>
-                                            <div className="flex justify-center items-center gap-x-2 h-fit w-fit">
-                                                <div>
-                                                    {product.price}₽
-                                                </div>
-                                                <div className="text-gray-500">
-                                                    &times;
-                                                </div>
-                                                <button type="button" onClick={() => decrementQuantity(product.id)}
-                                                    className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow duration-3000 transition-all">
-                                                </button>
-                                                <div className="text-gray-500">
-                                                    {getProductQuantity(product.id)}
-                                                </div>
-                                                <button type="button" onClick={() => incrementQuantity(product.id)}
-                                                    className="before:w-4 before:h-1 before:bg-neutral-600 hover:before:bg-neutral-900 after:w-4 after:h-1 after:bg-neutral-600 hover:after:bg-neutral-900 after:rotate-90 before:absolute flex items-center justify-center w-8 h-8 rounded-full border-gray-200 border shadow">
-                                                </button>
-                                                <div>
-                                                    =
-                                                </div>
-                                                <div>
-                                                    {product.price * getProductQuantity(product.id)}₽
-                                                </div>
-                                            </div>
+                                            <QuantityController
+                                                price={product.price}
+                                                quantity={getProductQuantity(product.id)}
+                                                onDecrease={() => decrementQuantity(product.id)}
+                                                onIncrease={() => incrementQuantity(product.id)}
+                                            />
                                         </div>
                                     </div>
                                 )
@@ -236,12 +222,7 @@ export default function OrderAdd() {
                                     ))}
                                 </select>
                                 {errors.pickUpPointTownId && <div className='text-red-500'>{errors.pickUpPointTownId.message}</div>}
-                                {/* Dropdown Icon */}
-                                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                                    <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" />
-                                    </svg>
-                                </div>
+                                <DropdownIcon />
                             </div>
                         </div>
 
@@ -262,19 +243,14 @@ export default function OrderAdd() {
                                         <option value={RouteChoice.Fastest} className='font-medium'>Быстрый</option>
                                         <option value={RouteChoice.Cheapest} className='font-medium'>Дешевый</option>
                                     </select>
-                                    {/* Dropdown Icon */}
-                                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-                                        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" />
-                                        </svg>
-                                    </div>
+                                    <DropdownIcon />
                                 </div>
                             </div>
                         </>
                         }
                         {previewOrderData &&
                             (<>
-                                <div className='flex flex-col gap-1'>
+                                <div className='flex flex-col gap-1 mb-4'>
                                     <div className='flex gap-2'>
                                         <div className='font-semibold'>Стоимость доставки:</div>
                                         <div className='font-medium'>{previewOrderData.shippingPrice}₽</div>
@@ -288,9 +264,7 @@ export default function OrderAdd() {
                                         <div className='font-medium'>{calculateFinalPrice() + previewOrderData.shippingPrice}₽</div>
                                     </div>
                                 </div>
-                                <button type="submit" className="w-full p-2 mt-4 text-xl font-semibold text-white rounded-lg cursor-pointer bg-amber-400 hover:bg-amber-500 transition-colors duration-150">
-                                    Создать
-                                </button>
+                                <Button label="Создать" fontWeight="semibold" fontSize="xl" />
                             </>)
                         }
                     </form >
