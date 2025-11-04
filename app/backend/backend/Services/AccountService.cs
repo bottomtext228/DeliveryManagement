@@ -197,7 +197,8 @@ namespace backend.Services
                 .Select(e => new ClientProfileDto
                 {
                     OrdersCount = _dbContext.Orders.Count(e => e.UserId == userId),
-                    OrdersCost = _dbContext.Orders.Where(e => e.UserId == userId).Sum(e => e.FinalPrice)
+                    OrdersCost = _dbContext.Orders.Where(e => e.UserId == userId).Sum(e => e.FinalPrice),
+                    ProductsInCartCount = _dbContext.CartItems.Where(e => e.Cart.UserId == userId).Sum(e => e.Quantity)
                 }).FirstOrDefaultAsync(cancellationToken);
 
             if (profileInfo is null)

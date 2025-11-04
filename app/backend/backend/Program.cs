@@ -166,6 +166,7 @@ builder.Services.AddScoped<IMapService, MapService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IPickUpPointService, PickUpPointService>();
 builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 var app = builder.Build();
 

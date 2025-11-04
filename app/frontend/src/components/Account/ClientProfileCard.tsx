@@ -1,4 +1,3 @@
-import useCartStore from "../../store/user/cartStore"
 import { ClientProfileDto } from "../../types/types"
 
 interface Props {
@@ -6,7 +5,6 @@ interface Props {
 }
 
 export default function ClientProfileCard({ data }: Props) {
-    const getProductsCount = useCartStore(e => e.getProductsCount);
 
     return (
         <table className="font-bold text-left w-full">
@@ -22,7 +20,7 @@ export default function ClientProfileCard({ data }: Props) {
                 </tr>
                 <tr>
                     <th className="font-normal p-2">Корзина</th>
-                    <td className="text-lg text-right p-2">{getProductsCount()}</td>
+                    <td className="text-lg text-right p-2">{data.productsInCartCount}</td>
                 </tr>
             </tbody>
         </table>

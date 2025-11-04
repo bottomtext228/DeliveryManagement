@@ -13,11 +13,6 @@ namespace backend.Errors
             return Error.BadRequest(Prefix, "Все продукты должны принадлежать одной компании.");
         }
 
-        public static Error InvalidQuantity(int productId)
-        {
-            return Error.BadRequest(Prefix, $"Неверное количество продукта с ID {productId}.");
-        }
-
         public static Error NotFound(int orderId)
         {
             return Error.NotFound(Prefix, $"Заказ с ID {orderId} не найден.");

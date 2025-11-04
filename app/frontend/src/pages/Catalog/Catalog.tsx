@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { ProductSortBy } from "../../types/types";
 import { useProducts } from "../../hooks/queries/useProducts";
 import Button from "../../components/Common/Button";
+import { useCart } from "../../hooks/queries/useCart";
 
 export default function CatalogAll() {
     const user = useUser();
@@ -27,7 +28,7 @@ export default function CatalogAll() {
 
     const pageSize = 20;
 
-    const { isError, isPending, error, data, hasNextPage, isFetchingNextPage, fetchNextPage } = useProducts(
+    const productsQuery = useProducts(
         pageSize,
         name,
         minPrice,
@@ -38,23 +39,29 @@ export default function CatalogAll() {
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        if (!loadMoreRef.current || !hasNextPage || isFetchingNextPage) return;
+        if (!loadMoreRef.current || !productsQuery.hasNextPage || productsQuery.isFetchingNextPage) return;
 
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-                fetchNextPage();
+                productsQuery.fetchNextPage();
             }
         });
 
         observer.observe(loadMoreRef.current);
 
         return () => observer.disconnect();
-    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+    }, [productsQuery, productsQuery.fetchNextPage, productsQuery.hasNextPage, productsQuery.isFetchingNextPage]);
 
+    const isClient = user?.roles.includes('client') === true;
 
-    if (isError) {
-        return <ErrorPage message={error.message} />
+    const cartQuery = useCart(isClient);
+
+    if (productsQuery.isError || cartQuery.isError) {
+        const error = productsQuery.error || cartQuery.error;
+        return <ErrorPage message={error!.message} />
     }
+
+    const isPending = productsQuery.isPending || (isClient && cartQuery.isPending); // if user is not client, ignore cart query because it will be disabled
 
     const handleOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormName(e.target.value);
@@ -88,8 +95,7 @@ export default function CatalogAll() {
         setSortIsDescending(formSortIsDescending)
     }
 
-    const products = data?.pages.flatMap((page) => page.data.data) ?? [];
-    const isUser = user?.roles.includes('client') === true;
+    const products = productsQuery.data?.pages.flatMap((page) => page.data.data) ?? [];
 
     return (<section className="my-4 md:my-16">
 
@@ -141,7 +147,12 @@ export default function CatalogAll() {
             {!isPending && (products.length > 0 ?
                 (<div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-x-12 gap-x-4 gap-y-20">
                     {
-                        products.map(product => <Product product={product} key={product.id} renderCart={isUser} />)
+                        products.map(product => <Product
+                            product={product}
+                            key={product.id}
+                            renderCart={isClient}
+                            cartItem={cartQuery?.data?.cartItems.find(e => e.productId == product.id)}
+                        />)
                     }
                 </div>) : <>
                     <div className="flex flex-col items-start w-full gap-y-2">
@@ -152,7 +163,7 @@ export default function CatalogAll() {
                 </>)
             }
 
-            <div ref={loadMoreRef} className="my-8">{isFetchingNextPage && <Loading />}</div>
+            <div ref={loadMoreRef} className="my-8">{productsQuery.isFetchingNextPage && <Loading />}</div>
         </div>
 
     </section>

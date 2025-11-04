@@ -76,7 +76,7 @@ namespace backend.Services
 
             foreach (var productOrder in model.Products)
             {
-                if (productOrder.Quantity <= 0) return OrderErrors.InvalidQuantity(productOrder.ProductId);
+                // quantity checked via Data Annotations in dto class
 
                 var product = products.First(p => p.Id == productOrder.ProductId);
 
@@ -103,7 +103,7 @@ namespace backend.Services
         {
             var user = await _dbContext.Users.FindAsync([userId], cancellationToken);
             if (user == null) return AccountErrors.NotFound(userId);
-            
+
             var orders = await _dbContext.Orders
                 .Include(e => e.Items)
                 .ThenInclude(e => e.Product)

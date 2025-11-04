@@ -9,12 +9,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from "./queryClient";
 
-
 let hasCheckedAuth = false;
 function App() {
     const login = useUserStore(state => state.login);
     const logout = useUserStore(state => state.logout);
-
     const checkAuth = async () => {
 
         if (hasCheckedAuth) return; // only do it once when user loads the page first time
@@ -25,7 +23,7 @@ function App() {
         if (token) {
             try {
                 const response = await AuthService.getMe();
-                login(response.data as IUser);
+                login(response.data as IUser);          
                 return;
             } catch (error: unknown) {
                 console.error(error);
@@ -37,7 +35,7 @@ function App() {
 
     useEffect(() => {
         checkAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

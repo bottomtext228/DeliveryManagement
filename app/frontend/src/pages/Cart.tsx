@@ -1,12 +1,13 @@
-import useCartStore from "../store/user/cartStore";
 import Loading from "../components/Loading/Loading";
 import { IProductDetail } from "../types/types";
 import CartCompanyCard from "../components/Cart/CartCompanyCard";
 import EmptyStateCard from "../components/Common/EmptyStateCard";
 import { useProductsDetail } from "../hooks/queries/useProductsDetail";
-import { isAxiosError } from "axios";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useCart } from "../hooks/queries/useCart";
+import { useSetCartItem } from "../hooks/mutations/useSetCartItem";
+import ErrorPage from "../components/Error/ErrorPage";
 
 export default function Cart() {
     const location = useLocation();
@@ -15,7 +16,7 @@ export default function Cart() {
     // watch dom until the cart item is rendered to scroll to it
     useEffect(() => {
         if (!scrollToId) return;
-        
+
         const tryScroll = () => {
             const el = document.getElementById(scrollToId);
             if (el) {
@@ -31,49 +32,41 @@ export default function Cart() {
     }, [scrollToId]);
 
 
-    const addToCart = useCartStore(store => store.add);
-    const removeFromCart = useCartStore(store => store.remove);
-    const cartList = useCartStore(store => store.list);
-    const getProductsCount = useCartStore(store => store.getProductsCount);
+    const cartQuery = useCart();
+    const setCartItem = useSetCartItem();
+
+    const cartList = cartQuery.data?.cartItems || [];
 
     const productQueries = useProductsDetail(cartList.map(item => item.productId));
 
-    const isPending = productQueries.some(e => e.isPending);
+    const isPending = productQueries.some(e => e.isPending) || cartQuery.isPending;
 
-    // remove not found (404) products from the cart
     useEffect(() => {
-        const failedQueries = productQueries.filter(e => e.isError);
-        failedQueries.forEach((query) => {
-            const index = productQueries.indexOf(query);
-            const error = query.error;
-
-            if (isAxiosError(error)) {
-                if (error.response?.status == 404) {
-                    const productId = cartList[index]?.productId;
-                    if (productId) {
-                        removeFromCart(productId);
-                    }
-                }
-            }
-        });
-    }, [cartList, productQueries, removeFromCart])
+        cartQuery.refetch();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     if (isPending) return <Loading></Loading>
 
+    if (cartQuery.isError) return <ErrorPage message={cartQuery.error.message} />
     const products = productQueries.map(e => e.data).filter((product): product is IProductDetail => !!product);
 
     function handleDeleteClick(productId: number) {
-        removeFromCart(productId);
+        setCartItem.mutate({ productId: productId, quantity: 0 });
     }
 
     function handleIncreaseQuantityClick(productId: number) {
         const cartItem = cartList.find(e => e.productId == productId);
-        if (cartItem && cartItem.quantity < 100) addToCart(productId);
+        if (cartItem && cartItem.quantity < 99) setCartItem.mutate({ productId: productId, quantity: cartItem.quantity + 1 });
     }
 
     function handleDecreaseQuantityClick(productId: number) {
         const cartItem = cartList.find(e => e.productId == productId);
-        if (cartItem && cartItem.quantity > 1) removeFromCart(productId, true);
+        if (cartItem && cartItem.quantity > 1) setCartItem.mutate({ productId: productId, quantity: cartItem.quantity - 1 });
+    }
+
+    function getProductsCount() {
+        return cartList.reduce((acc, item) => acc + item.quantity, 0)
     }
 
     const groupedByCompanies = Object.groupBy(products, ({ companyId }) => companyId);

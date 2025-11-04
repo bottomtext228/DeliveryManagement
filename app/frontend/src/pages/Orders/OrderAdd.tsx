@@ -3,7 +3,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { RouteChoice, CreateOrderDto, IProductDetail, ComputeRouteRequest, ProductOrderDto, ComputeRouteResponse } from '../../types/types';
 import Loading from '../../components/Loading/Loading';
-import useCartStore from '../../store/user/cartStore';
 import { computeRoute } from '../../api/map/computeRoute';
 import { formatHours } from '../../helpers/format.helper';
 import { getImageUrl } from '../../helpers/image.helper';
@@ -16,6 +15,8 @@ import { CloseButton } from '../../components/Common/CloseButton';
 import QuantityController from '../../components/Common/QuantityController';
 import Button from '../../components/Common/Button';
 import DropdownIcon from '../../components/Common/DropdownIcon';
+import { useSetCartItem } from '../../hooks/mutations/useSetCartItem';
+import { useCart } from '../../hooks/queries/useCart';
 
 interface FormValues {
     productId: number,
@@ -34,8 +35,8 @@ export default function OrderAdd() {
     const pickUpPointTownIdRef = useRef<HTMLSelectElement>(null);
     const routeChoiceRef = useRef<HTMLSelectElement>(null);
 
-    const removeFromCart = useCartStore(store => store.remove);
-    const cartList = useCartStore(store => store.list);
+    const setCartItem = useSetCartItem();
+    const cartQuery = useCart();
 
     const [productsQuantities, setProductsQuantities] = useState<Record<number, number>>({});
 
@@ -84,21 +85,29 @@ export default function OrderAdd() {
 
     const pickUpPointsQuery = useCompanyPickUpPoints(companyId);
 
-    const isPending = productQueries.some(e => e.isPending) || pickUpPointsQuery.isPending;
-    const isError = productQueries.some(e => e.isError) || pickUpPointsQuery.isError;
+    const isPending = productQueries.some(e => e.isPending) || pickUpPointsQuery.isPending || cartQuery.isPending;
+    const isError = productQueries.some(e => e.isError) || pickUpPointsQuery.isError || cartQuery.isError;
+
+    useEffect(() => {
+        cartQuery.refetch(); // refetch cart to be sure that initial quantities are right
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const cart = cartQuery.data;
+
 
     // set products quantities after getting all info
     useEffect(() => {
-        if (products.length > 0) {
+        if (products.length > 0 && cart) {
             const initialQuantities: Record<number, number> = {};
             products.forEach((product) => {
-                initialQuantities[product.id] = cartList.find(item => item.productId == product.id)?.quantity || 1;
+                initialQuantities[product.id] = cart.cartItems.find(item => item.productId == product.id)?.quantity || 1;
             });
 
             setProductsQuantities(initialQuantities);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isPending]);
+    }, [isPending, cart]);
 
     if (!hasValidIds) return <ErrorPage message='Invalid IDs in URL.' />
 
@@ -107,7 +116,7 @@ export default function OrderAdd() {
     if (isPending) return <Loading />;
 
     if (isError) {
-        const error = productQueries.find(e => e.error)?.error || pickUpPointsQuery.error;
+        const error = productQueries.find(e => e.error)?.error || pickUpPointsQuery.error || cartQuery.error;
         return <ErrorPage message={error?.message} />;
     }
 
@@ -126,7 +135,7 @@ export default function OrderAdd() {
 
         createOrder.mutate(dto, {
             onSuccess: () => {
-                products.forEach(e => removeFromCart(e.id)); // remove from cart products that we ordered
+                products.forEach(e => setCartItem.mutate({ productId: e.id, quantity: 0 }) /* removeFromCart(e.id) */); // remove from cart products that we ordered
                 navigate('/orders');
             },
             onError: (error) => {

@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import Loading from "../../components/Loading/Loading";
 import { useUser } from "../../hooks/useUser";
-import useCartStore from "../../store/user/cartStore";
 import ProductDetail from "../../components/Product/ProductDetail";
 import { useNumericParam } from "../../hooks/useNumericParam";
 import { isAxiosError } from "axios";
@@ -12,38 +11,42 @@ import ServerError from "../../components/Error/ServerError";
 import GoBackButton from "../../components/Common/GoBackButton";
 import { useProductDetail } from "../../hooks/queries/useProductDetail";
 import { useDeleteProduct } from "../../hooks/mutations/useDeleteProduct";
+import { useCart } from "../../hooks/queries/useCart";
+import { useSetCartItem } from "../../hooks/mutations/useSetCartItem";
 
 export default function CatalogDetail() {
     const id = useNumericParam();
     const navigate = useNavigate();
     const user = useUser();
-    const addToCart = useCartStore(state => state.add);
-    const removeFromCart = useCartStore(state => state.remove);
-    const cartList = useCartStore(state => state.list);
+
+    const setCartItem = useSetCartItem();
+    const cartQuery = useCart();
+
     const [serverError, setServerError] = useState<unknown>(null);
 
     const deleteProduct = useDeleteProduct();
 
-    const { isPending, isError, data, error } = useProductDetail(id);
+    const productQuery = useProductDetail(id);
 
     if (id === null) {
         return <NotFound />
     }
 
-    if (isPending) {
+    if (productQuery.isPending || cartQuery.isPending) {
         return <Loading />
     }
 
-    if (isError) {
+    if (productQuery.isError || cartQuery.isError) {
+        const error = productQuery.error || cartQuery.error;
         if (isAxiosError(error)) {
             if (error.response?.status === 404) return <NotFound />
         }
-        return <ErrorPage message={error.message} />
+        return <ErrorPage message={error!.message} />
     }
 
-    const product = data;
+    const product = productQuery.data;
 
-    const cartItem = cartList.find(e => e.productId == product.id);
+    const cartItem = cartQuery.data.cartItems.find(e => e.productId == product.id);
 
     const handleDelete = async () => {
         if (confirm('Удалить продукт?')) {
@@ -61,6 +64,11 @@ export default function CatalogDetail() {
     const handleEdit = async () => {
         navigate('/catalog/edit/' + product.id);
     }
+
+    const handleCartClick = () => {
+        setCartItem.mutate({ productId: product.id, quantity: cartItem ? 0 : 1 });
+    }
+
 
     return (
         <div className="max-w-[1440px] w-[90%] mx-auto my-4">
@@ -89,7 +97,7 @@ export default function CatalogDetail() {
                                 </>
                                 : <>
                                     <button
-                                        onClick={() => cartItem ? removeFromCart(product.id) : addToCart(product.id)}
+                                        onClick={handleCartClick}
                                         className={`block w-full p-2 font-semibold text-center rounded-xl active:scale-98 ${cartItem ? "border border-neutral-200 bg-neutral-100 hover:bg-neutral-200 active:bg-neutral-300" : "text-white bg-neutral-400 hover:bg-neutral-500 active:bg-neutral-600"}`}
                                     >
                                         {cartItem ? "Убрать из корзины" : "В корзину"}

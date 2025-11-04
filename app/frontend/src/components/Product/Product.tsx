@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
-import { IProduct } from "../../types/types";
+import { CartItem, IProduct } from "../../types/types";
 import CartSection from "../Cart/CartSection";
 import { getImageUrl } from "../../helpers/image.helper";
 
 interface Props {
     product: IProduct,
-    renderCart: boolean
+    renderCart: boolean,
+    cartItem?: CartItem
 }
 
-export default function Product({ product, renderCart }: Props) {
+export default function Product({ product, renderCart, cartItem }: Props) {
     return (
         <article className="flex flex-col w-full h-full min-h-60 md:min-h-85 max-h-120 rounded-xl border border-gray-300 p-2">
             <Link to={`/catalog/${product.id}`} className="mx-auto flex-8/10 h-10">
@@ -23,7 +24,7 @@ export default function Product({ product, renderCart }: Props) {
                 </div>
             </div>
             {renderCart &&
-                <CartSection productId={product.id}></CartSection>
+                <CartSection productId={product.id} cartItem={cartItem}></CartSection>
             }
         </article>
     )

@@ -13,7 +13,7 @@ namespace backend.Mappers
             {
                 Id = order.Id,
                 CompanyId = order.CompanyId,
-                Items = order.Items.Select(e => e.ToOrderItemDto()).ToList(),
+                Items = [.. order.Items.Select(e => e.ToOrderItemDto())],
                 Towns = [.. order.TownIds.Select(e => towns.Find(t => t.Id == e)!)],
                 FinalPrice = order.FinalPrice,
                 ShippingPrice = order.ShippingPrice,

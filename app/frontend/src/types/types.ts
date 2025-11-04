@@ -184,6 +184,10 @@ export interface CartItem {
     quantity: number
 }
 
+export interface Cart {
+    cartItems: CartItem[]
+}
+
 export interface Company {
     id: number,
     name: string
@@ -227,13 +231,14 @@ export interface CanCreateProductResponse {
 
 export interface ClientProfileDto {
     ordersCount: number,
-    ordersCost: number
+    ordersCost: number,
+    productsInCartCount: number
 }
 
 export interface CompanyProfileDto {
-    ordersCount: number, 
+    ordersCount: number,
     orderedProductsCount: number,
-    pickUpPointsCount : number,
+    pickUpPointsCount: number,
     stocksCount: number,
     productsCount: number
 }

@@ -12,7 +12,7 @@ namespace backend.Dtos.Order
         public int PickUpPointTownId { get; set; }
         [Required(ErrorMessage = "Выбор пути обязателен!")]
         // Attributes support only compile time expressions, so we write "0", "1" manually.
-        [EnumDataType(typeof(RouteChoice), ErrorMessage = "Тип пути может быть только \"0\" (быстрейший)  или \"1\" (дешевейший)")]
+        [EnumDataType(typeof(RouteChoice), ErrorMessage = "Тип пути может быть только \"fastest\" (быстрейший)  или \"cheapest\" (дешевейший)")]
         public RouteChoice Choice { get; set; }
     }
 }
