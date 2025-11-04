@@ -3,7 +3,9 @@ import { getCompany } from "../../api/company/getCompany";
 
 export const useCompany = (companyId: number | null) => useQuery({
     queryKey: ['company', companyId],
-    queryFn: () => getCompany(companyId!),
-    enabled: !!companyId,
-    select: e => e.data
+    queryFn: async () => {
+        const response = await getCompany(companyId!);
+        return response.data;
+    },
+    enabled: !!companyId
 });

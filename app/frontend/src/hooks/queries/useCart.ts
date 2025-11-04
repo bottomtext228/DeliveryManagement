@@ -2,8 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getCart } from "../../api/cart/getCart";
 
 export const useCart = (isClient = true) => useQuery({
-    queryFn: getCart,
     queryKey: ['cart'],
-    select: e => e.data,
+    queryFn: async () => {
+        const response = await getCart();
+        return response.data;
+    },
     enabled: isClient
 });

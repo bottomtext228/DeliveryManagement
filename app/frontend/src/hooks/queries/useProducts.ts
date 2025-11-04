@@ -11,10 +11,13 @@ export const useProducts = (
     isDescending?: boolean
 ) => useInfiniteQuery({
     queryKey: ['products', pageSize, name, minPrice, maxPrice, sortBy, isDescending],
-    queryFn: ({ pageParam }: { pageParam: number }) => getAllProducts(pageParam, pageSize, name, minPrice, maxPrice, sortBy, isDescending),
+    queryFn: async ({ pageParam }: { pageParam: number }) => {
+        const response = await getAllProducts(pageParam, pageSize, name, minPrice, maxPrice, sortBy, isDescending);
+        return response.data;
+    },
     initialPageParam: 1,
     getNextPageParam: (lastPageData) => {
-        const { pageNumber, totalPages } = lastPageData.data;
+        const { pageNumber, totalPages } = lastPageData;
         if (pageNumber < totalPages) {
             return pageNumber + 1;
         }

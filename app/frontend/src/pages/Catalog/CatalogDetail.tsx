@@ -27,7 +27,7 @@ export default function CatalogDetail() {
     const deleteProduct = useDeleteProduct();
 
     const productQuery = useProductDetail(id);
-
+    
     if (id === null) {
         return <NotFound />
     }

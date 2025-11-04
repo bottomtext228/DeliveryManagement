@@ -4,7 +4,7 @@ import { queryClient } from "../../queryClient"
 
 export const useSetCartItem = () => useMutation({
     mutationFn: setCartItem,
-    onSuccess: (updatedCart) => {
-        queryClient.setQueryData(['cart'], updatedCart);
+    onSuccess: (response) => {
+        queryClient.setQueryData(['cart'], response.data);
     },
 })

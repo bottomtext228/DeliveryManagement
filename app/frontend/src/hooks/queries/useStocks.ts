@@ -3,6 +3,8 @@ import { getStocks } from "../../api/stock/getStocks";
 
 export const useStocks = () => useQuery({
     queryKey: ['stocks'],
-    queryFn: getStocks,
-    select: e => e.data
+    queryFn: async () => {
+        const response = await getStocks();
+        return response.data;
+    }
 });

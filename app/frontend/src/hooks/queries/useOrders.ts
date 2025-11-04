@@ -3,6 +3,8 @@ import { getOrders } from "../../api/orders/getOrders";
 
 export const useOrders = () => useQuery({
     queryKey: ['orders'],
-    queryFn: getOrders,
-    select: e => e.data
+    queryFn: async () => {
+        const response = await getOrders();
+        return response.data;
+    }
 });

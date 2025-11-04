@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { canCompanyCreateProduct } from "../../api/company/canCompanyCreateProduct";
 
 export const useCanCompantCreateProduct = () => useQuery({
-    queryFn: canCompanyCreateProduct,
     queryKey: ['can-create-product'],
-    select: e => e.data
+    queryFn: async () => {
+        const response = await canCompanyCreateProduct();
+        return response.data;
+    }
 });

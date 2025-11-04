@@ -3,6 +3,8 @@ import { getUserProfile } from "../../api/profile/getUserProfile";
 
 export const useProfile = () => useQuery({
     queryKey: ['profile'],
-    queryFn: getUserProfile,
-    select: e => e.data
+    queryFn: async () => {
+        const response = await getUserProfile();
+        return response.data;
+    }
 });

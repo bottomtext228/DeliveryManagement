@@ -95,7 +95,7 @@ export default function CatalogAll() {
         setSortIsDescending(formSortIsDescending)
     }
 
-    const products = productsQuery.data?.pages.flatMap((page) => page.data.data) ?? [];
+    const products = productsQuery.data?.pages.flatMap((page) => page.data) ?? [];
 
     return (<section className="my-4 md:my-16">
 

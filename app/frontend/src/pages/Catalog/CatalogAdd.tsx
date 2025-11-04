@@ -10,7 +10,7 @@ import { useCreateProduct } from "../../hooks/mutations/useCreateProduct";
 import { useCanCompantCreateProduct } from "../../hooks/queries/useCanCompanyCreateProduct";
 import { CloseButton } from "../../components/Common/CloseButton";
 import InputField from "../../components/Common/Form/InputField";
-import TextAreaField from "../../components/Common/Form/TextareaField";
+import TextAreaField from "../../components/Common/Form/TextAreaField";
 import InputFile from "../../components/Common/Form/InputFile";
 import Button from "../../components/Common/Button";
 
@@ -95,15 +95,12 @@ export default function CatalogAdd() {
                     <InputField id="sizeX" label="Длина" error={errors.sizeX} type="number" min={0} max={10} step={0.0001}
                         {...register('sizeX', { required: 'Длина не может быть пустой!' })}
                     />
-
                     <InputField id="sizeY" label="Ширина" error={errors.sizeY} type="number" min={0} max={10} step={0.0001}
                         {...register('sizeY', { required: 'Ширина не может быть пустой!' })}
                     />
-
                     <InputField id="sizeZ" label="Высота" error={errors.sizeZ} type="number" min={0} max={10} step={0.0001}
                         {...register('sizeZ', { required: 'Высота не может быть пустой!' })}
                     />
-
                     <InputFile id="image" label="Изображение" error={errors.image}
                         {...register("image", { required: 'Изображение обязательно!' })}
                         clearError={() => clearErrors("image")}
