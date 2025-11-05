@@ -24,7 +24,10 @@ namespace backend.Controllers
         /// <summary>
         /// Creates a new order for one or more products with a specified pick up point and shipping preference. Accessible only to users registered as a client.
         /// </summary>
-        /// <param name="model">Details of the order including product IDs, quantities, and pickup point.</param>
+        /// <param name="model">
+        /// Details of the order including product IDs, quantities, and pickup point.
+        /// The <c>Quantity</c> of each product in <c>CreateOrderRequest.Products</c> must be in range [1, 99].
+        /// </param>
         /// <param name="cancellationToken"></param>
         /// <returns>Returns the created order dto or an error if validation fails.</returns>
         /// <response code="201">Order successfully created.</response>
