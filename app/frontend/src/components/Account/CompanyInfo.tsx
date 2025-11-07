@@ -48,7 +48,11 @@ export default function CompanyInfo({ company }: Props) {
                         type="text"
                         id="company_name"
                         autoComplete="off"
-                        {...register('name', { required: 'Название обязательно!' })}
+                        {...register('name', {
+                            required: 'Название обязательно',
+                            minLength: { value: 2, message: 'Название не может быть меньше 2 символов' },
+                            maxLength: { value: 200, message: 'Название не может превышать длину в 200 символов' }
+                        })}
                         className="w-full border border-neutral-200 rounded-lg outline-none focus:ring-4 focus:ring-blue-200 focus:border-blue-400 px-3 py-2 mt-1"
                     />
                     {errors.name && <span className="text-red-500 text-sm pt-1">{errors.name.message}</span>}

@@ -7,7 +7,7 @@ namespace backend.Dtos.Catalog
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public float Price { get; set; }
+        public decimal Price { get; set; }
         public float Weight { get; set; }
         public Vector Size { get; set; } = null!;
         public string Image { get; set; } = string.Empty;

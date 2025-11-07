@@ -1,6 +1,7 @@
 ﻿using backend.Models;
 using backend.Models.Cart;
 using backend.Models.Map;
+using backend.Models.RefreshToken;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

@@ -9,32 +9,38 @@ import { useProducts } from "../../hooks/queries/useProducts";
 import Button from "../../components/Common/Button";
 import { useCart } from "../../hooks/queries/useCart";
 
+interface QueryParams {
+    name: string;
+    minPrice: string;
+    maxPrice: string;
+    sortBy: ProductSortBy;
+    isDescending: boolean
+}
+
 export default function CatalogAll() {
     const user = useUser();
 
     // filtering and sorting
-    const [formName, setFormName] = useState('');
-    const [formMinPrice, setFormMinPrice] = useState('');
-    const [formMaxPrice, setFormMaxPrice] = useState('');
-    const [formSortBy, setFormSortBy] = useState<ProductSortBy>(ProductSortBy.Id);
-    const [formSortIsDescending, setFormSortIsDescending] = useState(false);
+    const [query, setQuery] = useState<QueryParams>({
+        name: '',
+        minPrice: '',
+        maxPrice: '',
+        sortBy: ProductSortBy.Id,
+        isDescending: false
+    });
 
-    const [name, setName] = useState('');
-    const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
-    const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
-    const [sortBy, setSortBy] = useState<ProductSortBy>(ProductSortBy.Id);
-    const [sortIsDescending, setSortIsDescending] = useState(false);
-
+    const [form, setForm] = useState(query);
 
     const pageSize = 20;
 
     const productsQuery = useProducts(
         pageSize,
-        name,
-        minPrice,
-        maxPrice,
-        sortBy,
-        sortIsDescending);
+        query.name,
+        query.minPrice ? Number(query.minPrice) : undefined,
+        query.maxPrice ? Number(query.maxPrice) : undefined,
+        query.sortBy,
+        query.isDescending
+    );
 
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -63,22 +69,37 @@ export default function CatalogAll() {
 
     const isPending = productsQuery.isPending || (isClient && cartQuery.isPending); // if user is not client, ignore cart query because it will be disabled
 
+    const handleChange = (key: keyof QueryParams, value: string | number | boolean | undefined) => {
+        setForm((prev) => ({ ...prev, [key]: value }));
+    };
+
     const handleOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormName(e.target.value);
+        handleChange('name', e.target.value)
     }
 
     const handleOnMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormMinPrice(e.target.value);
+        let value = e.target.value;
+        if (value) {
+            value = Math.max(0, Math.min(1000000, Number(e.target.value))).toString(); // clamp value
+        }
+        handleChange('minPrice', value)
     }
-
+    
     const handleOnMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormMaxPrice(e.target.value);
+        let value = e.target.value;
+        if (value) {
+            value = Math.max(0, Math.min(1000000, Number(e.target.value))).toString(); // clamp value
+        }
+        handleChange('maxPrice', value)
     }
 
     const handleOnSortTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const [sortKey, sortOrder] = e.target.value.split('_');
-        setFormSortBy(sortKey as ProductSortBy);
-        setFormSortIsDescending(sortOrder === 'desc');
+        setForm((prev) => ({
+            ...prev,
+            sortBy: sortKey as ProductSortBy,
+            isDescending: sortOrder === 'desc'
+        }));
     }
 
     const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -88,11 +109,16 @@ export default function CatalogAll() {
     }
 
     const handleOnApplyFilters = () => {
-        setName(formName);
-        setMinPrice(formMinPrice ? +formMinPrice : undefined);
-        setMaxPrice(formMaxPrice ? +formMaxPrice : undefined);
-        setSortBy(formSortBy);
-        setSortIsDescending(formSortIsDescending)
+        const { minPrice, maxPrice } = form;
+
+        if (minPrice && maxPrice && Number(minPrice) > Number(maxPrice)) { // if min price is bigger than max price
+            // swap them
+            form.minPrice = maxPrice;
+            form.maxPrice = minPrice;
+        }
+
+        setForm(form);
+        setQuery(form);
     }
 
     const products = productsQuery.data?.pages.flatMap((page) => page.data) ?? [];
@@ -103,16 +129,16 @@ export default function CatalogAll() {
             <div className="flex flex-col gap-2 rounded-xl p-2 border-amber-400 border-2 md:w-[60%] mx-auto my-4 md:my-16">
 
                 <label htmlFor="name"></label>
-                <input id="name" type="text" value={formName} placeholder="Поиск" autoComplete="on" onChange={handleOnNameChange} onKeyDown={handleOnKeyDown}
+                <input id="name" type="text" value={form.name} placeholder="Поиск" autoComplete="on" onChange={handleOnNameChange} onKeyDown={handleOnKeyDown}
                     className="border border-[#d9d9d9] p-2 rounded-xl outline-none w-full" />
 
                 <div className="flex md:flex-row flex-col md:items-center gap-1.5">
                     <div className="">Цена:</div>
                     <label htmlFor="minprice">От</label>
-                    <input id="minprice" type="number" value={formMinPrice} placeholder="0" onChange={handleOnMinPriceChange} onKeyDown={handleOnKeyDown}
+                    <input id="minprice" type="number" value={form.minPrice} placeholder="0" onChange={handleOnMinPriceChange} onKeyDown={handleOnKeyDown}
                         className="md:w-32 w-full border p-2 rounded-xl outline-none focus:bg-transparent hover:bg-transparent bg-neutral-50 border-[#d9d9d9]" />
                     <label htmlFor="maxprice">До</label>
-                    <input id="maxprice" type="number" value={formMaxPrice} placeholder="1 000 000" onChange={handleOnMaxPriceChange} onKeyDown={handleOnKeyDown}
+                    <input id="maxprice" type="number" value={form.maxPrice} placeholder="1 000 000" onChange={handleOnMaxPriceChange} onKeyDown={handleOnKeyDown}
                         className="md:w-32 w-full border p-2 rounded-xl outline-none focus:bg-transparent hover:bg-transparent bg-neutral-50 border-[#d9d9d9]" />
                 </div>
 
@@ -120,7 +146,7 @@ export default function CatalogAll() {
                     <label htmlFor="sortby">Сортировка:</label>
                     <select id="sortby"
                         className=" w-fit appearance-none rounded-lg  cursor-pointer outline-none text-blue-600 hover:text-blue-700 focus:text-blue-700"
-                        value={`${formSortBy}_${formSortIsDescending ? 'desc' : 'asc'}`} onChange={handleOnSortTypeChange}>
+                        value={`${form.sortBy}_${form.isDescending ? 'desc' : 'asc'}`} onChange={handleOnSortTypeChange}>
                         <option className="font-medium text-black" value={ProductSortBy.Id + "_asc"}>по умолчанию</option>
                         <option className="font-medium text-black" value={ProductSortBy.Price + "_asc"}>по наименьшей цене</option>
                         <option className="font-medium text-black" value={ProductSortBy.Price + "_desc"}>по наибольшей цене</option>

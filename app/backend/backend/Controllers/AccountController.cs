@@ -233,7 +233,7 @@ namespace backend.Controllers
         /// <response code="400">If email is not provided</response> 
         /// <response code="500">Internal server error.</response>
         [HttpGet("check_credentials")]
-        [ProducesResponseType(typeof(EmailAvailabilityRequest), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EmailAvailabilityResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CheckIfEmailIsNotUsed([FromQuery] string email, CancellationToken cancellationToken)

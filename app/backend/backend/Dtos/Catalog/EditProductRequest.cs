@@ -4,42 +4,43 @@ namespace backend.Dtos.Catalog
 {
     public class EditProductRequest
     {
-        [Required(ErrorMessage = "Название не может быть пустым!")]
+        [Required(ErrorMessage = "{0} не может быть пустым!")]
         [Display(Name = "Название")]
+        [StringLength(200, MinimumLength = 2, ErrorMessage = "{0} должно иметь длину от {2} до {1} символов.")]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Описание не может быть пустым!")]
+        [Required(ErrorMessage = "{0} не может быть пустым!")]
         [Display(Name = "Описание")]
+        [StringLength(2000, ErrorMessage = "{0} не должно превышать длину в {1} символов.")]
         public string Description { get; set; } = string.Empty;
 
-        [Range(0, 1000000.0, ErrorMessage = "Стоимость не может быть больше 1 миллиона рублей!")] // 1 million
-        [Required(ErrorMessage = "Стоимость не может быть пустой!")]
+        [Range(0, 1000000.0, ErrorMessage = "{0} должна быть в диапазоне от {1} до {2} рублей.")] // 1 million
+        [Required(ErrorMessage = "{0} не может быть пустой!")]
         [Display(Name = "Стоимость")]
-        public float Price { get; set; }
+        public decimal Price { get; set; }
 
-        [Range(0, 10.0, ErrorMessage = "Длина не может быть больше 10 метров!")]
-        [Required(ErrorMessage = "Длина не может быть пустой!")]
+        [Range(0, 10.0, ErrorMessage = "{0} должна быть в диапазоне от {1} до {2} метров.")]
+        [Required(ErrorMessage = "{0} не может быть пустой!")]
         [Display(Name = "Длина")]
         public float SizeX { get; set; }
 
-        [Range(0, 10.0, ErrorMessage = "Ширина не может быть больше 10 метров!")]
-        [Required(ErrorMessage = "Ширина не может быть пустой!")]
+        [Range(0, 10.0, ErrorMessage = "{0} должна быть в диапазоне от {1} до {2} метров.")]
+        [Required(ErrorMessage = "{0} не может быть пустой!")]
         [Display(Name = "Ширина")]
         public float SizeY { get; set; }
 
-        [Range(0, 10.0, ErrorMessage = "Высота не может быть больше 10 метров!")]
-        [Required(ErrorMessage = "Высота не может быть пустой!")]
+        [Range(0, 10.0, ErrorMessage = "{0} должна быть в диапазоне от {1} до {2} метров.")]
+        [Required(ErrorMessage = "{0} не может быть пустой!")]
         [Display(Name = "Высота")]
         public float SizeZ { get; set; }
 
-        [Range(0, 1000.0, ErrorMessage = "Вес не может быть больше 1000 килограмм!")]
-        [Required(ErrorMessage = "Вес не может быть пустым!")]
+        [Range(0, 1000.0, ErrorMessage = "{0} должен быть в диапазоне от {1} до {2} килограмм.")]
+        [Required(ErrorMessage = "{0} не может быть пустым!")]
         [Display(Name = "Вес")]
         public float Weight { get; set; }
 
         //[Required(ErrorMessage = "Изображение обязательно!")]
         [Display(Name = "Изображение")]
         public IFormFile? Image { get; set; }
-
     }
 }

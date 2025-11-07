@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
+
 namespace backend.Models
 {
     public class Order
@@ -14,9 +16,11 @@ namespace backend.Models
 
         public ICollection<OrderItem> Items { get; set; } = [];
 
-        public float ShippingPrice { get; set; }
+        [Precision(19, 4)]
+        public decimal ShippingPrice { get; set; }
 
-        public float FinalPrice { get; set; } // it's another field in case of sale system, etc.
+        [Precision(19, 4)]
+        public decimal FinalPrice { get; set; } // it's another field in case of sale system, etc.
 
         public int ShippingTime { get; set; }
 

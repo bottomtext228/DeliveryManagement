@@ -1,4 +1,5 @@
 using backend.Models;
+using backend.Models.RefreshToken;
 
 namespace backend.Interfaces.Services
 {

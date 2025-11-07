@@ -12,6 +12,6 @@ namespace backend.Interfaces.Services
         Task<Result> LogoutAsync(string? refreshToken, CancellationToken cancellationToken = default);
         Task<Result<ClientProfileDto>> GetClientProfileAsync(string userId, CancellationToken cancellationToken = default);
         Task<Result<CompanyProfileDto>> GetCompanyProfileAsync(string userId, int companyId, CancellationToken cancellationToken = default);
-        Task<EmailAvailabilityRequest> IsEmailAvailableAsync(string email, CancellationToken cancellationToken = default);
+        Task<EmailAvailabilityResponse> IsEmailAvailableAsync(string email, CancellationToken cancellationToken = default);
     }
 }

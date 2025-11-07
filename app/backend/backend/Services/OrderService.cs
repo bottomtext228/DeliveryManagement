@@ -72,7 +72,7 @@ namespace backend.Services
                 Items = []
             };
 
-            float totalProductPrice = 0;
+            decimal totalProductPrice = 0;
 
             foreach (var productOrder in model.Products)
             {

@@ -13,9 +13,9 @@ namespace backend.Dtos.Order
 
         public List<Town> Towns { get; set; } = [];
 
-        public float ShippingPrice { get; set; }
+        public decimal ShippingPrice { get; set; }
 
-        public float FinalPrice { get; set; }
+        public decimal FinalPrice { get; set; }
 
         public int ShippingTime { get; set; }
 

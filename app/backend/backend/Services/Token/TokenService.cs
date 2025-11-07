@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using backend.Interfaces.Services;
 using backend.Models;
+using backend.Models.RefreshToken;
 using backend.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

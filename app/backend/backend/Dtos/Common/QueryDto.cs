@@ -4,9 +4,9 @@ namespace backend.Dtos.Common
 {
     public class QueryDto
     {
-        [Range(1, int.MaxValue, ErrorMessage = "Page number must be atleast 1.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Номер страницы должен быть как минимум {1}.")]
         public int PageNumber { get; set; } = 1;
-        [Range(1, 100, ErrorMessage = "Page size must be between 1 and 100.")]
+        [Range(1, 100, ErrorMessage = "Размер страницы должен быть между {1} и {2}.")]
         public int PageSize { get; set; } = 20;
     }
 }

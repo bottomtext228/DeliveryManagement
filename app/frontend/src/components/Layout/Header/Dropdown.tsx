@@ -35,36 +35,40 @@ export default function Dropdown() {
                 <img className={`w-4 h-4 ${isOpen ? 'rotate-360' : 'rotate-180'}  transition-all duration-150`} src='/caret-down.svg'></img>
             </button>
             {isOpen &&
-                <div className="absolute right-0 z-10 mt-2 w-40 origin-top-right divide-y-[1px] divide-gray-300  rounded-md  bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden">
+                <div className="absolute right-0 z-10 mt-2 w-40 origin-top-right divide-y-[1px] divide-gray-300 rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden">
                     {user ?
-                        <div>
-                            <div className="w-full px-4 py-1 text-left text-black opacity-85">
-                                <div className='font-semibold text-ellipsis whitespace-pre-wrap overflow-hidden'>{user.email}</div>
-                                <RoleBadge roles={user.roles}></RoleBadge>
+                        <>
+                            <div>
+                                <div className="w-full px-4 py-1 text-left text-black opacity-85">
+                                    <div className='font-semibold text-ellipsis whitespace-pre-wrap overflow-hidden'>{user.email}</div>
+                                    <RoleBadge roles={user.roles}></RoleBadge>
+                                </div>
                             </div>
-                        </div> :
-                        <Link onClick={handleClick} to='/auth/login' className='block px-4 py-2 opacity-85 hover:bg-neutral-200 active:bg-neutral-300'>
+                            <div className='flex flex-col'>
+                                {user && <DropdownRow label='Аккаунт' link='/account' onClick={handleClick} />}
+                                {user?.roles.includes('company') &&
+                                    <>
+                                        <DropdownRow label='Карта' link='/map' onClick={handleClick} />
+                                    </>
+                                }
+                                {user?.roles.includes('client') &&
+                                    <>
+                                        <DropdownRow label='Корзина' link='/cart' onClick={handleClick} />
+                                        <DropdownRow label='Заказы' link='/orders' onClick={handleClick} />
+                                    </>
+                                }
+                            </div>
+                            <div>
+                                <button
+                                    onClick={() => { setIsOpen(false); navigate('/auth/login'); setTimeout(() => logout(), 100); }}
+                                    className="w-full px-4 py-1 my-1 text-left text-red-600 opacity-85 hover:bg-neutral-200 active:bg-neutral-300" type="button">
+                                    Выйти
+                                </button>
+                            </div>
+                        </> :
+                        <Link onClick={handleClick} to='/auth/login' className='block px-4 py-2 opacity-85 rounded-md hover:bg-neutral-200 active:bg-neutral-300'>
                             Войти в аккаунт
                         </Link>
-                    }
-                    <div className='flex flex-col'>
-                        {user && <DropdownRow label='Аккаунт' link='/account' onClick={handleClick} />}
-                        {user?.roles.includes('company') &&
-                            <>
-                                <DropdownRow label='Карта' link='/map' onClick={handleClick} />
-                            </>
-                        }
-                        {user?.roles.includes('client') &&
-                            <>
-                                <DropdownRow label='Корзина' link='/cart' onClick={handleClick} />
-                                <DropdownRow label='Заказы' link='/orders' onClick={handleClick} />
-                            </>
-                        }
-                    </div>
-                    {user &&
-                        <div>
-                            <button onClick={() => { setIsOpen(false); navigate('/auth/login'); setTimeout(() => logout(), 100); }} className="w-full px-4 py-1 my-1 text-left text-red-600 opacity-85 hover:bg-neutral-200 active:bg-neutral-300" type="button">Выйти</button>
-                        </div>
                     }
                 </div>
             }

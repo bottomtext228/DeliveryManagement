@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.Models
+namespace backend.Models.RefreshToken
 {
     [Index(nameof(Token), IsUnique = true)]
     public class RefreshToken

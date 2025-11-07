@@ -230,11 +230,11 @@ namespace backend.Services
             return profileInfo;
         }
 
-        public async Task<EmailAvailabilityRequest> IsEmailAvailableAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<EmailAvailabilityResponse> IsEmailAvailableAsync(string email, CancellationToken cancellationToken = default)
         {
             var exists = await _userManager.Users.AnyAsync(u => u.Email == email, cancellationToken);
 
-            return new EmailAvailabilityRequest { Available = !exists, Message = exists ? AccountErrors.TakenEmail(email).Message : null };
+            return new EmailAvailabilityResponse { Available = !exists, Message = exists ? AccountErrors.TakenEmail(email).Message : null };
         }
     }
 }

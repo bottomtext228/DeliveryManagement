@@ -46,11 +46,16 @@ export default function RegisterFormGeneral({ handleGeneralSubmit, isCompany, ha
             <div>
                 <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
                     <InputField id="email" label="Эл. адрес" type="email" error={errors.email} autoComplete="on"
-                        {...register('email', { required: 'Почта не может быть пустой' })}
+                        {...register('email', {
+                            required: 'Почта не может быть пустой',
+                            maxLength: { value: 254, message: 'Почта не должна превышать длину в 100 символов' }
+                        })}
                     />
                     <InputPasswordField id="password" label="Пароль" error={errors.password} autoComplete="off"
                         {...register('password', {
-                            required: 'Пароль не может быть пустым'
+                            required: 'Пароль не может быть пустым',
+                            minLength: { value: 5, message: 'Пароль должен иметь длину минимум в 5 символов' },
+                            maxLength: { value: 100, message: 'Пароль не должен превышать длину в 100 символов' }
                         })}
                     />
                     <div className='mt-5'>

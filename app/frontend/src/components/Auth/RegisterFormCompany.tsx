@@ -50,7 +50,11 @@ export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack,
             <div>
                 <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
                     <InputField id="companyName" label="Название" error={errors.companyName} autoComplete="on"
-                        {...register('companyName', { required: 'Название не может быть пустым' })}
+                        {...register('companyName', {
+                            required: 'Название не может быть пустым',
+                            minLength: {value: 2, message: 'Название не может быть меньше 2 символов'},
+                            maxLength: {value: 200, message: 'Название не может превышать длину в 200 символов'}
+                        })}
                     />
                     <TextAreaField id="companyDescription" label="Описание" error={errors.companyName} rows={5}
                         {...register('companyDescription', { required: 'Описание не может быть пустым' })}
