@@ -81,10 +81,17 @@ export default function CatalogAdd() {
                     </div>
 
                     <InputField id="name" label="Название" error={errors.name} autoComplete="on"
-                        {...register('name', { required: 'Название не может быть пустым!' })}
+                        {...register('name', {
+                            required: 'Название не может быть пустым!',
+                            minLength: { value: 2, message: 'Название должен иметь длину минимум в 2 символа.' },
+                            maxLength: { value: 200, message: 'Название не должно превышать длину в 200 символов.' }
+                        })}
                     />
                     <TextAreaField id="description" label="Описание" error={errors.description}
-                        {...register('description', { required: 'Описание не может быть пустым!' })}
+                        {...register('description', {
+                            required: 'Описание не может быть пустым!',             
+                            maxLength: { value: 2000, message: 'Описание не должно превышать длину в 2000 символов.' }
+                        })}
                     />
                     <InputField id="weight" label="Вес" error={errors.weight} type="number" min={0} max={10} step={0.0001}
                         {...register('weight', { required: 'Вес не может быть пустым!' })}

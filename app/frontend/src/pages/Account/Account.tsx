@@ -12,7 +12,7 @@ import LogoutButton from "../../components/Common/LogoutButton";
 
 export default function Account() {
     const user = useUser();
-
+    
     const { data, isLoading, isError, error } = useProfile();
 
     if (isLoading) return <Loading />;

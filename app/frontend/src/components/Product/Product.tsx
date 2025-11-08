@@ -11,7 +11,7 @@ interface Props {
 
 export default function Product({ product, renderCart, cartItem }: Props) {
     return (
-        <article className="flex flex-col w-full h-full min-h-60 md:min-h-85 max-h-120 rounded-xl border border-gray-300 p-2">
+        <article className="flex flex-col w-full h-full min-h-60 md:min-h-85 max-h-120 rounded-xl border border-gray-200 p-2">
             <Link to={`/catalog/${product.id}`} className="mx-auto flex-8/10 h-10">
                 <img className="object-contain rounded-xl  max-h-full" src={getImageUrl(product.image)} alt={product.name} draggable={false}>
                 </img>

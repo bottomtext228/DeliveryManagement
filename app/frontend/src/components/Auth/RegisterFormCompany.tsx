@@ -8,10 +8,10 @@ import TextAreaField from "../Common/Form/TextAreaField";
 
 
 interface FormValues {
-    email: string
-    password: string,
-    companyName: string,
-    companyDescription: string
+    email: string;
+    password: string;
+    companyName: string;
+    companyDescription: string;
 };
 
 
@@ -51,13 +51,16 @@ export default function RegisterFormCompany({ handleCompanySubmit, handleGoBack,
                 <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
                     <InputField id="companyName" label="Название" error={errors.companyName} autoComplete="on"
                         {...register('companyName', {
-                            required: 'Название не может быть пустым',
-                            minLength: {value: 2, message: 'Название не может быть меньше 2 символов'},
-                            maxLength: {value: 200, message: 'Название не может превышать длину в 200 символов'}
+                            required: 'Название не может быть пустым!',
+                            minLength: { value: 2, message: 'Название должно иметь длину минимум в 2 символа.' },
+                            maxLength: { value: 200, message: 'Название не должно превышать длину в 200 символов.' }
                         })}
                     />
-                    <TextAreaField id="companyDescription" label="Описание" error={errors.companyName} rows={5}
-                        {...register('companyDescription', { required: 'Описание не может быть пустым' })}
+                    <TextAreaField id="companyDescription" label="Описание" error={errors.companyDescription} rows={5}
+                        {...register('companyDescription', {
+                            required: 'Описание не может быть пустым!',
+                            maxLength: { value: 2000, message: 'Описание не должно превышать длину в 2000 символов.' }
+                        })}
                     />
                     <div className="pt-5">
                         <Button label="Регистрация" />

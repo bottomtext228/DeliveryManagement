@@ -5,9 +5,10 @@ import { IUser } from "../../types/types";
 import { create } from "zustand";
 
 interface UserState {
-    user?: IUser | null,
-    login: (data: IUser) => void,
-    logout: () => void
+    user?: IUser | null;
+    login: (data: IUser) => void;
+    logout: () => void;
+    updateCompany: (details: { name: string; description: string }) => void;
 }
 
 const useUserStore = create<UserState>((set) => ({
@@ -26,7 +27,24 @@ const useUserStore = create<UserState>((set) => ({
             removeTokenFromLocalStorage();
             queryClient.clear();
         }
+    },
+    updateCompany: (details: { name: string; description: string }) => {
+        set((state) => ({
+            user: state.user
+                ? {
+                    ...state.user,
+                    company: state.user.company
+                        ? {
+                            ...state.user.company,
+                            name: details.name,
+                            description: details.description,
+                        }
+                        : { id: 0, name: details.name, description: details.description },
+                }
+                : undefined,
+        }));
     }
+
 }));
 
 export default useUserStore;

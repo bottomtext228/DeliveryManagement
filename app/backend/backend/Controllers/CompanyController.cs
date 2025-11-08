@@ -50,11 +50,23 @@ namespace backend.Controllers
             );
         }
 
-        [HttpPut("{id:int}")]
+        /// <summary>
+        /// Updates company details of the current authenticated user. Accessible only to users registered as a company.
+        /// </summary>
+        /// <param name="model">Updated company data.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>No content.</returns>
+        /// <response code="204">Successfully updated details.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="403">Forbidden. Method used only by companies.</response>
+        /// <response code="500">Internal server error.</response>
+        [HttpPut]
         [Authorize(Roles = "company")]
-        public async Task<IActionResult> UpdateDetails([FromRoute] int id, [FromForm] UpdateCompanyDetailsRequest model, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateDetails([FromForm] UpdateCompanyDetailsRequest model, CancellationToken cancellationToken)
         {
-            var result = await _companyService.UpdateDetails(id, model, cancellationToken);
+            var companyId = User.GetCompanyId();
+
+            var result = await _companyService.UpdateDetails(companyId!.Value, model, cancellationToken);
 
             return result.Map(
                 onSuccess: NoContent,
@@ -62,6 +74,7 @@ namespace backend.Controllers
             );
 
         }
+
         /// <summary>
         /// Checks if the current company can create a product. Accessible only to users registered as a company.
         /// </summary>

@@ -18,7 +18,7 @@ const InputFile = forwardRef<HTMLInputElement, Props>(({ id, defaultSrc, error, 
         <div className="w-full mt-4">
             {fileSrc &&
                 <div className="w-full h-full">
-                    <img id="image-preview" className="object-contain w-full h-full rounded-2xl border border-gray-300 mb-4" src={fileSrc}></img>
+                    <img id="image-preview" className="object-contain w-full h-full border border-gray-200 rounded-xl p-2 mb-4" src={fileSrc}></img>
                 </div>
             }
             {error && <div className="text-red-500">{error.message}</div>}

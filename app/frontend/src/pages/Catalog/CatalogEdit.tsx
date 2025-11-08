@@ -80,9 +80,7 @@ export default function CatalogEdit() {
                 navigate(`/catalog/${id}`);
             },
             onError: (error) => {
-                if (isAxiosError(error)) {
-                    setServerError(error);
-                }
+                setServerError(error);
             }
         });
     }
@@ -92,7 +90,7 @@ export default function CatalogEdit() {
 
         <>
             <div className="max-w-[1440px] w-[90%] mx-auto my-4">
-                <GoBackButton></GoBackButton>
+                <GoBackButton link={`/catalog/${product.id}`}></GoBackButton>
                 {serverError !== null && <ServerError error={serverError} />}
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">
@@ -106,7 +104,14 @@ export default function CatalogEdit() {
                     <div className="mt-8 flex-1/3">
                         <div className="mb-4">
                             <div>
-                                <input id="name" className="px-2 py-0.5 w-full font-bold border border-gray-200 rounded-md outline-none md:w-54" {...register('name', { required: 'Название не может быть пустым!' })} placeholder=" " autoComplete="on" />
+                                <input
+                                    id="name"
+                                    className="px-2 py-0.5 w-full font-bold border border-gray-200 rounded-md outline-none md:w-54"
+                                    {...register('name', {
+                                        required: 'Название не может быть пустым!',
+                                        minLength: { value: 2, message: 'Название должен иметь длину минимум в 2 символа.' },
+                                        maxLength: { value: 200, message: 'Название не должно превышать длину в 200 символов.' }
+                                    })} placeholder=" " autoComplete="on" />
                                 {errors.name && <div className="text-red-500">{errors.name.message}</div>}
                             </div>
                         </div>
@@ -124,7 +129,7 @@ export default function CatalogEdit() {
                                             {...register('weight', { required: 'Вес не может быть пустым!' })}
                                         />
                                         <span>кг</span>
-                                        {errors.weight && <div className="text-red-500">{errors.weight.message}</div>}
+                                        {errors.weight && <div className="text-red-500 font-normal">{errors.weight.message}</div>}
                                     </div>
 
                                 </div>
@@ -135,7 +140,7 @@ export default function CatalogEdit() {
                                             {...register('sizeX', { required: 'Ширина не может быть пустой!' })} placeholder=" "
                                         />
                                         <span>м</span>
-                                        {errors.sizeX && <div className="text-red-500">{errors.sizeX.message}</div>}
+                                        {errors.sizeX && <div className="text-red-500 font-normal">{errors.sizeX.message}</div>}
                                     </div>
                                 </div>
                                 <div className="flex gap-16">
@@ -145,7 +150,7 @@ export default function CatalogEdit() {
                                             {...register('sizeY', { required: 'Ширина не может быть пустой!' })} placeholder=" "
                                         />
                                         <span>м</span>
-                                        {errors.sizeY && <div className="text-red-500">{errors.sizeY.message}</div>}
+                                        {errors.sizeY && <div className="text-red-500 font-normal">{errors.sizeY.message}</div>}
                                     </div>
 
 
@@ -157,7 +162,7 @@ export default function CatalogEdit() {
                                             {...register('sizeZ', { required: 'Высота не может быть пустой!' })} placeholder=" "
                                         />
                                         <span>м</span>
-                                        {errors.sizeZ && <div className="text-red-500">{errors.sizeZ.message}</div>}
+                                        {errors.sizeZ && <div className="text-red-500 font-normal">{errors.sizeZ.message}</div>}
                                     </div>
                                 </div>
                             </div>
@@ -165,7 +170,15 @@ export default function CatalogEdit() {
                         <div className="mt-12">
                             <h3 className="font-bold">Описание:</h3>
                             <div>
-                                <textarea id="description" className="w-full px-2 py-0.5 border border-gray-200 rounded-md outline-none h-38" {...register('description', { required: 'Описание не может быть пустым!' })} placeholder=" " />
+                                <textarea
+                                    id="description"
+                                    className="w-full px-2 py-0.5 border border-gray-200 rounded-md outline-none h-38"
+                                    {...register('description', {
+                                        required: 'Описание не может быть пустым!',
+                                        maxLength: { value: 2000, message: 'Описание не должно превышать длину в 2000 символов.' }
+                                    })}
+                                    placeholder=" " />
+                                {errors.description && <div className="text-red-500">{errors.description.message}</div>}
                             </div>
                         </div>
                     </div>

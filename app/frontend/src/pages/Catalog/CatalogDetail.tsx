@@ -19,20 +19,22 @@ export default function CatalogDetail() {
     const navigate = useNavigate();
     const user = useUser();
 
+    const isClient = user?.roles.includes('client') === true;
+
     const setCartItem = useSetCartItem();
-    const cartQuery = useCart();
+    const cartQuery = useCart(isClient);
 
     const [serverError, setServerError] = useState<unknown>(null);
 
     const deleteProduct = useDeleteProduct();
 
     const productQuery = useProductDetail(id);
-    
+
     if (id === null) {
         return <NotFound />
     }
 
-    if (productQuery.isPending || cartQuery.isPending) {
+    if (productQuery.isPending || (isClient && cartQuery.isPending)) {
         return <Loading />
     }
 
@@ -46,7 +48,7 @@ export default function CatalogDetail() {
 
     const product = productQuery.data;
 
-    const cartItem = cartQuery.data.cartItems.find(e => e.productId == product.id);
+    const cartItem = cartQuery.data?.cartItems.find(e => e.productId == product.id);
 
     const handleDelete = async () => {
         if (confirm('Удалить продукт?')) {
@@ -80,7 +82,7 @@ export default function CatalogDetail() {
                     <div className="flex flex-col h-48 border-2 max-w-72 border-amber-500 rounded-2xl">
                         <div className="p-4 font-semibold">{product.price} ₽</div>
                         <div className="mt-auto p-4 mx-auto w-full flex flex-col gap-2">
-                            {user?.roles.includes('company') ?
+                            {!isClient ?
                                 <>
                                     <button
                                         onClick={handleEdit}

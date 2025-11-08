@@ -8,7 +8,7 @@ interface Props {
 export default function ProductDetail({ product }: Props) {
     return (
         <>
-            <div className="flex-1/3">
+            <div className="flex-1/3 mt-4">
                 <img className="border border-gray-200 rounded-xl p-2" src={getImageUrl(product.image)}></img>
             </div>
             <div className="mt-8 flex-1/3">
