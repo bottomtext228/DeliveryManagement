@@ -9,6 +9,7 @@ import { useProducts } from "../../hooks/queries/useProducts";
 import Button from "../../components/Common/Button";
 import { useCart } from "../../hooks/queries/useCart";
 import { useForm } from "react-hook-form";
+import { CloseButton } from "../../components/Common/CloseButton";
 
 interface QueryParams {
     name: string;
@@ -21,7 +22,7 @@ interface QueryParams {
 export default function CatalogAll() {
     const user = useUser();
 
-    const { register, handleSubmit, setValue, watch } = useForm<QueryParams>({
+    const { register, handleSubmit, setValue, watch, reset } = useForm<QueryParams>({
         defaultValues: {
             name: '',
             minPrice: '',
@@ -85,7 +86,7 @@ export default function CatalogAll() {
     const onApplyFilters = (data: QueryParams) => {
         const min = data.minPrice ? Number(data.minPrice) : undefined;
         const max = data.maxPrice ? Number(data.maxPrice) : undefined;
-        
+
         // Swap min/max if needed
         if (min !== undefined && max !== undefined && min > max) {
             setValue('minPrice', data.maxPrice);
@@ -105,6 +106,12 @@ export default function CatalogAll() {
                 onSubmit={handleSubmit(onApplyFilters)}
                 className="flex flex-col gap-2 rounded-xl p-2 border-amber-400 border-2 md:w-[60%] mx-auto my-4 md:my-16"
             >
+                <button
+                    onClick={() => reset()}
+                    className="w-4 h-4 ml-auto mt-1"
+                >
+                    <CloseButton />
+                </button>
                 <input
                     id="name"
                     type="text"
