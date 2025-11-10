@@ -13,7 +13,7 @@ using backend;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251104155540_Initial")]
+    [Migration("20251110115207_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -209,11 +209,13 @@ namespace backend.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -282,11 +284,13 @@ namespace backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<float>("FinalPrice")
-                        .HasColumnType("real");
+                    b.Property<decimal>("FinalPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)");
 
-                    b.Property<float>("ShippingPrice")
-                        .HasColumnType("real");
+                    b.Property<decimal>("ShippingPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)");
 
                     b.Property<int>("ShippingTime")
                         .HasColumnType("integer");
@@ -325,8 +329,9 @@ namespace backend.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
-                    b.Property<float>("ProductPrice")
-                        .HasColumnType("real");
+                    b.Property<decimal>("ProductPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
@@ -353,7 +358,8 @@ namespace backend.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
 
                     b.Property<string>("Image")
                         .IsRequired()
@@ -361,10 +367,12 @@ namespace backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Price")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("numeric(19,4)");
 
                     b.Property<float>("Weight")
                         .HasColumnType("real");
@@ -390,7 +398,7 @@ namespace backend.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("backend.Models.RefreshToken", b =>
+            modelBuilder.Entity("backend.Models.RefreshToken.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -631,7 +639,7 @@ namespace backend.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("backend.Models.RefreshToken", b =>
+            modelBuilder.Entity("backend.Models.RefreshToken.RefreshToken", b =>
                 {
                     b.HasOne("backend.Models.User", "User")
                         .WithMany()
