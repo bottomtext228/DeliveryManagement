@@ -55,7 +55,7 @@ export default function CatalogAdd() {
 
     if (isLoading) return <Loading />;
 
-    if (isError) return <ErrorPage message={error.message} />;
+    if (isError) return <ErrorPage error={error} />;
 
     if (canCreateProductResponse?.canCreate === false) {
         return (

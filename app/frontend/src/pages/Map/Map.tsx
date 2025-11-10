@@ -50,7 +50,7 @@ export default function Map() {
 
     if (townsResult.isError || roadsResult.isError || pickUpPointsResult.isError || stocksResult.isError) {
         const error = townsResult.error || roadsResult.error || pickUpPointsResult.error || stocksResult.error;
-        return <ErrorPage message={error?.message} />
+        return <ErrorPage error={error} />
     }
 
     const towns = townsResult.data;

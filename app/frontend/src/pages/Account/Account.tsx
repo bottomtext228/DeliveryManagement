@@ -12,14 +12,14 @@ import LogoutButton from "../../components/Common/LogoutButton";
 
 export default function Account() {
     const user = useUser();
-    
+
     const { data, isLoading, isError, error } = useProfile();
 
     if (isLoading) return <Loading />;
 
-    if (isError) return <ErrorPage message={error.message} />;
+    if (isError) return <ErrorPage error={error} />;
 
-    if (!user) return <ErrorPage message="User object is empty" />;
+    if (!user) return <ErrorPage error="User object is empty" />;
 
     return <>
         <div className="flex md:flex-row flex-col py-16 lg:gap-16 gap-8 max-w-[1440px] w-[90%] mx-auto justify-center">

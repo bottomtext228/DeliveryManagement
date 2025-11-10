@@ -18,8 +18,10 @@ export default function Orders() {
 
     if (ordersResult.isPending || townsResult.isPending) return <Loading />
 
-    if (ordersResult.isError) return <ErrorPage message={ordersResult.error.name} />
-    if (townsResult.isError) return <ErrorPage message={townsResult.error.name} />
+    if (ordersResult.isError || townsResult.isError) {
+        const error = ordersResult.error || townsResult.error;
+        return <ErrorPage error={error} />
+    }
 
     const orders = ordersResult.data;
 

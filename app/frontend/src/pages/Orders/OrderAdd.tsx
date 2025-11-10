@@ -109,15 +109,15 @@ export default function OrderAdd() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isPending, cart]);
 
-    if (!hasValidIds) return <ErrorPage message='Invalid IDs in URL.' />
+    if (!hasValidIds) return <ErrorPage error='Invalid IDs in URL.' />
 
-    if (!validOrder) return <ErrorPage message='Products must be from the same company and there must be no duplicates.' />;
+    if (!validOrder) return <ErrorPage error='Products must be from the same company and there must be no duplicates.' />;
 
     if (isPending) return <Loading />;
 
     if (isError) {
         const error = productQueries.find(e => e.error)?.error || pickUpPointsQuery.error || cartQuery.error;
-        return <ErrorPage message={error?.message} />;
+        return <ErrorPage error={error} />;
     }
 
     const pickUpPoints = pickUpPointsQuery.data;

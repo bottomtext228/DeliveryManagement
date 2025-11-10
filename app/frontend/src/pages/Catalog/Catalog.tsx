@@ -77,7 +77,7 @@ export default function CatalogAll() {
 
     if (productsQuery.isError || cartQuery.isError) {
         const error = productsQuery.error || cartQuery.error;
-        return <ErrorPage message={error!.message} />
+        return <ErrorPage error={error} />
     }
 
     const isPending = productsQuery.isPending || (isClient && cartQuery.isPending); // if user is not client, ignore cart query because it will be disabled

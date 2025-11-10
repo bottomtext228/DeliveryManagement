@@ -64,7 +64,7 @@ export default function CatalogEdit() {
         if (isAxiosError(error)) {
             if (error.response?.status === 404) return <NotFound />
         }
-        return <ErrorPage message={error.message} />
+        return <ErrorPage error={error} />
     }
 
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {

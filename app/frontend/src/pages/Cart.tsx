@@ -48,7 +48,8 @@ export default function Cart() {
 
     if (isPending) return <Loading></Loading>
 
-    if (cartQuery.isError) return <ErrorPage message={cartQuery.error.message} />
+    if (cartQuery.isError) return <ErrorPage error={cartQuery.error} />
+    
     const products = productQueries.map(e => e.data).filter((product): product is IProductDetail => !!product);
 
     function handleDeleteClick(productId: number) {
