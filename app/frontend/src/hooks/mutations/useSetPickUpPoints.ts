@@ -6,5 +6,6 @@ export const useSetPickUpPoints = () => useMutation({
     mutationFn: setPickUpPoints,
     onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['pickuppoints'] });
+        queryClient.invalidateQueries({ queryKey: ['can-create-product'] });
     }
 });
