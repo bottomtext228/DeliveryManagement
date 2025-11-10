@@ -90,7 +90,7 @@ export default function CatalogEdit() {
 
         <>
             <div className="max-w-[1440px] w-[90%] mx-auto my-4">
-                <GoBackButton link={`/catalog/${product.id}`}></GoBackButton>
+                <GoBackButton />
                 {serverError !== null && <ServerError error={serverError} />}
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-x-8">
                     <div className="flex-1/3">

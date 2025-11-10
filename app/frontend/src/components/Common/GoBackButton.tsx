@@ -19,9 +19,8 @@ export default function GoBackButton({ link }: Props) {
         </Link> :
         <button
             onClick={() => navigate(-1)}
-            className="flex items-center justify-center w-20 h-12 p-2 mb-4 rounded-lg bg-amber-400 hover:bg-amber-500 active:bg-amber-600"
+            className={className}
         >
             <img src="/arrow-left.svg" className="w-8" draggable={false}></img>
         </button>
-
 }
