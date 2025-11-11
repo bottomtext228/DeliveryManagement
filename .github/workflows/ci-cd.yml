@@ -1,0 +1,31 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH to VPS and deploy
+        uses: appleboy/ssh-action@v0.1.1
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            export DB_NAME="${{ secrets.DB_NAME }}"
+            export DB_USER="${{ secrets.DB_USER }}"
+            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            export JWT_SECRETKEY="${{ secrets.JWT_SECRETKEY }}"
+
+            if [ ! -d "${{ github.event.repository.name }}" ]; then
+              git clone git@github.com:${{ github.repository }}.git
+            fi
+
+            cd ${{ github.event.repository.name }}
+            git pull origin main --rebase
+            docker compose down --rmi all
+            docker compose  up -d

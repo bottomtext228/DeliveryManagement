@@ -5,10 +5,12 @@ services:
       context: ./app/backend/backend
     environment:
       ASPNETCORE_ENVIRONMENT: PRODUCTION
-      ASPNETCORE_WEBROOTPATH: wwwroot
-      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=delivery_management;Username=postgres;Password=postgres11;
+      SEED_TEST_DATA: ${SEED_TEST_DATA}
+      ConnectionStrings__DefaultConnection: Host=db;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      JWT__SecretKey: ${JWT_SECRETKEY}
     volumes:
-      ./.containers/images:wwwroot
+      - ./.containers/backend/images:/app/wwwroot/images
+      - ./.containers/backend/keys:/root/.aspnet/DataProtection-Keys
     depends_on:
       db:
         condition: service_healthy
@@ -29,9 +31,9 @@ services:
   db:
     image: postgres:17
     environment:
-      - POSTGRES_DB=delivery_management
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres11
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - ./.containers/postgresql:/var/lib/postgresql/data
     healthcheck:

@@ -17,7 +17,7 @@
       "applicationUrl": "http://localhost:5146",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_WEBROOTPATH": "wwwroot"
+        "SEED_TEST_DATA": "true"
       }
     },
     "https": {

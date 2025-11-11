@@ -173,21 +173,27 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
     try
     {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<User>>();
         var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var dbContext = services.GetRequiredService<ApplicationDbContext>();
-        
-        await DbInitializer.Seed(dbContext, userManager, rolesManager);
+
+        // always ensure migrations & roles
+        await DbInitializer.Initialize(dbContext, rolesManager, logger);
+
+        // read env variable
+        bool shouldSeedTestData = builder.Configuration.GetValue<bool>("SEED_TEST_DATA");
+
+        // seed test data if needed
+        await DbInitializer.Seed(dbContext, userManager, shouldSeedTestData, logger);
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        logger.LogError(ex, "An error occurred while initializing/seeding the database.");
     }
-
-
 }
 
 

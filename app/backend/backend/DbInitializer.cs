@@ -8,21 +8,55 @@ namespace backend
 {
     public static class DbInitializer
     {
-        public static async Task Seed(ApplicationDbContext dbContext, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        /// <summary>
+        /// Initialize db (check migrations, create roles).
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="roleManager"></param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
+        public static async Task Initialize(ApplicationDbContext dbContext, RoleManager<IdentityRole> roleManager, ILogger logger)
         {
+            logger.LogInformation("Initializing database.");
+
             // ensure DB is up to date
             await dbContext.Database.MigrateAsync();
 
             // role seeding
             if (!await roleManager.RoleExistsAsync("client"))
+            {
                 await roleManager.CreateAsync(new IdentityRole("client"));
+            }
 
             if (!await roleManager.RoleExistsAsync("company"))
+            {
                 await roleManager.CreateAsync(new IdentityRole("company"));
+            }
+        }
 
-            // skip if already has users
-            if (userManager.Users.Any())
+        /// <summary>
+        /// Seed database with test data (companies, clients, products).
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="userManager"></param>
+        /// <param name="shouldSeedTestData"></param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
+        public static async Task Seed(ApplicationDbContext dbContext, UserManager<User> userManager, bool shouldSeedTestData, ILogger logger)
+        {
+            if (!shouldSeedTestData)
+            {
+                logger.LogInformation("Skipping database seeding. ShouldSeedTestData == false");
                 return;
+            }
+
+            if (await dbContext.Users.AnyAsync())
+            {
+                logger.LogInformation("Skipping database seeding. The database is already seeded.");
+                return;
+            }
+
+            logger.LogInformation("Seeding database with test data.");
 
             // companies
             var companyFaker = new Faker<Company>()
@@ -39,24 +73,24 @@ namespace backend
 
             // products
             var productImagePaths = new List<string>{
-                "bolt-m16.jpg",
-                "bolt-m6.png",
-                "dupel-gvozd.jpg",
-                "dupel.jpeg",
-                "gajka-shestigrannaya.png",
-                "gvozd-toleviy.jpg",
-                "gvozd.jpg",
-                "rim-bolt-m6.jpg",
-                "shaiba.jpg",
-                "shurup.jpg",
-                "ugol.png",
-                "ugolok.jpg",
-                "vint.jpg",
-                "chain.jpg",
-                "cronshtein.jpg",
-                "shpilka_m16.jpg",
-                "shponka.jpg",
-                "shtift.jpg"
+                "test/bolt-m16.jpg",
+                "test/bolt-m6.png",
+                "test/dupel-gvozd.jpg",
+                "test/dupel.jpeg",
+                "test/gajka-shestigrannaya.png",
+                "test/gvozd-toleviy.jpg",
+                "test/gvozd.jpg",
+                "test/rim-bolt-m6.jpg",
+                "test/shaiba.jpg",
+                "test/shurup.jpg",
+                "test/ugol.png",
+                "test/ugolok.jpg",
+                "test/vint.jpg",
+                "test/chain.jpg",
+                "test/cronshtein.jpg",
+                "test/shpilka_m16.jpg",
+                "test/shponka.jpg",
+                "test/shtift.jpg"
             };
 
             var products = new List<Product>
@@ -246,6 +280,8 @@ namespace backend
             }
 
             await dbContext.SaveChangesAsync();
+
+            logger.LogInformation("Finished seeding database.");
         }
     }
 }
