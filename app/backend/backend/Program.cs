@@ -125,7 +125,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddSingleton<IFileService>(new FileService(Path.Combine(builder.Environment.WebRootPath, "images"), [".jpg", ".jpeg", ".png"]));
 builder.Services.AddSingleton<CountryMap>();
