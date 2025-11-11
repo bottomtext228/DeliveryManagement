@@ -14,8 +14,8 @@ export interface IRegisterRequest {
     email: string,
     password: string,
     asCompany: boolean,
-    companyDescription: string,
-    companyName: string
+    companyDescription?: string,
+    companyName?: string
 }
 
 

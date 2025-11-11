@@ -23,8 +23,8 @@ interface RegistrationData {
     email: string
     password: string,
     asCompany: boolean,
-    companyName: string,
-    companyDescription: string
+    companyName?: string,
+    companyDescription?: string
 };
 
 enum FormState {
@@ -83,7 +83,7 @@ export default function Register() {
                 console.error(error);
             }
         } else {
-            registrationHandler({ ...data, asCompany: false });
+            registrationHandler({ ...data, asCompany: false, companyName: undefined, companyDescription: undefined });
         }
     }
 

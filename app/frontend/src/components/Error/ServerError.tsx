@@ -8,7 +8,13 @@ interface Props {
 
 export default function ServerError({ error }: Props) {
     console.error(error);
-    if (!isAxiosError(error)) return (<ErrorBorder><div>Что-то пошло не так...</div></ErrorBorder>); // just in case
+    if (!isAxiosError(error)) {
+        if (typeof error === "string") {
+            return (<ErrorBorder><div>{error}</div></ErrorBorder>)
+        }
+
+        return <ErrorBorder><div>Что-то пошло не так...</div></ErrorBorder> // just in case
+    }
 
     const axiosError = error as AxiosError;
 
