@@ -22,7 +22,7 @@ namespace backend.Infrastructure
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Internal Server Error",
                 Type = "https://httpstatuses.com/500",
-                Detail = "An unexpected error occurred. Please try again later."
+                Detail = "Произошла неизвестная ошибка. Пожалуйста, попробуйте позже."
 
             }, cancellationToken);
 

@@ -25,7 +25,7 @@ namespace backend.Infrastructure
                     Status = StatusCodes.Status404NotFound,
                     Title = "Not Found",
                     Type = "https://httpstatuses.com/404",
-                    Detail = "Resource not found.",
+                    Detail = "Ресурс не найден.",
                     Instance = context.Request.Path
                 };
                 await response.WriteAsJsonAsync(problem);

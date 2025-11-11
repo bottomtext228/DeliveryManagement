@@ -1,0 +1,9 @@
+services:
+  deliverymanagement_proxy:
+    ports:
+      - "8101:80"
+
+networks:
+  default:
+    external: true
+    name: proxy
