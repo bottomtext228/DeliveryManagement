@@ -30,10 +30,10 @@ jobs:
             echo "Pulling changes."
             git pull origin main --rebase
 
-            if [ ! -d "./app/backend/backend/wwwroot/images/test"] then 
+            if [ ! -d "./app/backend/backend/wwwroot/images/test" ]; then 
               echo "Copying test data."
               mkdir -p ./.containers/backend/images/test
-              cp -r ./app/backend/backend/wwwroot/images/test/* ./.containers/backend/images/test
+              cp -r ./app/backend/backend/wwwroot/images/test/* ./.containers/backend/images/test/
             else 
               echo "Test data not found."
             fi
