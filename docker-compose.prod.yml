@@ -1,6 +1,6 @@
 services:
   deliverymanagement_proxy:
-    ports:
+    ports: !override
       - "8101:80"
 
 networks:
