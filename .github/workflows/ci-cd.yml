@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: SSH to VPS and deploy
         uses: appleboy/ssh-action@v0.1.1
@@ -20,6 +21,7 @@ jobs:
             export DB_USER="${{ secrets.DB_USER }}"
             export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
             export JWT_SECRETKEY="${{ secrets.JWT_SECRETKEY }}"
+            export SEED_TEST_DATA="${{ vars.SEED_TEST_DATA }}"
 
             if [ ! -d "${{ github.event.repository.name }}" ]; then
               echo "Cloning repository."

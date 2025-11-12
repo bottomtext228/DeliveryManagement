@@ -1,5 +1,5 @@
 services:
-  backend:
+  deliverymanagement_backend:
     image: backend
     build:
       context: ./app/backend/backend
@@ -15,7 +15,7 @@ services:
       db:
         condition: service_healthy
     user: root
-  frontend:
+  deliverymanagement_frontend:
     image: frontend
     build:
       context: ./app/frontend
@@ -28,7 +28,7 @@ services:
     depends_on:
       - backend
       - frontend
-  db:
+  deliverymanagement_db:
     image: postgres:17
     environment:
       - POSTGRES_DB=${DB_NAME}
