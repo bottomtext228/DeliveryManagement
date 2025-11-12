@@ -12,7 +12,7 @@ services:
       - ./.containers/backend/images:/app/wwwroot/images
       - ./.containers/backend/keys:/root/.aspnet/DataProtection-Keys
     depends_on:
-      db:
+      deliverymanagement_db:
         condition: service_healthy
     user: root
   deliverymanagement_frontend:
@@ -26,8 +26,8 @@ services:
     ports:
       - 80:80
     depends_on:
-      - backend
-      - frontend
+      - deliverymanagement_backend
+      - deliverymanagement_frontend
   deliverymanagement_db:
     image: postgres:17
     environment:
