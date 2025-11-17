@@ -35,6 +35,7 @@ export default function CatalogAdd() {
 
     const { isLoading, isError, error, data: canCreateProductResponse } = useCanCompantCreateProduct();
 
+
     const onSubmit: SubmitHandler<FormValues> = async (data, e) => {
         e?.preventDefault();
 
@@ -89,7 +90,7 @@ export default function CatalogAdd() {
                     />
                     <TextAreaField id="description" label="Описание" error={errors.description}
                         {...register('description', {
-                            required: 'Описание не может быть пустым!',             
+                            required: 'Описание не может быть пустым!',
                             maxLength: { value: 2000, message: 'Описание не должно превышать длину в 2000 символов.' }
                         })}
                     />

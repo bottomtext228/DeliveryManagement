@@ -62,7 +62,7 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
             <div className="mt-4 mb-2">
                 <Link
                     to={`/orders/add?ids=${products.map(e => e.id).join(',')}`}
-                    className="block w-28 mr-auto font-semibold p-2 rounded-lg text-white hover:text-neutral-100 active:text-neutral-200 bg-red-600 hover:bg-red-700 active:bg-red-800 active:scale-98"
+                    className="block w-fit text-center mr-auto font-semibold p-2 rounded-lg text-white hover:text-neutral-100 active:text-neutral-200 bg-red-600 hover:bg-red-700 active:bg-red-800 active:scale-98"
                 >
                     Заказать всё
                 </Link>

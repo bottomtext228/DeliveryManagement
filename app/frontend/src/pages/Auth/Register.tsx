@@ -58,7 +58,7 @@ export default function Register() {
             const loginData = response.data as ILoginResponse;
             setTokenToLocalStorage(loginData.token);
             login(loginData.user);
-            navigate(location.state?.returnUrl ? location.state.returnUrl : '/', { replace: true });
+            navigate(location.state?.returnUrl ? location.state.returnUrl : '/catalog', { replace: true });
         }
         catch (error) {
             setServerError(error);

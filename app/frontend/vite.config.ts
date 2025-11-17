@@ -15,5 +15,6 @@ export default defineConfig({
             }
         },
         port: 5147,
+        host: true
     }
 })

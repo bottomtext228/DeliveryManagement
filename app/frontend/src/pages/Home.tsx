@@ -1,10 +1,14 @@
 import { Link } from "react-router-dom";
 import { ScrollAnimation } from "../components/Animation/ScrollAppear";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 
 
 
 export default function Home() {
-    return <>
+
+    useScrollToTop();
+
+    return (
         <div className="overflow-hidden">
             <div className="bg-linear-to-b from-white to-neutral-300">
                 <div className="max-w-[1440px] w-[90%] h-screen min-h-fit mx-auto md:flex">
@@ -120,6 +124,6 @@ export default function Home() {
                 </div>
 
             </div>
-        </div >
-    </>
+        </div>
+    )
 }

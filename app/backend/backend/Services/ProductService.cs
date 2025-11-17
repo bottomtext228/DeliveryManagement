@@ -55,7 +55,7 @@ namespace backend.Services
         }
 
         public async Task<Result<ProductDetailDto>> CreateAsync(CreateProductRequest model, int companyId, CancellationToken cancellationToken = default)
-        {
+        {   
             var company = await _dbContext.Companies
                        .Include(c => c.Stocks)
                        .Include(c => c.PickUpPoints)

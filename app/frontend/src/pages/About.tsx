@@ -1,7 +1,11 @@
 import { ScrollAnimation } from "../components/Animation/ScrollAppear";
+import { useScrollToTop } from "../hooks/useScrollToTop";
 
 
 export default function About() {
+
+    useScrollToTop();
+
     return (
         <div className="overflow-hidden">
             <div className="max-w-[1440px] w-[90%] mx-auto h-fit flex flex-col gap-8 font-mono md:text-2xl">
@@ -59,7 +63,7 @@ export default function About() {
                         <img className="lg:w-md w-sm" src="turtle 3page.png"></img>
                     </ScrollAnimation>
                 </div>
-          
+
             </div >
         </div >
     )
