@@ -125,10 +125,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddSingleton<IFileService>(new FileService(Path.Combine(builder.Environment.WebRootPath, "images"), [".jpg", ".jpeg", ".png"]));
-builder.Services.AddSingleton<CountryMap>();
-builder.Services.AddScoped<TownsGraphSearch>();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -158,6 +155,11 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 // Services
+builder.Services.AddHealthChecks();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddSingleton<IFileService>(new FileService(Path.Combine(builder.Environment.WebRootPath, "images"), [".jpg", ".jpeg", ".png"]));
+builder.Services.AddSingleton<CountryMap>();
+builder.Services.AddScoped<TownsGraphSearch>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
@@ -211,6 +213,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health");
 
 app.UseStaticFiles();
 

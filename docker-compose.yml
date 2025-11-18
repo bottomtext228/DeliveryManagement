@@ -11,6 +11,11 @@ services:
     volumes:
       - ./.containers/backend/images:/app/wwwroot/images
       - ./.containers/backend/keys:/root/.aspnet/DataProtection-Keys
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     depends_on:
       deliverymanagement_db:
         condition: service_healthy
@@ -26,8 +31,10 @@ services:
     ports:
       - 80:80
     depends_on:
-      - deliverymanagement_backend
-      - deliverymanagement_frontend
+      deliverymanagement_backend:
+        condition: service_healthy
+      deliverymanagement_frontend:
+        condition: service_started
   deliverymanagement_db:
     image: postgres:17
     environment:

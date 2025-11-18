@@ -1,6 +1,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER app
 WORKDIR /app
+USER root
+RUN apt-get update && apt-get install -y curl
+USER app
 EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
