@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace backend
 {
     public class Result<T>
@@ -15,8 +17,15 @@ namespace backend
         }
 
         public T? Value { get; }
+
         public Error? Error { get; }
+
+        [MemberNotNullWhen(true, nameof(Value))]
+        [MemberNotNullWhen(false, nameof(Error))]
         public bool IsSuccess => Error == null;
+
+        [MemberNotNullWhen(true, nameof(Error))]
+        [MemberNotNullWhen(false, nameof(Value))]
         public bool IsFailure => !IsSuccess;
 
         public static Result<T> Success(T value) => new(value);
@@ -45,7 +54,11 @@ namespace backend
         }
 
         public Error? Error { get; }
+
+        [MemberNotNullWhen(false, nameof(Error))]
         public bool IsSuccess => Error == null;
+
+        [MemberNotNullWhen(true, nameof(Error))]
         public bool IsFailure => !IsSuccess;
 
         public static Result Success() => new();

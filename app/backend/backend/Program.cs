@@ -157,7 +157,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 // Services
 builder.Services.AddHealthChecks();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddSingleton<IFileService>(new FileService(Path.Combine(builder.Environment.WebRootPath, "images"), [".jpg", ".jpeg", ".png"]));
+builder.Services.AddSingleton<IFileService>(sp =>
+{
+    var logger = sp.GetRequiredService<ILogger<FileService>>();
+    string saveDirectory = Path.Combine(builder.Environment.WebRootPath, "images");
+    string[] allowedExtensions = [".jpg", ".jpeg", ".png"];
+    int maxFileSizeInBytes = 10_000_000;
+
+    return new FileService(logger, saveDirectory, allowedExtensions, maxFileSizeInBytes);
+});
 builder.Services.AddSingleton<CountryMap>();
 builder.Services.AddScoped<TownsGraphSearch>();
 builder.Services.AddScoped<IAccountService, AccountService>();

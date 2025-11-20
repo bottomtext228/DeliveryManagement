@@ -29,7 +29,7 @@ namespace backend
         public static Error BadRequest(string prefix, string message, IDictionary<string, object>? metadata = null)
             => new($"{prefix}.BadRequest", message, ErrorType.BadRequest, metadata);
 
-        /*  public static Error Custom(string code, string message, IDictionary<string, object>? metadata = null)
-             => new(code, message, metadata); */
+         public static Error Internal(string prefix, string message, IDictionary<string, object>? metadata = null)
+            => new($"{prefix}.InternalServerError", message, ErrorType.Internal, metadata);
     }
 }

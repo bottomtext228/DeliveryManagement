@@ -19,7 +19,7 @@ namespace backend.Services
             _dbContext = dbContext;
             _fileService = fileService;
         }
-        
+
         public async Task<Result<PaginatedResponse<ProductDto>>> GetAllAsync(int? companyId, ProductQueryDto query, CancellationToken cancellationToken = default)
         {
             IQueryable<Product> queryableProducts = _dbContext.Products;
@@ -55,7 +55,7 @@ namespace backend.Services
         }
 
         public async Task<Result<ProductDetailDto>> CreateAsync(CreateProductRequest model, int companyId, CancellationToken cancellationToken = default)
-        {   
+        {
             var company = await _dbContext.Companies
                        .Include(c => c.Stocks)
                        .Include(c => c.PickUpPoints)
@@ -66,7 +66,8 @@ namespace backend.Services
 
             if (!company.ValidateSetup()) return CompanyErrors.MissingSetup();
 
-            var fileName = await _fileService.SaveFileAsync(model.Image);
+            var result = await _fileService.SaveFileAsync(model.Image);
+            if (result.IsFailure) return result.Error;
 
             var product = new Product
             {
@@ -75,7 +76,7 @@ namespace backend.Services
                 Size = new Vector(model.SizeX, model.SizeY, model.SizeZ),
                 Weight = model.Weight,
                 Price = model.Price,
-                Image = fileName
+                Image = result.Value
             };
 
             company.Products.Add(product);
@@ -97,8 +98,10 @@ namespace backend.Services
 
             if (model.Image != null)
             {
-                var fileName = await _fileService.SaveFileAsync(model.Image);
-                product.Image = fileName;
+                var result = await _fileService.SaveFileAsync(model.Image);
+                if (result.IsFailure) return result.Error;
+
+                product.Image = result.Value;
             }
 
             await _dbContext.SaveChangesAsync(); // do not pass cancellation token here because file already saved
