@@ -15,6 +15,7 @@ using backend.Helpers;
 using System.Text.Json.Serialization;
 using backend.Interfaces.Services;
 using backend.Options;
+using Microsoft.AspNetCore.HttpOverrides;
 
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -122,6 +123,14 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = RateLimiterHandlers.OnRejected;
+
+    options.AddPolicy("per-user", RateLimiterHandlers.PerUserPolicy);
+});
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -134,6 +143,11 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
         }
     });
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -208,7 +222,11 @@ using (var scope = app.Services.CreateScope())
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
+{
+    app.UseForwardedHeaders();
+}
+else
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -220,7 +238,9 @@ app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseRateLimiter();
+
+app.MapControllers().RequireRateLimiting("per-user");
 
 app.MapHealthChecks("/health");
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Infrastructure
 {
     /// <summary>
-    /// Handles default 404 status code
+    /// Handles default 404 status code.
     /// </summary>
     /// <param name="next"></param>
     public class NotFoundMiddleware(RequestDelegate next)
