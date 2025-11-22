@@ -49,21 +49,16 @@ export default function Cart() {
     if (isPending) return <Loading></Loading>
 
     if (cartQuery.isError) return <ErrorPage error={cartQuery.error} />
-    
+
     const products = productQueries.map(e => e.data).filter((product): product is IProductDetail => !!product);
 
     function handleDeleteClick(productId: number) {
         setCartItem.mutate({ productId: productId, quantity: 0 });
     }
 
-    function handleIncreaseQuantityClick(productId: number) {
+    function handleChangeQuantityClick(productId: number, newQuantity: number) {
         const cartItem = cartList.find(e => e.productId == productId);
-        if (cartItem && cartItem.quantity < 99) setCartItem.mutate({ productId: productId, quantity: cartItem.quantity + 1 });
-    }
-
-    function handleDecreaseQuantityClick(productId: number) {
-        const cartItem = cartList.find(e => e.productId == productId);
-        if (cartItem && cartItem.quantity > 1) setCartItem.mutate({ productId: productId, quantity: cartItem.quantity - 1 });
+        if (cartItem && newQuantity > 0 && newQuantity < 100) setCartItem.mutate({ productId: productId, quantity: newQuantity });
     }
 
     function getProductsCount() {
@@ -90,8 +85,7 @@ export default function Cart() {
                                     products={products!}
                                     cartList={cartList}
                                     handleDeleteClick={handleDeleteClick}
-                                    handleIncreaseQuantityClick={handleIncreaseQuantityClick}
-                                    handleDecreaseQuantityClick={handleDecreaseQuantityClick}
+                                    handleChangeQuantityClick={handleChangeQuantityClick}
                                 ></CartCompanyCard>
                             ))}
                         </div>

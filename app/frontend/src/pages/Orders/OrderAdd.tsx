@@ -62,13 +62,9 @@ export default function OrderAdd() {
         return productsQuantities[id] ?? 1;
     };
 
-    const incrementQuantity = (id: number) => {
-        updateQuantity(id, getProductQuantity(id) + 1);
-    };
-
-    const decrementQuantity = (id: number) => {
-        updateQuantity(id, getProductQuantity(id) - 1);
-    };
+    const handleQuantityChange = (id: number, newQuantity: number) => {
+        updateQuantity(id, newQuantity);
+    }
 
     const checkSameCompany = (products: IProductDetail[]) => {
         const companies = new Set(products.map((p) => p.companyId));
@@ -201,8 +197,7 @@ export default function OrderAdd() {
                                             <QuantityController
                                                 price={product.price}
                                                 quantity={getProductQuantity(product.id)}
-                                                onDecrease={() => decrementQuantity(product.id)}
-                                                onIncrease={() => incrementQuantity(product.id)}
+                                                onChange={(newQuantity) => handleQuantityChange(product.id, newQuantity)}
                                             />
                                         </div>
                                     </div>

@@ -9,11 +9,10 @@ interface Props {
     products: IProduct[],
     cartList: CartItem[],
     handleDeleteClick: (productId: number) => void,
-    handleIncreaseQuantityClick: (productId: number) => void,
-    handleDecreaseQuantityClick: (productId: number) => void,
+    handleChangeQuantityClick: (productId: number, newQuantity: number) => void
 }
 
-export default function CartCompanyCard({ companyId, products, cartList, handleDeleteClick, handleIncreaseQuantityClick, handleDecreaseQuantityClick }: Props) {
+export default function CartCompanyCard({ companyId, products, cartList, handleDeleteClick, handleChangeQuantityClick }: Props) {
     const { isPending, isError, error, data: company } = useCompany(companyId);
 
     if (isPending) return <LoadingSpinner></LoadingSpinner>
@@ -49,8 +48,7 @@ export default function CartCompanyCard({ companyId, products, cartList, handleD
                             cartItem={cartList.find(e => e.productId == product.id)!}
                             product={product}
                             handleDeleteClick={handleDeleteClick}
-                            handleIncreaseQuantityClick={handleIncreaseQuantityClick}
-                            handleDecreaseQuantityClick={handleDecreaseQuantityClick}
+                            handleChangeQuantityClick={handleChangeQuantityClick}
                         ></CartItemCard>
                     </div>
                 ))}

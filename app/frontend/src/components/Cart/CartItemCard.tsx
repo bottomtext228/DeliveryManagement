@@ -7,12 +7,11 @@ interface Props {
     cartItem: CartItem,
     product: IProduct,
     handleDeleteClick: (productId: number) => void,
-    handleIncreaseQuantityClick: (productId: number) => void,
-    handleDecreaseQuantityClick: (productId: number) => void,
+    handleChangeQuantityClick: (productId: number, newQuantity: number) => void
 }
 
 
-export default function CartItemCard({ cartItem, product, handleDeleteClick, handleIncreaseQuantityClick, handleDecreaseQuantityClick }: Props) {
+export default function CartItemCard({ cartItem, product, handleDeleteClick, handleChangeQuantityClick }: Props) {
     return (
         <div id={`cart-item-${product.id}`} className="flex md:flex-row flex-col md:gap-4 gap-2 p-2 rounded-xl">
             <div className="flex flex-row gap-2">
@@ -25,8 +24,7 @@ export default function CartItemCard({ cartItem, product, handleDeleteClick, han
                 <QuantityController
                     price={product.price}
                     quantity={cartItem.quantity}
-                    onDecrease={() => handleDecreaseQuantityClick(product.id)}
-                    onIncrease={() => handleIncreaseQuantityClick(product.id)}
+                    onChange={(newQuantity) => handleChangeQuantityClick(product.id, newQuantity)}
                 />
             </div>
             <button
