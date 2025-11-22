@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net;
 using backend;
 using backend.Models;
 using backend.Services;
@@ -145,10 +146,25 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
+if (!builder.Environment.IsDevelopment())
 {
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
+    var proxyOptions = builder.Configuration.GetSection("Proxy").Get<ProxyOptions>()
+     ?? throw new Exception("Proxy options must not be null.");
+
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.ForwardLimit = proxyOptions.ForwardLimit;
+
+        if (proxyOptions.KnownProxies != null)
+        {
+            foreach (var ip in proxyOptions.KnownProxies)
+            {
+                options.KnownProxies.Add(IPAddress.Parse(ip));
+            }
+        }
+    });
+}
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
