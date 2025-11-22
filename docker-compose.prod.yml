@@ -4,9 +4,9 @@ services:
       - "8101:80"
   deliverymanagement_backend:
     environment:
-      Proxy__KnownProxies__0=172.19.0.2
-      Proxy__KnownProxies__1=172.19.0.6
-      Proxy__ForwardLimit=2
+      Proxy__KnownProxies__0: 172.19.0.2
+      Proxy__KnownProxies__1: 172.19.0.6
+      Proxy__ForwardLimit: 2
 networks:
   default:
     external: true
